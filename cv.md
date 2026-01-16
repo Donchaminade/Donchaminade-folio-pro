@@ -10,7 +10,7 @@
 ## Profil
 Développeur web créatif avec plus de 3 ans d’expérience et 1 an en mobile. Maîtrise de Flutter, React et des architectures cloud. Spécialiste de l'innovation et de l'impact communautaire (GDG, WTM, Python Togo).
 
-## Expériences Professionnelles.
+## Expériences Professionnelles
 
 ### Développement Mobile | Efficorpe
 *Août 2025 - Octobre 2025*
