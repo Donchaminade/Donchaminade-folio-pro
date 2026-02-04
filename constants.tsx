@@ -1,10 +1,11 @@
+import { title } from 'process';
 import { Stat, Skill, Experience, Project, Community, Education, Testimonial, ManagedPage, Award, GalleryImage, Client } from './types';
 
 export const STATS: Stat[] = [
-  { label: "Expérience Web", value: '3', suffix: 'ans+' },
-  { label: 'Expérience Mobile', value: '2', suffix: 'an' },
+  { label: "Expérience Web", value: '3', suffix: 'ans' },
+  { label: 'Expérience Mobile', value: '2', suffix: 'ans' },
   { label: 'Comm. Digitale', value: '2', suffix: 'ans' },
-  { label: 'Projets Impactants', value: '10', suffix: '+' }
+  { label: 'Projets Impactants', value: '5', suffix: '+' }
 ];
 
 export const TECH_ICONS: Record<string, string> = {
@@ -14,10 +15,11 @@ export const TECH_ICONS: Record<string, string> = {
   'Next.js': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',
   'Node.js': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',
   'TypeScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',
-  'Firebase': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg',
+
   'Tailwind': 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg',
   'PostgreSQL': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',
   'Figma': 'https://www.vectorlogo.zone/logos/figma/figma-icon.svg',
+  'Canva': 'https://www.vectorlogo.zone/logos/canva/canva-icon.svg',
   'Python': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
   'MongoDB': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg',
   'JavaScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
@@ -32,6 +34,10 @@ export const TECH_ICONS: Record<string, string> = {
   'Intelligence Artificielle': 'https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg',
   'Marketing Digital': 'https://www.vectorlogo.zone/logos/hubspot/hubspot-icon.svg',
   'Creation Visuelle': 'https://www.vectorlogo.zone/logos/adobe_illustrator/adobe_illustrator-icon.svg',
+  'Word': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftword/microsoftword-original.svg',
+  'VScode': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg',
+  'HTML': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',
+  'CSS': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg'
 };
 
 export const SKILLS: Skill[] = [
@@ -43,34 +49,36 @@ export const SKILLS: Skill[] = [
   { name: 'TypeScript', icon: TECH_ICONS['TypeScript'], category: 'Langage' },
   { name: 'PHP', icon: TECH_ICONS['PHP'], category: 'Langage' },
   { name: 'MySQL', icon: TECH_ICONS['MySQL'], category: 'Database' },
-  { name: 'Firebase', icon: TECH_ICONS['Firebase'], category: 'Backend' },
+
   { name: 'PostgreSQL', icon: TECH_ICONS['PostgreSQL'], category: 'Database' },
   { name: 'Git', icon: TECH_ICONS['Git'], category: 'Tools' },
   { name: 'GitHub', icon: TECH_ICONS['GitHub'], category: 'Tools' },
   { name: 'Bootstrap', icon: TECH_ICONS['Bootstrap'], category: 'Web' },
   { name: 'Tailwind', icon: TECH_ICONS['Tailwind'], category: 'Design' },
   { name: 'Figma', icon: TECH_ICONS['Figma'], category: 'Design' },
+  { name: 'Canva', icon: TECH_ICONS['Canva'], category: 'Design' },
 ];
 
 export const EXPERIENCES: Experience[] = [
   {
     company: 'Efficorpe',
-    role: 'Développeur Mobile',
+    role: 'Développeur Frontend Mobile',
     period: 'Août 2025 - Octobre 2025',
-    tags: ['Flutter', 'Dart', 'Firebase', 'Agile'],
+    tags: ['Flutter', 'Dart', 'Supabase', 'Agile'],
     description: [
       'Création et intégration d’interfaces mobiles interactives sous Flutter.',
       'Optimisation du code et correction des anomalies techniques.',
       'Collaboration en équipe Agile pour le développement des projets mobiles.'
+      
     ]
   },
   {
     company: 'ISF | WTM | Ecobank | GDG',
     role: 'Formateur en Informatique',
     period: 'Juillet 2025 - Octobre 2025',
-    tags: ['Intelligence Artificielle', 'TypeScript', 'Tailwind', 'Git'],
+    tags: ['Intelligence Artificielle', 'Word', 'Python', 'VScode'],
     description: [
-      'Animation d’ateliers sur l’IA, les réseaux sociaux et le développement web pour divers publics (Ecobank, ISF).',
+      'Animation d’ateliers sur l’IA, les réseaux sociaux et le développement web pour divers publics.',
       'Conception de supports pédagogiques interactifs favorisant l’apprentissage pratique.',
       'Accompagnement personnalisé des apprenants dans la mise en pratique d’outils numériques modernes.'
     ]
@@ -79,7 +87,7 @@ export const EXPERIENCES: Experience[] = [
     company: 'Axone Digital Company',
     role: 'Développeur Web/Mobile',
     period: 'Décembre 2024 - Juillet 2025',
-    tags: ['React', 'Next.js', 'Node.js', 'Tailwind', 'PostgreSQL'],
+    tags: ['Php','TypeScript', 'Next.js', 'MySQL', 'Tailwind', 'PostgreSQL'],
     description: [
       'Réalisation d’applications web et mobiles dynamiques à forte valeur ajoutée.',
       'Amélioration de la stabilité front-end et back-end pour garantir une expérience utilisateur fluide.',
@@ -90,53 +98,175 @@ export const EXPERIENCES: Experience[] = [
     company: 'Hyver | Python Togo | ABC',
     role: 'Social Media & Community Manager',
     period: 'Depuis 2024 (Saisonnier)',
-    tags: ['Marketing Digital', 'Creation Visuelle', 'Python', 'Git'],
+    tags: ['Marketing Digital', 'Creation Visuelle', 'Agile'],
     description: [
       'Gestion stratégique et animation des réseaux sociaux pour accroître la visibilité communautaire.',
       'Création de visuels et de contenus vidéo attractifs adaptés aux audiences tech.',
-      'Suivi des performances et interaction continue avec les membres des différentes communautés.'
+      'Suivi des performances et interaction continue avec les membres des différentes communautés.',
+      'Mobilisation de plus de 600 participants lors d’événements tech locaux.'
     ]
   }
 ];
 
 export const PROJECTS: Project[] = [
+  
+  // Ai228 hub
   {
     title: 'AI228 (Open Source)',
     description: 'Projet communautaire recensant les outils IA pour faciliter leur adoption au quotidien.',
     detailedDescription: 'AI228 est une plateforme centralisée conçue pour l\'écosystème tech togolais. Elle agit comme un hub recensant les outils d\'intelligence artificielle les plus pertinents, classés par cas d\'utilisation. Le projet est entièrement open-source pour encourager la contribution locale et la transparence.',
-    tags: ['React', 'Next.js', 'Tailwind', 'Supabase'],
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800',
+    tags: ['Github','Git', 'Next.js', 'Tailwind', 'json'],
+    image: '/ai.png',
     additionalImages: [
-      'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800',
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800'
+      '/aib.png',
+      '/splash.png'
     ],
-    link: 'https://ai228.com',
-    github: 'https://github.com/Donchaminade/ai228',
+    link: 'https://ai228-hub.vercel.app/',
+    github: 'https://github.com/Donchaminade/ai228-hub/',
     type: 'Web'
   },
+  
+  // Nutripack
   {
-    title: 'Efficorpe App',
-    description: 'Solution mobile haute performance pour le suivi et l\'optimisation des flux de travail.',
-    detailedDescription: 'Développement d\'une application mobile robuste destinée aux entreprises souhaitant digitaliser leurs processus métier. L\'application inclut des tableaux de bord interactifs, une gestion des notifications temps réel via Firebase et une architecture optimisée pour la scalabilité.',
-    tags: ['Flutter', 'Dart', 'Firebase', 'State Management'],
-    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800',
+    title: 'Nutripack',
+    description: 'Projet communautaire recensant les outils IA pour faciliter leur adoption au quotidien.',
+    detailedDescription: 'AI228 est une plateforme centralisée conçue pour l\'écosystème tech togolais. Elle agit comme un hub recensant les outils d\'intelligence artificielle les plus pertinents, classés par cas d\'utilisation. Le projet est entièrement open-source pour encourager la contribution locale et la transparence.',
+    tags: ['Next.js', 'Tailwind','Supabase', 'json'],
+    image: '/ai.png',
     additionalImages: [
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800'
+      '/aib.png',
+      '/splash.png'
     ],
-    link: 'https://efficorpe.io',
-    github: 'https://github.com/Donchaminade/efficorpe-mobile',
-    type: 'Mobile'
+    link: 'https://ai228-hub.vercel.app/',
+    github: 'https://github.com/Donchaminade/ai228-hub/',
+    type: 'Web'
   },
+
+  // Ratoufa
   {
-    title: 'Axone B2B Dashboard',
-    description: 'Interface de gestion administrative et analytique pour partenaires institutionnels.',
-    detailedDescription: 'Conception et réalisation d\'un dashboard analytique complexe. Utilisation de bibliothèques de visualisation de données avancées, intégration d\'une authentification sécurisée et optimisation des requêtes PostgreSQL pour gérer de gros volumes de données.',
-    tags: ['React', 'Node.js', 'PostgreSQL', 'Charts.js'],
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
+  title: 'Ratoufa',
+  description: 'Solution mobile de gestion des commandes et de réservation de tickets pour événements.',
+  detailedDescription: 'Développement d’une application mobile permettant la gestion des commandes et la réservation de tickets pour des événements, offrant une solution digitale fiable pour les organisateurs et une expérience simple et rapide pour les utilisateurs.',
+  tags: ['Flutter', 'Dart', 'Agile'],
+  image: '/rtf.jpeg',
+  additionalImages: [
+    '/rtf1.jpeg',
+  ],
+  link: '#',
+  github: '#',
+  type: 'Mobile'
+},
+
+// Locafrica
+  {
+  title: 'Locafrica',
+  description: 'Solution mobile de location des chambres/maisons et de réservation en afrique.',
+  detailedDescription: 'Développement des interfaces mobiles permettant de trouver les chambres/maisons dispo, voir sa localisation et se rendre ou de faire simplement la réservation offrant une solution rapide pour les utilisateurs.',
+  tags: ['Flutter', 'Dart', 'Agile'],
+  image: '/loca.png',
+  additionalImages: [
+    '/loca1.png',
+    '/loca2.png',
+
+  ],
+  link: '#',
+  github: '#',
+  type: 'Mobile'
+},
+
+// Axone DC
+  {
+    title: 'Axone Digital Company',
+    description: 'Mise en place du site vitrine de l\'entreprise Axone Digital Company.',
+    detailedDescription: 'Conception et réalisation d’un site vitrine dédié au branding de l’entreprise, mettant en valeur son identité visuelle, ses services et sa vision. Le site a été pensé pour offrir une expérience utilisateur fluide, un design moderne et une navigation claire, afin de renforcer la crédibilité de la marque et sa présence en ligne.',
+    tags: ['Bootstrap', 'HTML', 'CSS', 'javascript'],
+    image: '/axone.png',
     link: 'https://axone-digital.net/demo',
     github: '#',
     type: 'Web'
-  }
+  },
+
+  // Akontaa
+  {
+  title: 'Akontaa App',
+  description: 'Application mobile de gestion des dettes et redevances.',
+  detailedDescription: 'Conception et développement d’une application mobile dédiée à la gestion des dettes et redevances. Akontaa permet aux utilisateurs de suivre, enregistrer et organiser leurs créances de manière simple et intuitive. L’application met l’accent sur une expérience utilisateur fluide, une interface moderne et une navigation optimisée pour un usage quotidien.',
+  tags: ['Flutter', 'Dart', 'Tailwind'],
+  image: '/akk.jpeg',
+  additionalImages: [
+    '/ak.jpeg',
+    '/ak1.jpeg',
+    '/ak2.jpeg',
+    '/ak3.jpeg',
+    '/ak4.jpeg'
+  ],
+  link: '#',
+  github: 'https://github.com/Donchaminade/akontaa_v2',
+  type: 'Mobile'
+},
+
+  // 48 lois
+  {
+  title: '48 lois app vf',
+  description: 'Application mobile des 48 lois du pouvoir de Robert Greene.',
+  detailedDescription: 'Une application Anglaise existante reproduite fidelement en Francais, la toute 1ere au Togo avec des apports personnels comme des exemples concrets afin d\'aider les lecteurs a mieux comprendre chaque lois, avec une fonctionnalite de notification journaliere selon le paraetrage de chaque utilisateur.',
+  tags: ['Flutter', 'Dart'],
+  image: '/48.png',
+  additionalImages: [
+    '/481.png',
+    '/482.png',
+    '/483.png',
+    '/484.png',
+    '/485.png'
+  ],
+  link: '#',
+  github: 'https://github.com/Donchaminade/',
+  type: 'Mobile'
+},
+
+// Procope
+{
+  title: 'PROCOPE Afrique',
+  description: 'Site vitrine du Centre Incubateur PROCOPE Afrique.',
+  detailedDescription: 'Conception et personnalisation d’un site web vitrine pour le Centre Incubateur PROCOPE Afrique, à partir d’un modèle de site statique. Le site a été adapté pour répondre aux besoins spécifiques du centre, en mettant en avant sa mission, ses programmes d’incubation et ses activités. Une attention particulière a été portée au branding, à la clarté des contenus et à l’expérience utilisateur.',
+  tags: ['HTML', 'CSS', 'JavaScript'],
+  image: '/proco.png',
+    additionalImages: [
+    // '/ak.jpeg',
+    // '/ak1.jpeg',
+    // '/ak2.jpeg',
+    // '/ak3.jpeg',
+    // '/ak4.jpeg'
+  ],
+  link: 'https://procope-afrique.vercel.app',
+  github: 'https://github.com/Donchaminade/procope-afrique.git',
+  type: 'Web',
+
+
+},
+
+// Andykc
+{
+  title: 'AndyKC',
+  description: 'Site vitrine des services de consulting, accompagnement et suivis.',
+  //detailedDescription: 'Conception et personnalisation d’un site web vitrine pour le Centre Incubateur PROCOPE Afrique, à partir d’un modèle de site statique. Le site a été adapté pour répondre aux besoins spécifiques du centre, en mettant en avant sa mission, ses programmes d’incubation et ses activités. Une attention particulière a été portée au branding, à la clarté des contenus et à l’expérience utilisateur.',
+  tags: ['React', 'Tailwind'],
+  image: '/proco.png',
+    additionalImages: [
+    // '/ak.jpeg',
+    // '/ak1.jpeg',
+    // '/ak2.jpeg',
+    // '/ak3.jpeg',
+    // '/ak4.jpeg'
+  ],
+  link: 'https://procope-afrique.vercel.app',
+  github: 'https://github.com/Donchaminade/procope-afrique.git',
+  type: 'Web',
+
+
+}
+
+
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
