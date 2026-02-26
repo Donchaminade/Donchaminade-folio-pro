@@ -38,19 +38,19 @@ const ProjectCarousel: React.FC<{ project: Project }> = ({ project }) => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-white hover:bg-white/10 transition-colors z-30"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-slate-900 dark:text-white hover:bg-slate-200/50 dark:hover:bg-white/10 transition-colors z-30"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-white hover:bg-white/10 transition-colors z-30"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-slate-900 dark:text-white hover:bg-slate-200/50 dark:hover:bg-white/10 transition-colors z-30"
           >
             <ChevronRight size={20} />
           </button>
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
             {allImages.map((_, i) => (
-              <div key={i} className={`h-1 rounded-full transition-all ${i === currentIndex ? 'w-6 bg-blue-500' : 'w-2 bg-white/30'}`} />
+              <div key={i} className={`h-1 rounded-full transition-all ${i === currentIndex ? 'w-6 bg-blue-600 dark:bg-blue-500' : 'w-2 bg-slate-400 dark:bg-white/30'}`} />
             ))}
           </div>
         </>

@@ -17,7 +17,7 @@ const About: React.FC = () => {
     >
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
         <GlassCard className="lg:col-span-2 p-6 md:p-10 rounded-[2.5rem]">
-          <h3 className="text-2xl md:text-3xl font-black text-white uppercase mb-8 md:mb-12 flex items-center gap-4"><Code size={28} className="text-blue-500" /> Stack Technique</h3>
+          <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-8 md:mb-12 flex items-center gap-4"><Code size={28} className="text-blue-600 dark:text-blue-500" /> Stack Technique</h3>
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -34,10 +34,10 @@ const About: React.FC = () => {
                   hidden: { opacity: 0, scale: 0.8, y: 20 },
                   visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
                 }}
-                className="flex flex-col items-center gap-3 md:gap-4 p-4 md:p-6 glass rounded-3xl hover:bg-blue-500/10 transition-all border-white/5 hover:border-blue-500/40 group cursor-default"
+                className="flex flex-col items-center gap-3 md:gap-4 p-4 md:p-6 glass rounded-3xl hover:bg-blue-500/5 dark:hover:bg-blue-500/10 transition-all border-slate-200 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-500/40 group cursor-default"
               >
                 <img src={skill.icon} alt={skill.name} className="w-10 h-10 md:w-12 md:h-12 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-                <span className="text-[9px] md:text-[10px] font-black uppercase text-slate-400 text-center tracking-widest">{skill.name}</span>
+                <span className="text-[9px] md:text-[10px] font-black uppercase text-slate-600 dark:text-slate-400 text-center tracking-widest">{skill.name}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -45,10 +45,10 @@ const About: React.FC = () => {
 
         <div className="space-y-6">
           {EDUCATION.map((edu, i) => (
-            <GlassCard key={i} className="p-6 md:p-8 rounded-[2rem] bg-blue-900/5 hover:bg-blue-900/10 border-white/5">
-              <div className="font-black text-white text-lg md:text-xl uppercase leading-tight tracking-tight">{edu.degree}</div>
-              <div className="text-sm md:text-base text-slate-400 mt-2 font-light">{edu.field}</div>
-              <div className="text-[10px] md:text-xs font-black text-slate-500 mt-6 uppercase tracking-widest border-t border-white/10 pt-4 flex justify-between">
+            <GlassCard key={i} className="p-6 md:p-8 rounded-[2rem] bg-blue-50/50 hover:bg-blue-100/50 dark:bg-blue-900/5 dark:hover:bg-blue-900/10 border-slate-200 dark:border-white/5">
+              <div className="font-black text-slate-900 dark:text-white text-lg md:text-xl uppercase leading-tight tracking-tight">{edu.degree}</div>
+              <div className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-2 font-light">{edu.field}</div>
+              <div className="text-[10px] md:text-xs font-black text-slate-500 mt-6 uppercase tracking-widest border-t border-slate-200 dark:border-white/10 pt-4 flex justify-between">
                 <span>{edu.school}</span>
                 <span className="text-blue-500">{edu.year}</span>
               </div>
@@ -57,15 +57,15 @@ const About: React.FC = () => {
         </div>
 
         <GlassCard className="lg:col-span-3 p-6 md:p-10 rounded-[2.5rem]">
-          <h3 className="text-2xl md:text-3xl font-black text-white uppercase mb-6 md:mb-8 flex items-center gap-4"><Trophy size={28} className="text-blue-500" /> Distinctions</h3>
+          <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-6 md:mb-8 flex items-center gap-4"><Trophy size={28} className="text-blue-600 dark:text-blue-500" /> Distinctions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {AWARDS.map((award, i) => (
-              <div key={i} className="glass p-5 md:p-6 rounded-2xl border border-white/5 hover:border-blue-500/30 hover:bg-blue-500/5 transition-all group flex flex-col justify-between">
+              <div key={i} className="glass p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/5 transition-all group flex flex-col justify-between">
                 <div>
-                  <div className="text-[10px] font-black w-fit px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 uppercase tracking-[0.2em] mb-3">{award.year}</div>
-                  <div className="text-sm md:text-base font-black text-white uppercase tracking-tight leading-tight group-hover:text-blue-400 transition-colors">{award.title}</div>
+                  <div className="text-[10px] font-black w-fit px-2 py-1 rounded-md bg-blue-100/50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] mb-3">{award.year}</div>
+                  <div className="text-sm md:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{award.title}</div>
                 </div>
-                <p className="text-[11px] md:text-xs text-slate-400 mt-4 leading-relaxed font-light">{award.description}</p>
+                <p className="text-[11px] md:text-xs text-slate-600 dark:text-slate-400 mt-4 leading-relaxed font-light">{award.description}</p>
               </div>
             ))}
           </div>

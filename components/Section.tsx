@@ -30,7 +30,7 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
   const opacity = useTransform(smoothYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
-    <section id={id} ref={ref} className={`relative py-16 md:py-24 px-6 max-w-7xl mx-auto overflow-hidden ${className}`}>
+    <section id={id} ref={ref} className={`relative py-16 md:py-24 overflow-hidden w-full ${className}`}>
       {/* Parallax Background Layer */}
       <motion.div
         style={{ y, opacity, scale }}
@@ -47,9 +47,9 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
             <img
               src={bgImage}
               alt=""
-              className="w-full h-full object-cover opacity-[0.07]"
+              className="w-full h-full object-cover opacity-[0.03] dark:opacity-[0.07]"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-transparent to-slate-950" />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-transparent to-slate-50 dark:from-slate-950 dark:via-transparent dark:to-slate-950" />
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -64,19 +64,19 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="relative mb-10 md:mb-16 z-10"
+        className="relative mb-10 md:mb-16 z-10 px-6 max-w-7xl mx-auto"
       >
-        <h2 className="text-4xl md:text-6xl font-black mb-4 md:mb-6 uppercase tracking-tighter text-white">
-          {title}<span className="text-blue-500">.</span>
+        <h2 className="text-4xl md:text-6xl font-black mb-4 md:mb-6 uppercase tracking-tighter text-slate-900 dark:text-white">
+          {title}<span className="text-blue-600 dark:text-blue-500">.</span>
         </h2>
-        {subtitle && <p className="text-slate-300 text-lg md:text-2xl max-w-3xl font-light leading-relaxed">{subtitle}</p>}
+        {subtitle && <p className="text-slate-600 dark:text-slate-300 text-lg md:text-2xl max-w-3xl font-light leading-relaxed">{subtitle}</p>}
       </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="relative z-10"
+        className={`relative z-10 ${className === 'full-width' ? '' : 'px-6 max-w-7xl mx-auto'}`}
       >
         {children}
       </motion.div>

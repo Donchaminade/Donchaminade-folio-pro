@@ -9,7 +9,9 @@ import {
   Layers,
   Briefcase,
   MessageSquare,
-  User
+  User,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { PROJECTS } from './constants';
 import { Project } from './types';
@@ -43,7 +45,7 @@ const NAV_ITEMS = [
 ];
 
 const NavItem: React.FC<{ item: typeof NAV_ITEMS[0] }> = ({ item }) => (
-  <a href={`#${item.id}`} className="relative py-1 group overflow-hidden transition-colors hover:text-blue-400">
+  <a href={`#${item.id}`} className="relative py-1 group overflow-hidden transition-colors hover:text-blue-600 dark:hover:text-blue-400">
     <span className="font-bold tracking-widest text-[11px] uppercase">{item.name}</span>
     <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500/50 scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
   </a>
@@ -52,6 +54,24 @@ const NavItem: React.FC<{ item: typeof NAV_ITEMS[0] }> = ({ item }) => (
 const App: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showAllProjects, setShowAllProjects] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') !== 'light';
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   useEffect(() => {
     if (showAllProjects) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -64,25 +84,37 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen selection:bg-blue-500 selection:text-white dark:selection:text-white">
+      {/* Mobile Top Controls */}
+      <div className="fixed top-4 right-4 z-[70] lg:hidden">
+        <button onClick={toggleTheme} className="p-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-full shadow-lg border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
+          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </div>
+
       {/* Desktop Navigation */}
       <header className="fixed top-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl hidden lg:block">
-        <nav className="glass-dark px-10 py-4 rounded-full flex items-center justify-between border border-white/10 shadow-2xl">
-          <div className="text-2xl font-black text-blue-500 tracking-tighter uppercase cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Donchaminade</div>
-          <div className="flex items-center gap-10 text-slate-400">
+        <nav className="glass-dark px-10 py-4 rounded-full flex items-center justify-between border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:border-white/10 dark:shadow-2xl">
+          <div className="text-2xl font-black text-blue-600 dark:text-blue-500 tracking-tighter uppercase cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Donchaminade</div>
+          <div className="flex items-center gap-10 text-slate-600 dark:text-slate-400">
             {NAV_ITEMS.map((item) => <NavItem key={item.id} item={item} />)}
           </div>
-          <a href="#contact" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 rounded-full text-[11px] font-black uppercase text-white transition-all shadow-lg shadow-blue-600/20">ME CONTACTER</a>
+          <div className="flex items-center gap-4">
+            <button onClick={toggleTheme} className="p-2 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500 transition-colors">
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+            <a href="#contact" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 rounded-full text-[11px] font-black uppercase text-white transition-all shadow-lg shadow-blue-600/20">ME CONTACTER</a>
+          </div>
         </nav>
       </header>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[92%] max-w-md lg:hidden bg-gradient-to-b from-slate-900/60 to-slate-950/90 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 px-6 md:px-8 py-4 md:py-5 flex justify-between items-center shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[92%] max-w-md lg:hidden bg-gradient-to-b from-white/90 to-slate-50/90 dark:from-slate-900/60 dark:to-slate-950/90 backdrop-blur-3xl rounded-[2.5rem] border border-slate-200 dark:border-white/10 px-6 md:px-8 py-4 md:py-5 flex justify-between items-center shadow-[0_20px_60px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
         {NAV_ITEMS.map((item) => (
           <a
             key={item.id}
             href={`#${item.id}`}
-            className="text-slate-300 hover:text-blue-500 active:text-blue-400 transition-all flex flex-col items-center gap-1 md:gap-2"
+            className="text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 active:text-blue-500 dark:active:text-blue-400 transition-all flex flex-col items-center gap-1 md:gap-2"
           >
             <div className="p-1 hover:scale-110 transition-transform">
               {React.cloneElement(item.icon as React.ReactElement<any>, { size: 18 })}
@@ -107,14 +139,14 @@ const App: React.FC = () => {
 
       <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
 
-      <footer className="py-16 md:py-24 text-center border-t border-white/5 px-6 bg-slate-950/40">
-        <div className="text-2xl md:text-3xl font-black text-blue-500 mb-6 md:mb-8 uppercase tracking-tighter">Donchaminade</div>
-        <div className="flex justify-center gap-8 md:gap-10 mb-10 md:mb-12 text-slate-500">
-          <a href={SOCIALS.github} target="_blank" className="hover:text-blue-500 transition-all hover:scale-110"><Github size={28} /></a>
-          <a href={SOCIALS.linkedin} target="_blank" className="hover:text-blue-500 transition-all hover:scale-110"><Linkedin size={28} /></a>
-          <a href={SOCIALS.twitter} target="_blank" className="hover:text-blue-500 transition-all hover:scale-110"><Twitter size={28} /></a>
+      <footer className="py-16 md:py-24 text-center border-t border-slate-200 dark:border-white/5 px-6 bg-slate-50/50 dark:bg-slate-950/40">
+        <div className="text-2xl md:text-3xl font-black text-blue-600 dark:text-blue-500 mb-6 md:mb-8 uppercase tracking-tighter">Donchaminade</div>
+        <div className="flex justify-center gap-8 md:gap-10 mb-10 md:mb-12 text-slate-400 dark:text-slate-500">
+          <a href={SOCIALS.github} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Github size={28} /></a>
+          <a href={SOCIALS.linkedin} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Linkedin size={28} /></a>
+          <a href={SOCIALS.twitter} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Twitter size={28} /></a>
         </div>
-        <div className="text-[10px] uppercase font-black tracking-[0.5em] opacity-30">© 2024 Donchaminade. Tous droits réservés.</div>
+        <div className="text-[10px] uppercase font-black tracking-[0.5em] text-slate-500 dark:text-white opacity-40 dark:opacity-30">© 2024 Donchaminade. Tous droits réservés.</div>
       </footer>
     </div>
   );

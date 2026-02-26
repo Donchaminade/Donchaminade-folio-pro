@@ -15,7 +15,7 @@ const ImageGalleryCarousel: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative aspect-video md:aspect-[21/9] overflow-hidden rounded-[2.5rem] glass border border-white/10 shadow-2xl">
+    <div className="relative aspect-video md:aspect-[21/9] overflow-hidden rounded-[2.5rem] glass border border-slate-200 dark:border-white/10 shadow-2xl">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}

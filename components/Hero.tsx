@@ -53,21 +53,21 @@ const Hero: React.FC = () => {
                     </div>
 
                     <div className="mb-6 md:mb-8">
-                        <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-white uppercase leading-none mb-2 md:mb-4">
+                        <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-white uppercase leading-none mb-2 md:mb-4">
                             <GlitchText text="ADJOLOU" />
                         </h2>
-                        <h2 className="text-xl md:text-4xl font-black tracking-tighter text-blue-500 uppercase leading-none opacity-90">
+                        <h2 className="text-xl md:text-4xl font-black tracking-tighter text-blue-600 dark:text-blue-500 uppercase leading-none opacity-90">
                             <GlitchText text="Dondah Chaminade" />
                         </h2>
                     </div>
 
-                    <h1 className="text-3xl md:text-6xl lg:text-7xl font-black mb-6 md:mb-10 leading-[0.85] tracking-tighter text-white uppercase">
+                    <h1 className="text-3xl md:text-6xl lg:text-7xl font-black mb-6 md:mb-10 leading-[0.85] tracking-tighter text-slate-900 dark:text-white uppercase">
                         Développeur <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300">Web & Mobile.</span>
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-slate-300 mb-8 md:mb-14 max-w-xl font-light leading-relaxed">
-                        Ingénieur IT passionné, je conçois et déploie des solutions digitales sur mesure. Avec plus de <span className="text-white font-bold italic underline decoration-blue-500/50">3 ans d'expertise</span> en ingénierie logicielle et support IT, j'accompagne les entreprises dans leur transformation technologique avec des applications robustes, esthétiques et évolutives.
+                    <p className="text-lg md:text-2xl text-slate-600 dark:text-slate-300 mb-8 md:mb-14 max-w-xl font-light leading-relaxed">
+                        Ingénieur IT passionné, je conçois et déploie des solutions digitales sur mesure. Avec plus de <span className="text-slate-900 dark:text-white font-bold italic underline decoration-blue-500/50">3 ans d'expertise</span> en ingénierie logicielle et support IT, j'accompagne les entreprises dans leur transformation technologique avec des applications robustes, esthétiques et évolutives.
                     </p>
 
                     <div className="flex flex-wrap gap-4 md:gap-6 items-center">
@@ -78,7 +78,7 @@ const Hero: React.FC = () => {
                         <a
                             href="/CV_ADJOLOU_DONDAH_CHAMINADE.pdf"
                             download
-                            className="px-8 md:px-10 py-5 md:py-6 glass text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 hover:bg-white/10 border-white/10 transition-all hover:scale-105 active:scale-95 shadow-2xl"
+                            className="px-8 md:px-10 py-5 md:py-6 glass text-slate-800 dark:text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-white/10 border-slate-200 dark:border-white/10 transition-all hover:scale-105 active:scale-95 shadow-xl dark:shadow-2xl"
                         >
                             <Download size={18} className="text-blue-400" /> TÉLÉCHARGER CV
                         </a>
@@ -87,16 +87,16 @@ const Hero: React.FC = () => {
                     <div className="mt-10 md:mt-14 flex items-center gap-6">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Me suivre</span>
                         <div className="flex gap-4">
-                            <a href={SOCIALS.github} target="_blank" className="p-3 glass rounded-xl text-slate-400 hover:text-blue-400 transition-all border-white/5"><Github size={20} /></a>
-                            <a href={SOCIALS.linkedin} target="_blank" className="p-3 glass rounded-xl text-slate-400 hover:text-blue-400 transition-all border-white/5"><Linkedin size={20} /></a>
-                            <a href={SOCIALS.twitter} target="_blank" className="p-3 glass rounded-xl text-slate-400 hover:text-blue-400 transition-all border-white/5"><Twitter size={20} /></a>
+                            <a href={SOCIALS.github} target="_blank" className="p-3 glass rounded-xl text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all border-slate-200 dark:border-white/5"><Github size={20} /></a>
+                            <a href={SOCIALS.linkedin} target="_blank" className="p-3 glass rounded-xl text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all border-slate-200 dark:border-white/5"><Linkedin size={20} /></a>
+                            <a href={SOCIALS.twitter} target="_blank" className="p-3 glass rounded-xl text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all border-slate-200 dark:border-white/5"><Twitter size={20} /></a>
                         </div>
                     </div>
                 </motion.div>
 
                 <motion.div style={{ y: heroImageY }} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: "easeOut" }} className="relative flex flex-col items-center lg:items-end">
-                    <div className="relative z-10 w-full max-w-[340px] md:max-w-xl aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden glass p-3 md:p-4 border-white/10 bg-slate-900/40 shadow-[0_50px_100px_rgba(0,0,0,0.7)] group">
-                        <img src="/pypicture.jpg" alt="Portrait Professionnel" className="w-full h-full object-cover rounded-[2.5rem] md:rounded-[3.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" loading="lazy" />
+                    <div className="relative z-10 w-full max-w-[340px] md:max-w-xl aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden glass p-3 md:p-4 border-slate-200 dark:border-white/10 bg-white/40 dark:bg-slate-900/40 shadow-[0_30px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_50px_100px_rgba(0,0,0,0.7)] group">
+                        <img src="/pypicture.png" alt="Portrait Professionnel" className="w-full h-full object-cover rounded-[2.5rem] md:rounded-[3.5rem] grayscale group-hover:grayscale-0 transition-all duration-700" loading="lazy" />
                     </div>
 
                     <motion.div
@@ -108,7 +108,7 @@ const Hero: React.FC = () => {
                             <ShieldCheck className="w-9 h-9 md:w-11 md:h-11" />
                         </div>
                         <div>
-                            <div className="text-3xl md:text-5xl font-black text-white leading-none">3+ Ans</div>
+                            <div className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white leading-none">3+ ans</div>
                             <div className="text-[10px] md:text-[11px] uppercase font-black text-blue-400 tracking-[0.4em] mt-2 md:mt-3">Expérience Solide</div>
                         </div>
                     </motion.div>

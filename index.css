@@ -1,10 +1,16 @@
 
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #020617;
-        color: #f8fafc;
+        background-color: #f8fafc; /* Light mode default (slate-50) */
+        color: #0f172a; /* Light mode default text (slate-900) */
         overflow-x: hidden;
         position: relative;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .dark body {
+        background-color: #020617; /* Dark mode (slate-950) */
+        color: #f8fafc; /* Dark mode text (slate-50) */
       }
       
       /* Tech Decor Background with Unclosed Lines */
@@ -12,11 +18,18 @@
         position: fixed;
         inset: 0;
         z-index: -2;
+        background-color: #f8fafc;
+        background-image: 
+          radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.1) 1px, transparent 0);
+        background-size: 50px 50px;
+        pointer-events: none;
+        transition: background-color 0.3s;
+      }
+
+      .dark .tech-decor {
         background-color: #020617;
         background-image: 
           radial-gradient(circle at 2px 2px, rgba(59, 130, 246, 0.05) 1px, transparent 0);
-        background-size: 50px 50px;
-        pointer-events: none;
       }
 
       .circuit-svg {
@@ -27,21 +40,37 @@
         height: 100%;
         z-index: -1;
         pointer-events: none;
-        stroke: rgba(59, 130, 246, 0.1);
+        stroke: rgba(59, 130, 246, 0.2);
         stroke-width: 1.5;
         fill: none;
+        transition: stroke 0.3s;
+      }
+
+      .dark .circuit-svg {
+         stroke: rgba(59, 130, 246, 0.1);
       }
 
       .glass {
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      
+      .dark .glass {
+        background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
+
       .glass-dark {
-        background: rgba(2, 6, 23, 0.7);
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .dark .glass-dark {
+        background: rgba(2, 6, 23, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
       
@@ -49,6 +78,9 @@
         width: 6px;
       }
       .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9; /* slate-100 */
+      }
+      .dark.custom-scrollbar::-webkit-scrollbar-track, .dark .custom-scrollbar::-webkit-scrollbar-track {
         background: #020617;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb {

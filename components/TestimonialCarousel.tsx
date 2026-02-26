@@ -31,22 +31,22 @@ const TestimonialCarousel: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="w-full"
           >
-            <GlassCard className="p-6 md:p-16 rounded-[2.5rem] border-white/5 bg-slate-900/40 relative">
+            <GlassCard className="p-6 md:p-16 rounded-[2.5rem] border-slate-200 dark:border-white/5 bg-white/40 dark:bg-slate-900/40 relative">
               <Quote className="absolute top-8 left-8 text-blue-500/10 w-24 h-24 -z-10" />
               <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
                 {TESTIMONIALS[currentIndex].image && (
-                  <img 
-                    src={TESTIMONIALS[currentIndex].image} 
-                    alt={TESTIMONIALS[currentIndex].name} 
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-blue-500/50 object-cover" 
+                  <img
+                    src={TESTIMONIALS[currentIndex].image}
+                    alt={TESTIMONIALS[currentIndex].name}
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-blue-500/50 object-cover"
                   />
                 )}
                 <div className="flex-1">
-                  <p className="text-lg md:text-2xl text-slate-200 italic font-light leading-relaxed mb-6 md:mb-8">
+                  <p className="text-lg md:text-2xl text-slate-700 dark:text-slate-200 italic font-light leading-relaxed mb-6 md:mb-8">
                     "{TESTIMONIALS[currentIndex].quote}"
                   </p>
                   <div>
-                    <h4 className="text-lg font-black text-white uppercase tracking-tighter">
+                    <h4 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">
                       {TESTIMONIALS[currentIndex].name}
                     </h4>
                     <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest mt-1">
@@ -60,19 +60,19 @@ const TestimonialCarousel: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 p-3 glass rounded-full text-slate-400 hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:block">
+      <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 p-3 glass rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:block border-slate-200 dark:border-white/10">
         <ChevronLeft size={24} />
       </button>
-      <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 p-3 glass rounded-full text-slate-400 hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:block">
+      <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 p-3 glass rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 hidden md:block border-slate-200 dark:border-white/10">
         <ChevronRight size={24} />
       </button>
 
       <div className="flex justify-center gap-3 mt-8">
         {TESTIMONIALS.map((_, i) => (
-          <button 
-            key={i} 
-            onClick={() => setCurrentIndex(i)} 
-            className={`h-1 rounded-full transition-all ${i === currentIndex ? 'w-10 bg-blue-500' : 'w-4 bg-white/10'}`} 
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            className={`h-1 rounded-full transition-all ${i === currentIndex ? 'w-10 bg-blue-600 dark:bg-blue-500' : 'w-4 bg-slate-200 dark:bg-white/10'}`}
           />
         ))}
       </div>
