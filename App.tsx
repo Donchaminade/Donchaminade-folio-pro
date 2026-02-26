@@ -84,7 +84,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen selection:bg-blue-500 selection:text-white dark:selection:text-white">
+    <div className="min-h-screen w-full overflow-x-hidden relative selection:bg-blue-500 selection:text-white dark:selection:text-white">
       {/* Mobile Top Controls */}
       <div className="fixed top-4 right-4 z-[70] lg:hidden">
         <button onClick={toggleTheme} className="p-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-full shadow-lg border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
