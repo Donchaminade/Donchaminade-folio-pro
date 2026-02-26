@@ -11,6 +11,24 @@ export interface Skill {
   category: string;
 }
 
+export interface SkillCategory {
+  name: string;
+  skills: string[];
+  icons?: string[];
+}
+
+export interface SkillBlock {
+  title: string;
+  icon: string;
+  categories: SkillCategory[];
+}
+
+export interface SoftSkill {
+  title: string;
+  context: string[];
+  impact: string;
+}
+
 export interface Experience {
   company: string;
   role: string;

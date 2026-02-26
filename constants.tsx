@@ -1,5 +1,5 @@
 import { title } from 'process';
-import { Stat, Skill, Experience, Project, Community, Education, Testimonial, ManagedPage, Award, GalleryImage, Client } from './types';
+import { Stat, Skill, SkillBlock, SoftSkill, Experience, Project, Community, Education, Testimonial, ManagedPage, Award, GalleryImage, Client } from './types';
 
 export const STATS: Stat[] = [
   { label: "Expérience Web", value: '3', suffix: 'ans' },
@@ -21,6 +21,7 @@ export const TECH_ICONS: Record<string, string> = {
   'Figma': 'https://www.vectorlogo.zone/logos/figma/figma-icon.svg',
   'Canva': 'https://www.vectorlogo.zone/logos/canva/canva-icon.svg',
   'Python': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',
+  'FastAPI': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg',
   'MongoDB': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg',
   'JavaScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',
   'Supabase': 'https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg',
@@ -57,6 +58,250 @@ export const SKILLS: Skill[] = [
   { name: 'Tailwind', icon: TECH_ICONS['Tailwind'], category: 'Design' },
   { name: 'Figma', icon: TECH_ICONS['Figma'], category: 'Design' },
   { name: 'Canva', icon: TECH_ICONS['Canva'], category: 'Design' },
+];
+
+export const SKILL_BLOCKS: SkillBlock[] = [
+  {
+    title: "Backend & API Engineering",
+    icon: "Server",
+    categories: [
+      {
+        name: "PHP (Architecture orientée production)",
+        icons: [TECH_ICONS['PHP'], TECH_ICONS['MySQL']],
+        skills: [
+          "PHP procédural et structuré",
+          "PDO (requêtes préparées, transactions, sécurité SQL)",
+          "Architecture MVC simplifiée",
+          "Gestion des rôles (RBAC)",
+          "Pagination, recherche, filtrage côté serveur",
+          "Génération PDF (factures)",
+          "Systèmes CRUD complets",
+          "Gestion d’authentification sécurisée",
+          "Système 'mot de passe oublié' avec envoi d’email"
+        ]
+      },
+      {
+        name: "API Development & RESTful Services",
+        icons: [TECH_ICONS['Node.js'], TECH_ICONS['FastAPI'], TECH_ICONS['PHP']],
+        skills: [
+          "Conception d'APIs RESTful performantes",
+          "Développement backend rapide avec FastAPI (Python)",
+          "Intégration frontend ↔ backend",
+          "JSON handling & documentation interactive (Swagger/OpenAPI)",
+          "Architecture modulaire (dossier admin/public)",
+          "Gestion de sous-domaines API"
+        ]
+      },
+      {
+        name: "Node.js",
+        icons: [TECH_ICONS['Node.js'], TECH_ICONS['TypeScript']],
+        skills: [
+          "Déploiement API Node",
+          "Intégration React + API backend",
+          "Configuration serveur production"
+        ]
+      },
+      {
+        name: "Base de Données (MySQL & Modélisation)",
+        icons: [TECH_ICONS['MySQL'], TECH_ICONS['PostgreSQL']],
+        skills: [
+          "Conception relationnelle, clés étrangères, contraintes",
+          "Optimisation requêtes & scripts SQL structurés",
+          "Schémas normalisés, relations 1-N / N-N",
+          "Base multi-modules (réparation, scolaire, etc.)",
+          "Gestion multi-tables complexes"
+        ]
+      },
+      {
+        name: "DevOps & Déploiement",
+        icons: [TECH_ICONS['Git'], TECH_ICONS['GitHub']],
+        skills: [
+          "Serveur Linux, configuration Nginx, SSL Let's Encrypt",
+          "Gestion erreurs 500 et sous-domaines (Hostinger)",
+          "Déploiement React + Node",
+          "Git / CLI, npm global installs, gestion dépendances",
+          "Debug erreurs environnement"
+        ]
+      }
+    ]
+  },
+  {
+    title: "Fullstack Web Development",
+    icon: "Layout",
+    categories: [
+      {
+        name: "React (TypeScript)",
+        icons: [TECH_ICONS['React'], TECH_ICONS['TypeScript'], TECH_ICONS['Next.js']],
+        skills: [
+          "SPA (Single Page Application)",
+          "Configuration production",
+          "Intégration backend",
+          "Déploiement sur serveur (Hostinger + Nginx)"
+        ]
+      },
+      {
+        name: "HTML5 / CSS3 / JavaScript",
+        icons: [TECH_ICONS['HTML'], TECH_ICONS['CSS'], TECH_ICONS['JavaScript']],
+        skills: [
+          "Interfaces responsives et structuration de layouts",
+          "UI orientée expérience utilisateur",
+          "Manipulation DOM et interaction avec API",
+          "Gestion d'états dynamiques complexes"
+        ]
+      },
+      {
+        name: "Bootstrap & Outils UI",
+        icons: [TECH_ICONS['Bootstrap'], TECH_ICONS['Tailwind']],
+        skills: [
+          "Dashboard admin",
+          "Modals dynamiques",
+          "Tables interactives"
+        ]
+      },
+      {
+        name: "Web Design & UI/UX",
+        icons: [TECH_ICONS['Figma'], TECH_ICONS['Canva']],
+        skills: [
+          "Conception d'interfaces utilisateurs (UI)",
+          "Parcours utilisateurs (UX)",
+          "Design system & mockups",
+          "Prototypage interactif"
+        ]
+      },
+      {
+        name: "Architecture & Structuration",
+        icons: [TECH_ICONS['VScode'], TECH_ICONS['Git']],
+        skills: [
+          "Organisation dossier admin/public",
+          "Séparation des responsabilités",
+          "Structuration modulaire",
+          "Architecture évolutive"
+        ]
+      }
+    ]
+  },
+  {
+    title: "Mobile Development",
+    icon: "Smartphone",
+    categories: [
+      {
+        name: "Flutter",
+        icons: [TECH_ICONS['Flutter'], TECH_ICONS['Dart'], TECH_ICONS['Supabase']],
+        skills: [
+          "Interfaces animées",
+          "Exécution de scripts backend",
+          "Intégration Python",
+          "Gestion plugins Android",
+          "Debug mobile_scanner",
+          "Configuration Gradle"
+        ]
+      }
+    ]
+  },
+  {
+    title: "AI & Data Solutions",
+    icon: "BrainCircuit",
+    categories: [
+      {
+        name: "Intégration IA",
+        icons: [TECH_ICONS['Intelligence Artificielle'], TECH_ICONS['Python']],
+        skills: [
+          "Intégration IA dans applications Flutter",
+          "Automatisation via scripts Python",
+          "Génération intelligente de contenu",
+          "Conception d’app SaaS (MailBlast)"
+        ]
+      },
+      {
+        name: "Data",
+        icons: [TECH_ICONS['Python'], TECH_ICONS['MySQL']],
+        skills: [
+          "Portails interactifs de données",
+          "Dashboard décisionnel",
+          "Visualisation de données",
+          "Logique métier orientée reporting"
+        ]
+      },
+      {
+        name: "Python",
+        icons: [TECH_ICONS['Python']],
+        skills: [
+          "Manipulation fichiers (.txt → matrice)",
+          "Interfaces simples de traitement",
+          "Automatisation"
+        ]
+      }
+    ]
+  },
+  {
+    title: "Digital Marketing & Management",
+    icon: "Users",
+    categories: [
+      {
+        name: "Social Media & Community",
+        icons: [TECH_ICONS['Marketing Digital'], TECH_ICONS['Creation Visuelle']],
+        skills: [
+          "Gestion stratégique réseaux sociaux",
+          "Création de visuels et contenus",
+          "Animation de communautés tech",
+          "Suivi des performances"
+        ]
+      },
+      {
+        name: "Leadership & Team Management",
+        icons: [TECH_ICONS['Agile'], TECH_ICONS['Word']],
+        skills: [
+          "Gestion de projet Agile",
+          "Coordination d'équipes techniques",
+          "Organisation d'événements (Hackathons, Meetups)",
+          "Communication et vulgarisation technique"
+        ]
+      }
+    ]
+  }
+];
+
+export const SOFT_SKILLS: SoftSkill[] = [
+  {
+    title: "Pensée analytique & résolution de problèmes complexes",
+    context: ["Erreurs serveur 500", "Conflits Nginx / SSL", "Erreurs Gradle Android", "Bugs npm", "Problèmes disque macOS"],
+    impact: "Diagnostic technique structuré, debugging méthodique, analyse causale et approche orientée solution."
+  },
+  {
+    title: "Architecture thinking & vision systémique",
+    context: ["Séparation admin / public", "Logique métier", "Organisation modulaire", "Gestion rôles & permissions"],
+    impact: "Vision systémique, capacité à penser scalabilité et structuration claire de projets complexes."
+  },
+  {
+    title: "Autonomie technique avancée",
+    context: ["Déploiement React + Node", "Configuration SSL", "Gestion BDD", "Conception de projets de A à Z"],
+    impact: "Capacité d’auto-formation rapide, recherche proactive de solutions et apprentissage autodidacte continu."
+  },
+  {
+    title: "Rigueur et précision dans l’exécution",
+    context: ["Contraintes SQL", "Sécurité (PDO)", "Gestion des rôles", "Gestion d’état complexe"],
+    impact: "Attention au détail, sens de la sécurité et discipline technique solide."
+  },
+  {
+    title: "Orientation produit & solution digitale",
+    context: ["App de réparation", "Plateforme SaaS", "Système scolaire", "Dashboard décisionnel"],
+    impact: "Pensée orientée produit, compréhension des besoins utilisateurs et traduction digitale efficace."
+  },
+  {
+    title: "Adaptabilité multi-technologies",
+    context: ["PHP", "Flutter", "React", "Node.js", "Python", "DevOps"],
+    impact: "Flexibilité technique, environnement multi-stacks et adaptation rapide aux nouveaux outils."
+  },
+  {
+    title: "Communication technique claire",
+    context: ["Architectures", "Dashboards", "Choix techniques", "Logiques backend"],
+    impact: "Vulgarisation technique, communication structurée et forte capacité à documenter."
+  },
+  {
+    title: "Apprentissage continu & growth mindset",
+    context: ["Data Analyst", "IA intégrée", "SaaS", "Déploiement production"],
+    impact: "Ambition technique constante, vision long terme et engagement vers l'excellence."
+  }
 ];
 
 export const EXPERIENCES: Experience[] = [
