@@ -67,7 +67,7 @@ const Hero: React.FC = () => {
                     </h1>
 
                     <p className="text-lg md:text-2xl text-slate-300 mb-8 md:mb-14 max-w-xl font-light leading-relaxed">
-                        Ingénieur IT passionné, je conçois et déploie des solutions digitales sur mesure. Avec plus de <span className="text-white font-bold italic underline decoration-blue-500/50">3 ans d'expertise</span> en ingénierie logicielle (React, Flutter, Next.js) et support réseau (Cisco), j'accompagne les entreprises dans leur transformation technologique avec des applications robustes, esthétiques et évolutives.
+                        Ingénieur IT passionné, je conçois et déploie des solutions digitales sur mesure. Avec plus de <span className="text-white font-bold italic underline decoration-blue-500/50">3 ans d'expertise</span> en ingénierie logicielle et support IT, j'accompagne les entreprises dans leur transformation technologique avec des applications robustes, esthétiques et évolutives.
                     </p>
 
                     <div className="flex flex-wrap gap-4 md:gap-6 items-center">
