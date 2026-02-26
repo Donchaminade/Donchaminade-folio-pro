@@ -61,6 +61,28 @@ export const SKILLS: Skill[] = [
 
 export const EXPERIENCES: Experience[] = [
   {
+    company: 'GROSBIT SARLU',
+    role: 'IT Support, Développeur Web & Mobile',
+    period: 'Février 2026 - Présent',
+    tags: ['Cisco', 'Support IT', 'Next.js', 'Flutter', 'Remote'],
+    description: [
+      'Assistance technique (IT Support) et assistance au déploiement de solutions réseau pour les clients (entreprise partenaire Cisco).',
+      'Développement d’applications web et mobiles (Next.js, Flutter).',
+      'Maintien en conditions opérationnelles des infrastructures et assistance à la résolution des incidents.'
+    ]
+  },
+  {
+    company: 'Tayba Market',
+    role: 'Consultant IT & Lead Tech',
+    period: '2025',
+    tags: ['Digitalisation', 'Audit IT', 'ERP', 'Management'],
+    description: [
+      'Accompagnement dans la digitalisation globale des processus de travail et le choix des infrastructures.',
+      'Audit technique et conseil sur l’adoption d’outils informatiques adaptés aux besoins du métier.',
+      'Développement et mise en place d’une application complète de gestion (Ventes, Stocks, Clients, Caisses).'
+    ]
+  },
+  {
     company: 'Efficorpe',
     role: 'Développeur Frontend Mobile',
     period: 'Août 2025 - Octobre 2025',
@@ -69,7 +91,7 @@ export const EXPERIENCES: Experience[] = [
       'Création et intégration d’interfaces mobiles interactives sous Flutter.',
       'Optimisation du code et correction des anomalies techniques.',
       'Collaboration en équipe Agile pour le développement des projets mobiles.'
-      
+
     ]
   },
   {
@@ -87,7 +109,7 @@ export const EXPERIENCES: Experience[] = [
     company: 'Axone Digital Company',
     role: 'Développeur Web/Mobile',
     period: 'Décembre 2024 - Juillet 2025',
-    tags: ['Php','TypeScript', 'Next.js', 'MySQL', 'Tailwind', 'PostgreSQL'],
+    tags: ['Php', 'TypeScript', 'Next.js', 'MySQL', 'Tailwind', 'PostgreSQL'],
     description: [
       'Réalisation d’applications web et mobiles dynamiques à forte valeur ajoutée.',
       'Amélioration de la stabilité front-end et back-end pour garantir une expérience utilisateur fluide.',
@@ -109,13 +131,104 @@ export const EXPERIENCES: Experience[] = [
 ];
 
 export const PROJECTS: Project[] = [
-  
+
+  // PICON
+  {
+    title: 'PICON',
+    description: 'Application mobile innovante développée en 2026.',
+    detailedDescription: 'Conception et développement d\'une application mobile complète sur mesure. Elle vise à optimiser les processus d\impression de photos en ligne avec integration de moyens de paiementet à offrir une expérience utilisateur exceptionnelle.',
+    tags: ['Flutter', 'Dart'],
+    image: '/picon.png',
+    additionalImages: [],
+    link: '#',
+    github: '#',
+    type: 'Mobile'
+  },
+
+  // Tayba Market ERP
+  {
+    title: 'Tayba Market ERP',
+    description: 'Système complet de gestion commerciale pour Tayba Market.',
+    detailedDescription: 'Logiciel sur-mesure (SaaS) conçu pour digitaliser entièrement l\'activité : gestion des ventes, suivi des stocks en temps réel, fidélisation clients, gestion des caissiers et clôtures de caisses.',
+    tags: ['React', 'Node.js', 'ERP', 'Digitalisation'],
+    image: '',
+    additionalImages: [],
+    link: '#',
+    github: '#',
+    type: 'Web'
+  },
+
+  // La 8e Tranche
+  {
+    title: 'La 8e Tranche',
+    description: 'Site web pour le restaurant La 8e Tranche à Lomé.',
+    detailedDescription: 'Une expérience culinaire ivoiro-togolaise authentique dans un cadre chaleureux et raffiné. Le site permet de découvrir le menu, de lire les avis et de réserver une table.',
+    tags: ['React', 'Tailwind'],
+    image: '/resto8tranch.png',
+    additionalImages: [
+      '/8tran.png',
+      '/8tranch.png'
+
+    ],
+    link: '8-me-tranche-delights.vercel.app',
+    github: '#',
+    type: 'Web'
+  },
+
+  // RachCargo
+  {
+    title: 'RachCargo',
+    description: 'Plateforme d\'expédition premium de colis par voie aérienne.',
+    detailedDescription: 'Service d\'expédition rapide et certifié depuis le Togo, Bénin et Ghana vers le monde entier. Transport sécurisé avec suivi de colis en temps réel.',
+    tags: ['Next.js', 'Tailwind'],
+    image: '/rachcar.png',
+    additionalImages: [
+      '/rachcaar.png',
+      '/rachcarg.png'
+    ],
+    link: 'https://rachcargo.vercel.app/',
+    github: '#',
+    type: 'Web'
+  },
+
+  // Africa Power Platform
+  {
+    title: 'Africa Power Platform',
+    description: 'Le premier sommet dédié à Microsoft Power Platform en Afrique de l\'Ouest.',
+    detailedDescription: 'Une initiative panafricaine pour éduquer, connecter et impacter (Édition 2024 - Cotonou, Bénin).',
+    tags: ['React', 'Tailwind'],
+    image: '/afro.png',
+    additionalImages: [
+      '/afroo.png',
+      '/afrooo.png'
+    ],
+    link: 'https://africapowerplateform.vercel.app/',
+    github: '#',
+    type: 'Web'
+  },
+
+  // PayFlex
+  {
+    title: 'PayFlex',
+    description: 'Solution de paiement flexible pour les apprentis et artisans.',
+    detailedDescription: 'Plateforme innovante dédiée aux artisans pour faciliter la gestion financière et les paiements échelonnés de leurs apprentis.',
+    tags: ['React', 'Tailwind'],
+    image: '/payf.png',
+    additionalImages: [
+      '/payff.png',
+      '/payfff.png'
+    ],
+    link: 'https://pay-flex.vercel.app/',
+    github: '#',
+    type: 'Web'
+  },
+
   // Ai228 hub
   {
     title: 'AI228 (Open Source)',
     description: 'Projet communautaire recensant les outils IA pour faciliter leur adoption au quotidien.',
     detailedDescription: 'AI228 est une plateforme centralisée conçue pour l\'écosystème tech togolais. Elle agit comme un hub recensant les outils d\'intelligence artificielle les plus pertinents, classés par cas d\'utilisation. Le projet est entièrement open-source pour encourager la contribution locale et la transparence.',
-    tags: ['Github','Git', 'Next.js', 'Tailwind', 'json'],
+    tags: ['Github', 'Git', 'Next.js', 'Tailwind', 'json'],
     image: '/ai.png',
     additionalImages: [
       '/aib.png',
@@ -125,56 +238,57 @@ export const PROJECTS: Project[] = [
     github: 'https://github.com/Donchaminade/ai228-hub/',
     type: 'Web'
   },
-  
+
   // Nutripack
   {
     title: 'Nutripack',
-    description: 'Projet communautaire recensant les outils IA pour faciliter leur adoption au quotidien.',
-    detailedDescription: 'AI228 est une plateforme centralisée conçue pour l\'écosystème tech togolais. Elle agit comme un hub recensant les outils d\'intelligence artificielle les plus pertinents, classés par cas d\'utilisation. Le projet est entièrement open-source pour encourager la contribution locale et la transparence.',
-    tags: ['Next.js', 'Tailwind','Supabase', 'json'],
-    image: '/ai.png',
+    description: 'Plateforme e-Commerce de vente de produits alimentaires bio.',
+    detailedDescription: 'Nutripack est une plateforme e-commerce spécialisée dans la vente de produits alimentaires bio. Elle offre une solution simple et rapide pour les utilisateurs souhaitant acheter des produits frais et sains, avec une livraison à domicile.',
+    tags: ['Next.js', 'Tailwind', 'Supabase', 'json'],
+    image: '/nutri.png',
     additionalImages: [
-      '/aib.png',
-      '/splash.png'
+      '/nutri.png',
+      '/nutrii.png',
+      '/nutriii.png'
     ],
-    link: 'https://ai228-hub.vercel.app/',
-    github: 'https://github.com/Donchaminade/ai228-hub/',
+    link: 'https://nutripack.vercel.app/',
+    github: 'https://github.com/Donchaminade/nutripack/',
     type: 'Web'
   },
 
   // Ratoufa
   {
-  title: 'Ratoufa',
-  description: 'Solution mobile de gestion des commandes et de réservation de tickets pour événements.',
-  detailedDescription: 'Développement d’une application mobile permettant la gestion des commandes et la réservation de tickets pour des événements, offrant une solution digitale fiable pour les organisateurs et une expérience simple et rapide pour les utilisateurs.',
-  tags: ['Flutter', 'Dart', 'Agile'],
-  image: '/rtf.jpeg',
-  additionalImages: [
-    '/rtf1.jpeg',
-  ],
-  link: '#',
-  github: '#',
-  type: 'Mobile'
-},
+    title: 'Ratoufa',
+    description: 'Solution mobile de gestion des commandes et de réservation de tickets pour événements.',
+    detailedDescription: 'Développement d’une application mobile permettant la gestion des commandes et la réservation de tickets pour des événements, offrant une solution digitale fiable pour les organisateurs et une expérience simple et rapide pour les utilisateurs.',
+    tags: ['Flutter', 'Dart', 'Agile'],
+    image: '/rtf.jpeg',
+    additionalImages: [
+      '/rtf1.jpeg',
+    ],
+    link: '#',
+    github: '#',
+    type: 'Mobile'
+  },
 
-// Locafrica
+  // Locafrica
   {
-  title: 'Locafrica',
-  description: 'Solution mobile de location des chambres/maisons et de réservation en afrique.',
-  detailedDescription: 'Développement des interfaces mobiles permettant de trouver les chambres/maisons dispo, voir sa localisation et se rendre ou de faire simplement la réservation offrant une solution rapide pour les utilisateurs.',
-  tags: ['Flutter', 'Dart', 'Agile'],
-  image: '/loca.png',
-  additionalImages: [
-    '/loca1.png',
-    '/loca2.png',
+    title: 'Locafrica',
+    description: 'Solution mobile de location des chambres/maisons et de réservation en afrique.',
+    detailedDescription: 'Développement des interfaces mobiles permettant de trouver les chambres/maisons dispo, voir sa localisation et se rendre ou de faire simplement la réservation offrant une solution rapide pour les utilisateurs.',
+    tags: ['Flutter', 'Dart', 'Agile'],
+    image: '/loca.png',
+    additionalImages: [
+      '/loca1.png',
+      '/loca2.png',
 
-  ],
-  link: '#',
-  github: '#',
-  type: 'Mobile'
-},
+    ],
+    link: '#',
+    github: '#',
+    type: 'Mobile'
+  },
 
-// Axone DC
+  // Axone DC
   {
     title: 'Axone Digital Company',
     description: 'Mise en place du site vitrine de l\'entreprise Axone Digital Company.',
@@ -188,83 +302,83 @@ export const PROJECTS: Project[] = [
 
   // Akontaa
   {
-  title: 'Akontaa App',
-  description: 'Application mobile de gestion des dettes et redevances.',
-  detailedDescription: 'Conception et développement d’une application mobile dédiée à la gestion des dettes et redevances. Akontaa permet aux utilisateurs de suivre, enregistrer et organiser leurs créances de manière simple et intuitive. L’application met l’accent sur une expérience utilisateur fluide, une interface moderne et une navigation optimisée pour un usage quotidien.',
-  tags: ['Flutter', 'Dart', 'Tailwind'],
-  image: '/akk.jpeg',
-  additionalImages: [
-    '/ak.jpeg',
-    '/ak1.jpeg',
-    '/ak2.jpeg',
-    '/ak3.jpeg',
-    '/ak4.jpeg'
-  ],
-  link: '#',
-  github: 'https://github.com/Donchaminade/akontaa_v2',
-  type: 'Mobile'
-},
+    title: 'Akontaa App',
+    description: 'Application mobile de gestion des dettes et redevances.',
+    detailedDescription: 'Conception et développement d’une application mobile dédiée à la gestion des dettes et redevances. Akontaa permet aux utilisateurs de suivre, enregistrer et organiser leurs créances de manière simple et intuitive. L’application met l’accent sur une expérience utilisateur fluide, une interface moderne et une navigation optimisée pour un usage quotidien.',
+    tags: ['Flutter', 'Dart', 'Tailwind'],
+    image: '/akk.jpeg',
+    additionalImages: [
+      '/ak.jpeg',
+      '/ak1.jpeg',
+      '/ak2.jpeg',
+      '/ak3.jpeg',
+      '/ak4.jpeg'
+    ],
+    link: '#',
+    github: 'https://github.com/Donchaminade/akontaa_v2',
+    type: 'Mobile'
+  },
 
   // 48 lois
   {
-  title: '48 lois app vf',
-  description: 'Application mobile des 48 lois du pouvoir de Robert Greene.',
-  detailedDescription: 'Une application Anglaise existante reproduite fidelement en Francais, la toute 1ere au Togo avec des apports personnels comme des exemples concrets afin d\'aider les lecteurs a mieux comprendre chaque lois, avec une fonctionnalite de notification journaliere selon le paraetrage de chaque utilisateur.',
-  tags: ['Flutter', 'Dart'],
-  image: '/48.png',
-  additionalImages: [
-    '/481.png',
-    '/482.png',
-    '/483.png',
-    '/484.png',
-    '/485.png'
-  ],
-  link: '#',
-  github: 'https://github.com/Donchaminade/',
-  type: 'Mobile'
-},
-
-// Procope
-{
-  title: 'PROCOPE Afrique',
-  description: 'Site vitrine du Centre Incubateur PROCOPE Afrique.',
-  detailedDescription: 'Conception et personnalisation d’un site web vitrine pour le Centre Incubateur PROCOPE Afrique, à partir d’un modèle de site statique. Le site a été adapté pour répondre aux besoins spécifiques du centre, en mettant en avant sa mission, ses programmes d’incubation et ses activités. Une attention particulière a été portée au branding, à la clarté des contenus et à l’expérience utilisateur.',
-  tags: ['HTML', 'CSS', 'JavaScript'],
-  image: '/proco.png',
+    title: '48 lois app vf',
+    description: 'Application mobile des 48 lois du pouvoir de Robert Greene.',
+    detailedDescription: 'Une application Anglaise existante reproduite fidelement en Francais, la toute 1ere au Togo avec des apports personnels comme des exemples concrets afin d\'aider les lecteurs a mieux comprendre chaque lois, avec une fonctionnalite de notification journaliere selon le paraetrage de chaque utilisateur.',
+    tags: ['Flutter', 'Dart'],
+    image: '/48.png',
     additionalImages: [
-    // '/ak.jpeg',
-    // '/ak1.jpeg',
-    // '/ak2.jpeg',
-    // '/ak3.jpeg',
-    // '/ak4.jpeg'
-  ],
-  link: 'https://procope-afrique.vercel.app',
-  github: 'https://github.com/Donchaminade/procope-afrique.git',
-  type: 'Web',
+      '/481.png',
+      '/482.png',
+      '/483.png',
+      '/484.png',
+      '/485.png'
+    ],
+    link: '#',
+    github: 'https://github.com/Donchaminade/',
+    type: 'Mobile'
+  },
 
-
-},
-
-// Andykc
-{
-  title: 'AndyKC',
-  description: 'Site vitrine des services de consulting, accompagnement et suivis.',
-  //detailedDescription: 'Conception et personnalisation d’un site web vitrine pour le Centre Incubateur PROCOPE Afrique, à partir d’un modèle de site statique. Le site a été adapté pour répondre aux besoins spécifiques du centre, en mettant en avant sa mission, ses programmes d’incubation et ses activités. Une attention particulière a été portée au branding, à la clarté des contenus et à l’expérience utilisateur.',
-  tags: ['React', 'Tailwind'],
-  image: '/proco.png',
+  // Procope
+  {
+    title: 'PROCOPE Afrique',
+    description: 'Site vitrine du Centre Incubateur PROCOPE Afrique.',
+    detailedDescription: 'Conception et personnalisation d’un site web vitrine pour le Centre Incubateur PROCOPE Afrique, à partir d’un modèle de site statique. Le site a été adapté pour répondre aux besoins spécifiques du centre, en mettant en avant sa mission, ses programmes d’incubation et ses activités. Une attention particulière a été portée au branding, à la clarté des contenus et à l’expérience utilisateur.',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    image: '/proco.png',
     additionalImages: [
-    // '/ak.jpeg',
-    // '/ak1.jpeg',
-    // '/ak2.jpeg',
-    // '/ak3.jpeg',
-    // '/ak4.jpeg'
-  ],
-  link: 'https://procope-afrique.vercel.app',
-  github: 'https://github.com/Donchaminade/procope-afrique.git',
-  type: 'Web',
+      '/proco.png',
+      '/procoo.png',
+      '/procooo.png',
+      // '/ak3.jpeg',
+      // '/ak4.jpeg'
+    ],
+    link: 'https://procope-afriqueclosed.vercel.app',
+    github: 'https://github.com/Donchaminade/procope-afrique.git',
+    type: 'Web',
 
 
-}
+  },
+
+  // Andykc
+  {
+    title: 'AndyKC',
+    description: 'Site vitrine des services de consulting, accompagnement et suivis.',
+    //detailedDescription: 'Conception et personnalisation d’un site web vitrine pour le Centre Incubateur PROCOPE Afrique, à partir d’un modèle de site statique. Le site a été adapté pour répondre aux besoins spécifiques du centre, en mettant en avant sa mission, ses programmes d’incubation et ses activités. Une attention particulière a été portée au branding, à la clarté des contenus et à l’expérience utilisateur.',
+    tags: ['React', 'Tailwind'],
+    image: '/andy.png',
+    additionalImages: [
+      '/andyy.png',
+      // '/andy2.png',
+      // '/andy3.png',
+      // '/andy4.png',
+      // '/andy5.png'
+    ],
+    link: 'https://andykc.com',
+    github: '',
+    type: 'Web',
+
+
+  }
 
 
 ];
@@ -299,28 +413,32 @@ export const MANAGED_PAGES: ManagedPage[] = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg",
     link: "https://www.linkedin.com/company/python-togo/",
     followers: "1k+",
-    category: "Communauté Tech"
+    category: "Communauté Tech",
+    borderColor: "border-yellow-400 border-[2px]"
   },
   {
     name: "GDG Lomé",
     logo: "https://www.gstatic.com/devrel-devsite/prod/vc893708466e31e515d90616b3f7495b46e393b6e76d99723223087268d813470/developers/images/touchicon-180.png",
     link: "https://www.linkedin.com/company/gdglome/",
     followers: "2k+",
-    category: "Google Developer Groups"
+    category: "Google Developer Groups",
+    borderColor: "border-t-[#ea4335] border-r-[#fbbc05] border-b-[#34a853] border-l-[#4285f4] border-[2px]"
   },
   {
     name: "WTM Lomé",
     logo: "https://developers.google.com/static/community/wtm/images/wtm-logo.png",
     link: "https://www.linkedin.com/showcase/wtmlome/",
     followers: "800+",
-    category: "Women Techmakers"
+    category: "Women Techmakers",
+    borderColor: "border-[#00BFA5] border-[2px]"
   },
   {
     name: "Hyver",
     logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=100",
     link: "#",
     followers: "500+",
-    category: "Startup Agency"
+    category: "Startup Agency",
+    borderColor: "border-purple-500 border-[2px]"
   }
 ];
 
@@ -362,41 +480,110 @@ export const EDUCATION: Education[] = [
 
 export const AWARDS: Award[] = [
   {
-    title: "Vainqueur Hackathon Tech228",
-    issuer: "Ministère de l'Économie Numérique",
-    year: "2024",
-    description: "Premier prix pour le développement d'une solution de gestion des déchets connectée."
+    title: "Coorganisateur Hackathon MLH",
+    issuer: "Major League Hacking Togo",
+    year: "2025",
+    description: "Coorganisation de l'événement qui a réuni plus de 50 participants locaux."
   },
   {
-    title: "Mentor de l'année WTM",
-    issuer: "Women Techmakers Togo",
-    year: "2023",
-    description: "Reconnaissance pour l'engagement dans l'éducation tech des jeunes femmes."
+    title: "1er Prix Hackathon Ecole IA",
+    issuer: "ACAN",
+    year: "2025",
+    description: "Récompensé pour le projet Hletitii (gestion des locations et des paiements mensuels)."
   },
   {
-    title: "Top 10 Innovateurs Digitaux",
-    issuer: "Cinaf",
-    year: "2023",
-    description: "Sélectionné parmi les 10 meilleurs profils tech influents du pays."
+    title: "2e Prix AssurTech & Coup de cœur",
+    issuer: "CSIS",
+    year: "2025",
+    description: "2e prix et projet coup de coeur lors du hackathon AssurTech."
+  },
+  {
+    title: "2e Prix Projet Innov",
+    issuer: "Lomé Business School",
+    year: "2025",
+    description: "Reconnaissance pour la présentation d'un projet innovant."
   }
+
+  // {
+  //   title: "Vainqueur Hackathon Tech228",
+  //   issuer: "Ministère de l'Économie Numérique",
+  //   year: "2024",
+  //   description: "Premier prix pour le développement d'une solution de gestion des déchets connectée."
+  // },
+  // {
+  //   title: "Mentor de l'année WTM",
+  //   issuer: "Women Techmakers Togo",
+  //   year: "2023",
+  //   description: "Reconnaissance pour l'engagement dans l'éducation tech des jeunes femmes."
+  // },
+  // {
+  //   title: "Top 10 Innovateurs Digitaux",
+  //   issuer: "Cinaf",
+  //   year: "2023",
+  //   description: "Sélectionné parmi les 10 meilleurs profils tech influents du pays."
+  // }
 ];
 
 export const GALLERY_IMAGES: GalleryImage[] = [
   {
-    url: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=800",
-    caption: "Session de formation Google Developer Groups"
+    url: "/gallerie/1753259537664.jpg",
+    caption: ""
   },
   {
-    url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
-    caption: "Hackathon 2024 - Présentation du projet"
+    url: "/gallerie/1753259550152.jpg",
+    caption: ""
   },
   {
-    url: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=800",
-    caption: "Meetup Python Togo"
+    url: "/gallerie/1754081969406.jpg",
+    caption: ""
   },
   {
-    url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
-    caption: "Atelier Women Techmakers"
+    url: "/gallerie/1754081970965.jpg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-09-12 at 20.49.29.jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-09-27 at 13.19.20 (2).jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 (1).jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 (2).jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 copy.jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.47.jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.48.jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.49 (1).jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/WhatsApp Image 2025-12-15 at 11.25.49.jpeg",
+    caption: ""
+  },
+  {
+    url: "/gallerie/adc.png",
+    caption: ""
+  },
+  {
+    url: "/gallerie/pypicture.jpg",
+    caption: ""
   }
 ];
 

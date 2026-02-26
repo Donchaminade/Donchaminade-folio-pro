@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Github, 
-  Linkedin, 
-  Twitter, 
+import {
+  Github,
+  Linkedin,
+  Twitter,
   Package,
   Layers,
   Briefcase,
@@ -28,6 +28,27 @@ import AllProjects from './components/AllProjects';
 import ProjectModal from './components/ProjectModal';
 
 
+const SOCIALS = {
+  linkedin: 'https://linkedin.com/in/chaminadeadjolou',
+  twitter: 'https://x.com/Donchaminde',
+  github: 'https://github.com/Donchaminade',
+};
+
+const NAV_ITEMS = [
+  { name: 'Profil', id: 'apropos', icon: <User size={20} /> },
+  { name: 'Parcours', id: 'experience', icon: <Briefcase size={20} /> },
+  { name: 'Projets', id: 'projets', icon: <Package size={20} /> },
+  { name: 'Comm.', id: 'linkedin', icon: <Layers size={20} /> },
+  { name: 'Contact', id: 'contact', icon: <MessageSquare size={20} /> }
+];
+
+const NavItem: React.FC<{ item: typeof NAV_ITEMS[0] }> = ({ item }) => (
+  <a href={`#${item.id}`} className="relative py-1 group overflow-hidden transition-colors hover:text-blue-400">
+    <span className="font-bold tracking-widest text-[11px] uppercase">{item.name}</span>
+    <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500/50 scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
+  </a>
+);
+
 const App: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showAllProjects, setShowAllProjects] = useState(false);
@@ -37,27 +58,6 @@ const App: React.FC = () => {
   }, [showAllProjects]);
 
   const homeProjects = PROJECTS.slice(0, 5);
-
-  const SOCIALS = {
-    linkedin: 'https://linkedin.com/in/chaminadeadjolou',
-    twitter: 'https://x.com/Donchaminde',
-    github: 'https://github.com/Donchaminade',
-  };
-
-  const NAV_ITEMS = [
-    { name: 'Profil', id: 'apropos', icon: <User size={20} /> },
-    { name: 'Parcours', id: 'experience', icon: <Briefcase size={20} /> },
-    { name: 'Projets', id: 'projets', icon: <Package size={20} /> },
-    { name: 'Comm.', id: 'communaute', icon: <Layers size={20} /> },
-    { name: 'Contact', id: 'contact', icon: <MessageSquare size={20} /> }
-  ];
-
-  const NavItem = ({ item }: { item: typeof NAV_ITEMS[0] }) => (
-    <a href={`#${item.id}`} className="relative py-1 group overflow-hidden transition-colors hover:text-blue-400">
-      <span className="font-bold tracking-widest text-[11px] uppercase">{item.name}</span>
-      <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500/50 scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
-    </a>
-  );
 
   if (showAllProjects) {
     return <AllProjects setShowAllProjects={setShowAllProjects} />;
@@ -79,9 +79,9 @@ const App: React.FC = () => {
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[92%] max-w-md lg:hidden bg-gradient-to-b from-slate-900/60 to-slate-950/90 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 px-6 md:px-8 py-4 md:py-5 flex justify-between items-center shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
         {NAV_ITEMS.map((item) => (
-          <a 
-            key={item.id} 
-            href={`#${item.id}`} 
+          <a
+            key={item.id}
+            href={`#${item.id}`}
             className="text-slate-300 hover:text-blue-500 active:text-blue-400 transition-all flex flex-col items-center gap-1 md:gap-2"
           >
             <div className="p-1 hover:scale-110 transition-transform">
@@ -100,8 +100,8 @@ const App: React.FC = () => {
         <Experience />
         <LinkedInMarquee />
         <Testimonials />
-        <Trust />
-        <Community />
+        {/* <Trust /> */}
+        {/* <Community /> */}
         <Contact />
       </main>
 

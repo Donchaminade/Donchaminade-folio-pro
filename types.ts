@@ -59,6 +59,7 @@ export interface ManagedPage {
   link: string;
   followers?: string;
   category: string;
+  borderColor?: string;
 }
 
 export interface Award {

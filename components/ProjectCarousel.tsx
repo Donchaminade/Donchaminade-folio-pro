@@ -30,19 +30,19 @@ const ProjectCarousel: React.FC<{ project: Project }> = ({ project }) => {
           transition={{ duration: 0.4 }}
           src={allImages[currentIndex]}
           alt={`${project.title} screenshot ${currentIndex + 1}`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain p-2"
         />
       </AnimatePresence>
 
       {allImages.length > 1 && (
         <>
-          <button 
+          <button
             onClick={prevSlide}
             className="absolute left-4 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-white hover:bg-white/10 transition-colors z-30"
           >
             <ChevronLeft size={20} />
           </button>
-          <button 
+          <button
             onClick={nextSlide}
             className="absolute right-4 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-white hover:bg-white/10 transition-colors z-30"
           >

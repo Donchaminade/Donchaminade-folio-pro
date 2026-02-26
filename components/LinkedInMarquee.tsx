@@ -10,30 +10,36 @@ const LinkedInMarquee: React.FC = () => {
   const doublePages = [...MANAGED_PAGES, ...MANAGED_PAGES];
 
   return (
-    <Section 
-      id="linkedin" 
-      title="Gestion LinkedIn" 
-      subtitle="Stratégies digitales performantes."
+    <Section
+      id="linkedin"
+      title={
+        <>
+          Membre <span className="text-blue-500 underline decoration-white/20">actif</span> des communautés
+        </>
+      }
+      subtitle="Un engagement prononcé pour l'épanouissement technologique local."
       bgImage="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200"
     >
       <div className="relative overflow-hidden w-full py-8 md:py-12 -mx-6 px-6">
-        <motion.div 
-          className="flex gap-6 md:gap-8 w-max"
-          animate={{ x: [0, -1100] }}
-          transition={{ repeat: Infinity, repeatType: "loop", duration: 35, ease: "linear" }}
+        <motion.div
+          className="flex gap-4 md:gap-8 w-max"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ repeat: Infinity, repeatType: "loop", duration: 25, ease: "linear" }}
         >
           {doublePages.map((page, i) => (
-            <GlassCard key={i} className="flex flex-col items-center gap-4 w-56 md:w-64 p-6 md:p-8 border-white/5 hover:border-blue-500/30">
-              <div className="w-16 h-16 md:w-20 md:h-20 glass rounded-2xl flex items-center justify-center p-3 md:p-4">
-                <img src={page.logo} alt={page.name} className="w-full h-full object-contain" />
-              </div>
+            <GlassCard
+              key={i}
+              className={`flex flex-col justify-center items-center gap-4 w-56 md:w-64 h-40 p-6 md:p-8 transition-all group hover:bg-white/5 ${page.borderColor || 'border border-white/5'}`}
+            >
               <div className="text-center">
-                <h3 className="font-black text-white text-base md:text-lg uppercase tracking-tight">{page.name}</h3>
-                <p className="text-[9px] text-blue-400 font-black uppercase tracking-[0.2em] mt-1">{page.category}</p>
+                <h3 className="font-black text-white text-lg md:text-xl uppercase tracking-tight group-hover:text-white transition-colors">{page.name}</h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2">{page.category}</p>
               </div>
-              <a href={page.link} target="_blank" rel="noreferrer" className="mt-3 md:mt-4 text-slate-500 hover:text-blue-500 transition-colors">
-                <Linkedin size={18} />
-              </a>
+              {page.link !== '#' && (
+                <a href={page.link} target="_blank" rel="noreferrer" className="absolute top-4 right-4 text-slate-600 hover:text-white transition-colors">
+                  <Linkedin size={16} />
+                </a>
+              )}
             </GlassCard>
           ))}
         </motion.div>

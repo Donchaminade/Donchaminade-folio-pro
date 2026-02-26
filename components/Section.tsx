@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 interface SectionProps {
   id: string;
-  title: string;
+  title: string | React.ReactNode;
   subtitle?: string;
   children: React.ReactNode;
   className?: string;
@@ -32,29 +32,29 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
   return (
     <section id={id} ref={ref} className={`relative py-16 md:py-24 px-6 max-w-7xl mx-auto overflow-hidden ${className}`}>
       {/* Parallax Background Layer */}
-      <motion.div 
+      <motion.div
         style={{ y, opacity, scale }}
         className="absolute inset-0 -z-10 pointer-events-none h-[120%] -top-[10%]"
       >
         {/* Abstract Tech Decor Pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.03] md:opacity-[0.05] z-10" style={{ 
+        <div className="absolute inset-0 opacity-[0.03] md:opacity-[0.05] z-10" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 H90 V30 H70 V90' fill='none' stroke='%233b82f6' stroke-width='0.5'/%3E%3Ccircle cx='10' cy='10' r='2' fill='%233b82f6'/%3E%3Ccircle cx='70' cy='90' r='2' fill='%233b82f6'/%3E%3Cpath d='M20 50 H40 V70' fill='none' stroke='%233b82f6' stroke-width='0.5'/%3E%3Ccircle cx='40' cy='70' r='1.5' fill='%233b82f6'/%3E%3C/svg%3E")`,
           backgroundSize: '300px 300px'
         }} />
-        
+
         {bgImage ? (
           <>
-            <img 
-              src={bgImage} 
-              alt="" 
+            <img
+              src={bgImage}
+              alt=""
               className="w-full h-full object-cover opacity-[0.07]"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-transparent to-slate-950" />
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-             {/* A subtle tech-inspired abstract shape if no image is provided */}
-             <div className="w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px]" />
+            {/* A subtle tech-inspired abstract shape if no image is provided */}
+            <div className="w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px]" />
           </div>
         )}
       </motion.div>

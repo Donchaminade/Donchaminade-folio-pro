@@ -18,7 +18,7 @@ const ParallaxImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => 
         style={{ y, scale: 1.15 }}
         src={src} 
         alt={alt} 
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain bg-slate-900/20"
         loading="lazy"
       />
     </div>

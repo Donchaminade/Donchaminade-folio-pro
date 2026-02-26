@@ -25,7 +25,7 @@ const Projects: React.FC<ProjectsProps> = ({ homeProjects, setSelectedProject, s
               <div className="p-6 md:p-8 bg-blue-500/10 rounded-full mb-6 group-hover:scale-110 transition-transform">
                 <Layers size={40} className="text-blue-500" />
               </div>
-              <h3 className="text-xl md:text-2xl font-black text-white uppercase mb-3">Plus de 25 Projets</h3>
+              <h3 className="text-xl md:text-2xl font-black text-white uppercase mb-3">Plus de 10 Projets</h3>
               <p className="text-slate-500 text-center text-sm mb-6 md:mb-8 font-light">Découvrez l'intégralité de mon portfolio.</p>
               <button className="px-8 md:px-10 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-blue-600/20">VOIR TOUT</button>
             </div>
