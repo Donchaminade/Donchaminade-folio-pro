@@ -1,12 +1,32 @@
 import path from 'path';
+import { cpSync, existsSync, mkdirSync, readdirSync } from 'fs';
+import { join } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 const PHP_LOCAL = 'http://localhost/donchaminade-d%C3%A9veloppeur-web';
 
+/** Copie public/ vers dist/ sans uploads/ (médias servis par l'API Hostinger). */
+function copyPublicWithoutUploads() {
+  return {
+    name: 'copy-public-without-uploads',
+    closeBundle() {
+      const publicDir = join(__dirname, 'public');
+      const outDir = join(__dirname, 'dist');
+      if (!existsSync(publicDir)) return;
+      if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+      for (const name of readdirSync(publicDir)) {
+        if (name === 'uploads') continue;
+        cpSync(join(publicDir, name), join(outDir, name), { recursive: true });
+      }
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
+      publicDir: false,
       server: {
         port: 3000,
         host: '0.0.0.0',
@@ -16,7 +36,11 @@ export default defineConfig(({ mode }) => {
           '/uploads': { target: PHP_LOCAL, changeOrigin: true, rewrite: (p) => `/public${p}` },
         },
       },
-      plugins: [react()],
+      plugins: [react(), copyPublicWithoutUploads()],
+      build: {
+        outDir: 'dist',
+        emptyOutDir: true,
+      },
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
