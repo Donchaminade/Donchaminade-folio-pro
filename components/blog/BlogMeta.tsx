@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BlogPostDetail } from '../../lib/api';
-import { mediaUrl } from '../../lib/media';
+import { getSharePreviewImageUrl } from '../../lib/ogImage';
 
 interface Props {
   post: BlogPostDetail;
@@ -11,11 +11,7 @@ const BlogMeta: React.FC<Props> = ({ post }) => {
   useEffect(() => {
     const title = `${post.title} — Donchaminade`;
     const description = post.excerpt || '';
-    const image =
-      post.og_image_url ||
-      (mediaUrl(post.cover_image).startsWith('http')
-        ? mediaUrl(post.cover_image)
-        : `${window.location.origin}${mediaUrl(post.cover_image) || '/pypicture.png'}`);
+    const image = getSharePreviewImageUrl();
     const url = post.share_url || window.location.href;
 
     document.title = title;

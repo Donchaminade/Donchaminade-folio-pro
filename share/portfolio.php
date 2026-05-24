@@ -10,11 +10,13 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/bootstrap.php';
 
 $siteName = 'Donchaminade';
-$frontendUrl = rtrim(frontendUrl(), '/') . '/';
+$frontendBase = rtrim(frontendUrl(), '/');
+$frontendUrl = $frontendBase . '/';
 
 $title = 'Donchaminade | Développeur Web & Mobile Full-Stack';
 $description = 'Portfolio de ADJOLOU Dondah Chaminade — développeur web & mobile. Solutions digitales sur mesure, React, PHP, Flutter.';
-$imageUrl = absoluteMediaUrl('/pypicture.png');
+// Image unique : public/image.png sur le front Vercel
+$imageUrl = $frontendBase . '/image.png';
 
 try {
     $repo = new PortfolioRepository(Database::connection());
@@ -26,12 +28,14 @@ try {
         if (!empty($profile['bio'])) {
             $description = mb_substr(trim(strip_tags((string) $profile['bio'])), 0, 300);
         }
-        if (!empty($profile['photo_path'])) {
-            $imageUrl = absoluteMediaUrl((string) $profile['photo_path']);
-        }
     }
 } catch (Throwable) {
     // valeurs par défaut ci-dessus
+}
+
+$pageUrl = trim((string) ($_GET['from'] ?? ''));
+if ($pageUrl === '' || !str_starts_with($pageUrl, 'http')) {
+    $pageUrl = $frontendUrl;
 }
 
 header('Content-Type: text/html; charset=utf-8');
@@ -43,11 +47,11 @@ header('Content-Type: text/html; charset=utf-8');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($title) ?></title>
     <meta name="description" content="<?= e($description) ?>">
-    <link rel="canonical" href="<?= e($frontendUrl) ?>">
+    <link rel="canonical" href="<?= e($pageUrl) ?>">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="<?= e($siteName) ?>">
-    <meta property="og:url" content="<?= e($frontendUrl) ?>">
+    <meta property="og:url" content="<?= e($pageUrl) ?>">
     <meta property="og:title" content="<?= e($title) ?>">
     <meta property="og:description" content="<?= e($description) ?>">
     <meta property="og:image" content="<?= e($imageUrl) ?>">
@@ -60,10 +64,10 @@ header('Content-Type: text/html; charset=utf-8');
     <meta name="twitter:description" content="<?= e($description) ?>">
     <meta name="twitter:image" content="<?= e($imageUrl) ?>">
 
-    <meta http-equiv="refresh" content="0;url=<?= e($frontendUrl) ?>">
-    <script>window.location.replace(<?= json_encode($frontendUrl, JSON_UNESCAPED_UNICODE) ?>);</script>
+    <meta http-equiv="refresh" content="0;url=<?= e($pageUrl) ?>">
+    <script>window.location.replace(<?= json_encode($pageUrl, JSON_UNESCAPED_UNICODE) ?>);</script>
 </head>
 <body>
-    <p>Redirection vers le portfolio… <a href="<?= e($frontendUrl) ?>"><?= e($title) ?></a></p>
+    <p>Redirection vers le portfolio… <a href="<?= e($pageUrl) ?>"><?= e($title) ?></a></p>
 </body>
 </html>
