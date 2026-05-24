@@ -1,12 +1,26 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, Briefcase, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Section } from './Section';
 import { GlassCard } from './GlassCard';
-import { EXPERIENCES, TECH_ICONS } from '../constants';
+import { EXPERIENCES } from '../constants';
+import { fetchPortfolio } from '../lib/api';
+import { normalizeProjectTags, techIconUrl } from '../lib/projectTags';
+import { mediaUrl } from '../lib/media';
+import type { Experience as ExperienceType } from '../types';
 
 const Experience: React.FC = () => {
+  const [experiences, setExperiences] = useState<ExperienceType[]>(EXPERIENCES);
+
+  useEffect(() => {
+    fetchPortfolio<{ experiences: ExperienceType[] }>()
+      .then((data) => {
+        if (data.experiences?.length) setExperiences(data.experiences);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <Section
       id="experience"
@@ -16,7 +30,7 @@ const Experience: React.FC = () => {
     >
       <div className="max-w-5xl mx-auto px-4 md:px-0">
         <div className="relative border-l-2 md:border-l-4 border-blue-500/20 ml-4 md:ml-12 space-y-12 md:space-y-20">
-          {EXPERIENCES.map((exp, i) => (
+          {experiences.map((exp, i) => (
             <motion.div
               key={i}
               className="relative pl-8 md:pl-16 group"
@@ -64,16 +78,17 @@ const Experience: React.FC = () => {
                     <div className="pt-6 border-t border-slate-200 dark:border-white/5">
                       <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-500 mb-4 opacity-70">Technologies clés</p>
                       <div className="flex flex-wrap gap-2 md:gap-3">
-                        {exp.tags.map((tag) => {
-                          const iconUrl = TECH_ICONS[tag];
+                        {normalizeProjectTags(exp.tags, exp.tagDetails).map((tag) => {
+                          const iconUrl = techIconUrl(tag);
+                          const src = iconUrl ? (iconUrl.startsWith('http') ? iconUrl : mediaUrl(iconUrl)) : null;
                           return (
-                            <div key={tag} className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 glass rounded-xl border-slate-200 dark:border-white/5 hover:border-blue-500/30 hover:bg-slate-200/50 dark:hover:bg-blue-500/5 transition-all group/tag cursor-default">
-                              {iconUrl ? (
-                                <img src={iconUrl} alt={tag} className="w-4 h-4 md:w-5 md:h-5 group-hover/tag:scale-110 transition-transform" />
+                            <div key={tag.name} className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 glass rounded-xl border-slate-200 dark:border-white/5 hover:border-blue-500/30 transition-all group/tag">
+                              {src ? (
+                                <img src={src} alt={tag.name} className="w-4 h-4 md:w-5 md:h-5 group-hover/tag:scale-110 transition-transform" />
                               ) : (
                                 <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500/50" />
                               )}
-                              <span className="text-[9px] md:text-[10px] font-black uppercase text-slate-700 dark:text-slate-300 group-hover/tag:text-slate-900 dark:group-hover/tag:text-white transition-colors tracking-widest">{tag}</span>
+                              <span className="text-[9px] md:text-[10px] font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">{tag.name}</span>
                             </div>
                           );
                         })}

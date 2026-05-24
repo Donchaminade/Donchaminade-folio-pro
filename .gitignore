@@ -24,3 +24,14 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# PHP / Backend
+/vendor/
+.env
+public/uploads/**/*
+!public/uploads/.gitkeep
+!public/uploads/blog/.gitkeep
+!public/uploads/projects/.gitkeep
+!public/uploads/profile/.gitkeep
+!public/uploads/documents/.gitkeep
+install.php.lock

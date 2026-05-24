@@ -1,13 +1,33 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Linkedin } from 'lucide-react';
 import { Section } from './Section';
 import { GlassCard } from './GlassCard';
 import { COMMUNITIES } from '../constants';
+import { fetchPortfolio } from '../lib/api';
+import { mediaUrl } from '../lib/media';
+import type { Community } from '../types';
 
-const Community: React.FC = () => {
+function communityLogo(logo: string): React.ReactNode {
+  if (!logo) return '👥';
+  if (logo.startsWith('http') || logo.startsWith('/')) {
+    return <img src={mediaUrl(logo)} alt="" className="h-12 w-12 object-contain" />;
+  }
+  return logo;
+}
+
+const CommunitySection: React.FC = () => {
+  const [communities, setCommunities] = useState<Community[]>(COMMUNITIES);
   const [activeCommunity, setActiveCommunity] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchPortfolio<{ communities: Community[] }>()
+      .then((data) => {
+        if (data.communities?.length) setCommunities(data.communities);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <Section
@@ -17,19 +37,19 @@ const Community: React.FC = () => {
       bgImage="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&q=80&w=1200"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto items-start">
-        {COMMUNITIES.map((comm, i) => (
+        {communities.map((comm, i) => (
           <GlassCard
-            key={i}
+            key={comm.name}
             className={`p-10 cursor-pointer rounded-[3rem] transition-all border-slate-200 dark:border-white/5 relative overflow-hidden group/card ${activeCommunity === i ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-500/10 scale-[1.02]' : 'hover:bg-slate-200/50 dark:hover:bg-white/5 hover:-translate-y-2'}`}
             onClick={() => setActiveCommunity(activeCommunity === i ? null : i)}
           >
             <div className="absolute top-[-20%] right-[-10%] opacity-[0.02] group-hover/card:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
-              <div className="text-[140px] font-black">{comm.logo}</div>
+              <div className="text-[140px] font-black">{typeof comm.logo === 'string' && comm.logo.length <= 4 ? comm.logo : '•'}</div>
             </div>
 
             <div className="relative z-10 flex flex-col items-center text-center">
               <div className="w-24 h-24 glass rounded-3xl flex items-center justify-center text-5xl mb-8 group-hover/card:scale-110 group-hover/card:rotate-6 transition-all duration-500 bg-blue-50 dark:bg-blue-500/5 border border-slate-200 dark:border-white/10">
-                {comm.logo}
+                {communityLogo(comm.logo)}
               </div>
               <h3 className="font-black text-slate-900 dark:text-white text-2xl uppercase tracking-tighter leading-none mb-4">{comm.name}</h3>
               <div className="px-4 py-1.5 glass rounded-full border-blue-500/30">
@@ -47,16 +67,26 @@ const Community: React.FC = () => {
                     <div className="pt-6 border-t border-slate-200 dark:border-white/10">
                       {comm.description}
                     </div>
-                    <div className="mt-8 flex justify-center gap-4">
-                      <div className="p-3 glass rounded-xl text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-transparent"><Globe size={18} /></div>
-                      <div className="p-3 glass rounded-xl text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-transparent"><Linkedin size={18} /></div>
-                    </div>
+                    {(comm.websiteUrl || comm.linkedinUrl) && (
+                      <div className="mt-8 flex justify-center gap-4">
+                        {comm.websiteUrl && (
+                          <a href={comm.websiteUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="p-3 glass rounded-xl text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-transparent">
+                            <Globe size={18} />
+                          </a>
+                        )}
+                        {comm.linkedinUrl && (
+                          <a href={comm.linkedinUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="p-3 glass rounded-xl text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/10 bg-slate-100/50 dark:bg-transparent">
+                            <Linkedin size={18} />
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
 
               <div className="mt-8">
-                <button className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-500/50 group-hover/card:text-blue-500 transition-colors">
+                <button type="button" className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-500/50 group-hover/card:text-blue-500 transition-colors">
                   {activeCommunity === i ? 'FERMER' : 'DÉCOUVRIR MON IMPACT'}
                 </button>
               </div>
@@ -66,6 +96,6 @@ const Community: React.FC = () => {
       </div>
     </Section>
   );
-}
+};
 
-export default Community;
+export default CommunitySection;

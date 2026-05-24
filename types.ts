@@ -35,6 +35,7 @@ export interface Experience {
   period: string;
   description: string[];
   tags?: string[];
+  tagDetails?: TechTag[];
 }
 
 export interface Education {
@@ -44,11 +45,17 @@ export interface Education {
   year: string;
 }
 
+export interface TechTag {
+  name: string;
+  icon?: string | null;
+}
+
 export interface Project {
   title: string;
   description: string;
   detailedDescription?: string;
   tags: string[];
+  tagDetails?: TechTag[];
   image: string;
   additionalImages?: string[];
   link: string;
@@ -61,6 +68,8 @@ export interface Community {
   logo: string;
   role: string;
   description: string;
+  websiteUrl?: string | null;
+  linkedinUrl?: string | null;
 }
 
 export interface Testimonial {
@@ -69,6 +78,15 @@ export interface Testimonial {
   role: string;
   company: string;
   image?: string;
+}
+
+export interface Recommendation {
+  name: string;
+  role?: string | null;
+  company?: string | null;
+  body: string;
+  rating: number;
+  createdAt?: string;
 }
 
 export interface ManagedPage {

@@ -1,0 +1,11 @@
+{
+  "name": "donchaminade/portfolio",
+  "description": "Portfolio Donchaminade — API PHP",
+  "require": {
+    "php": ">=8.1",
+    "minishlink/web-push": "^9.0"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

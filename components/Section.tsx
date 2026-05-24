@@ -66,10 +66,14 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="relative mb-10 md:mb-16 z-10 px-6 max-w-7xl mx-auto"
       >
-        <h2 className="text-4xl md:text-6xl font-black mb-4 md:mb-6 uppercase tracking-tighter text-slate-900 dark:text-white">
+        <h2 className="section-title font-black mb-4 md:mb-6 uppercase text-slate-900 dark:text-white max-w-4xl">
           {title}<span className="text-blue-600 dark:text-blue-500">.</span>
         </h2>
-        {subtitle && <p className="text-slate-600 dark:text-slate-300 text-lg md:text-2xl max-w-3xl font-light leading-relaxed">{subtitle}</p>}
+        {subtitle && (
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg md:text-xl max-w-3xl font-light leading-relaxed">
+            {subtitle}
+          </p>
+        )}
       </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}

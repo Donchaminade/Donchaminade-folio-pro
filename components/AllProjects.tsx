@@ -2,16 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
-import { PROJECTS } from '../constants';
 import { Project } from '../types';
 import ProjectCard from './ProjectCard';
 import ProjectModal from './ProjectModal';
 
 interface AllProjectsProps {
     setShowAllProjects: (show: boolean) => void;
+    projects: Project[];
 }
 
-const AllProjects: React.FC<AllProjectsProps> = ({ setShowAllProjects }) => {
+const AllProjects: React.FC<AllProjectsProps> = ({ setShowAllProjects, projects }) => {
 
     const [projectFilter, setProjectFilter] = useState<'All' | 'Web' | 'Mobile' | 'Design'>('All');
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -20,7 +20,7 @@ const AllProjects: React.FC<AllProjectsProps> = ({ setShowAllProjects }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const filteredProjects = projectFilter === 'All' ? PROJECTS : PROJECTS.filter(p => p.type === projectFilter);
+    const filteredProjects = projectFilter === 'All' ? projects : projects.filter(p => p.type === projectFilter);
 
     return (
         <main className="min-h-screen pb-20 px-4 md:px-0 bg-slate-50 dark:bg-slate-950">

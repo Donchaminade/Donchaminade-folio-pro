@@ -1,0 +1,20 @@
+# Protection des fichiers et dossiers sensibles (Apache / XAMPP)
+<IfModule mod_authz_core.c>
+    <Files ".env">
+        Require all denied
+    </Files>
+    <FilesMatch "(?i)^\.env(\..+)?$">
+        Require all denied
+    </FilesMatch>
+    <FilesMatch "(?i)\.(sql|log|lock|bak|ini)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(?:database|config|vendor|includes|node_modules)(?:/|$) - [F,L]
+    RewriteRule ^\.git(?:/|$) - [F,L]
+</IfModule>
+
+Options -Indexes

@@ -1,0 +1,29 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; }
+.admin-shell { display: flex; min-height: 100vh; }
+.sidebar { width: 240px; background: #1e293b; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; border-right: 1px solid #334155; }
+.brand { font-weight: 800; font-size: 1.1rem; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.05em; }
+.user { font-size: 0.85rem; color: #94a3b8; margin: 0; }
+.sidebar nav { display: flex; flex-direction: column; gap: 0.35rem; flex: 1; }
+.sidebar a { color: #cbd5e1; text-decoration: none; padding: 0.55rem 0.75rem; border-radius: 0.5rem; font-size: 0.9rem; }
+.sidebar a:hover, .sidebar a.active { background: #2563eb33; color: #93c5fd; }
+.logout { color: #f87171; font-size: 0.85rem; }
+.content { flex: 1; padding: 2rem; max-width: 1100px; }
+.content h1 { margin-top: 0; font-size: 1.75rem; }
+.card { background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+.stat-box { text-align: center; }
+.stat-box strong { display: block; font-size: 2rem; color: #60a5fa; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { text-align: left; padding: 0.65rem; border-bottom: 1px solid #334155; font-size: 0.9rem; }
+th { color: #94a3b8; font-weight: 600; }
+.btn { display: inline-block; background: #2563eb; color: #fff; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; border: none; cursor: pointer; font-size: 0.875rem; }
+.btn:hover { background: #1d4ed8; }
+.btn-danger { background: #dc2626; }
+.btn-secondary { background: #475569; }
+form label { display: block; margin: 0.75rem 0 0.25rem; font-size: 0.85rem; color: #94a3b8; }
+form input, form textarea, form select { width: 100%; max-width: 600px; padding: 0.55rem 0.75rem; border-radius: 0.5rem; border: 1px solid #475569; background: #0f172a; color: #f1f5f9; }
+form textarea { min-height: 100px; }
+.flash { background: #14532d; border: 1px solid #22c55e; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; }
+.flash-error { background: #7f1d1d; border-color: #ef4444; }
+.actions { display: flex; gap: 0.5rem; }

@@ -8,13 +8,18 @@ import {
   Package,
   Layers,
   Briefcase,
-  MessageSquare,
   User,
   Moon,
-  Sun
+  Sun,
+  BookOpen,
+  Users
 } from 'lucide-react';
+import { navigate } from './lib/navigation';
+import { fetchPortfolio } from './lib/api';
+import { mergeProjects } from './lib/mergeProjects';
 import { PROJECTS } from './constants';
 import { Project } from './types';
+import BrandMark from './components/BrandMark';
 
 import Hero from './components/Hero';
 import Stats from './components/Stats';
@@ -40,26 +45,48 @@ const NAV_ITEMS = [
   { name: 'Profil', id: 'apropos', icon: <User size={20} /> },
   { name: 'Parcours', id: 'experience', icon: <Briefcase size={20} /> },
   { name: 'Projets', id: 'projets', icon: <Package size={20} /> },
-  { name: 'Comm.', id: 'linkedin', icon: <Layers size={20} /> },
-  { name: 'Contact', id: 'contact', icon: <MessageSquare size={20} /> }
+  { name: 'Blog', id: 'blog', icon: <BookOpen size={20} />, href: '/blog' },
+  { name: 'Réf.', id: 'testimonials', icon: <Layers size={20} /> },
+  { name: 'Comm.', id: 'communaute', icon: <Users size={20} /> },
 ];
 
-const NavItem: React.FC<{ item: typeof NAV_ITEMS[0] }> = ({ item }) => (
-  <a href={`#${item.id}`} className="relative py-1 group overflow-hidden transition-colors hover:text-blue-600 dark:hover:text-blue-400">
-    <span className="font-bold tracking-widest text-[11px] uppercase">{item.name}</span>
-    <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500/50 scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
-  </a>
-);
+const NavItem: React.FC<{ item: typeof NAV_ITEMS[0] }> = ({ item }) => {
+  const isBlog = 'href' in item && item.href;
+  const className = "relative py-1 group overflow-hidden transition-colors hover:text-blue-600 dark:hover:text-blue-400";
+  const inner = (
+    <>
+      <span className="font-bold tracking-widest text-[11px] uppercase">{item.name}</span>
+      <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-500/50 scale-x-0 group-hover:scale-x-100 origin-left transition-transform" />
+    </>
+  );
+  if (isBlog) {
+    return (
+      <a href={item.href} onClick={(e) => { e.preventDefault(); navigate(item.href!); }} className={className}>
+        {inner}
+      </a>
+    );
+  }
+  return <a href={`#${item.id}`} className={className}>{inner}</a>;
+};
 
 const App: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showAllProjects, setShowAllProjects] = useState(false);
+  const [projects, setProjects] = useState<Project[]>(PROJECTS);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') !== 'light';
     }
     return true;
   });
+
+  useEffect(() => {
+    fetchPortfolio<{ projects: Project[] }>()
+      .then((data) => {
+        setProjects(mergeProjects(data.projects, PROJECTS));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -77,10 +104,10 @@ const App: React.FC = () => {
     if (showAllProjects) window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [showAllProjects]);
 
-  const homeProjects = PROJECTS.slice(0, 5);
+  const homeProjects = projects.slice(0, 5);
 
   if (showAllProjects) {
-    return <AllProjects setShowAllProjects={setShowAllProjects} />;
+    return <AllProjects setShowAllProjects={setShowAllProjects} projects={projects} />;
   }
 
   return (
@@ -94,16 +121,26 @@ const App: React.FC = () => {
 
       {/* Desktop Navigation */}
       <header className="fixed top-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl hidden lg:block">
-        <nav className="glass-dark px-10 py-4 rounded-full flex items-center justify-between border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:border-white/10 dark:shadow-2xl">
-          <div className="text-2xl font-black text-blue-600 dark:text-blue-500 tracking-tighter uppercase cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Donchaminade</div>
-          <div className="flex items-center gap-10 text-slate-600 dark:text-slate-400">
+        <nav className="glass-dark px-8 py-4 rounded-full flex items-center justify-between gap-6 border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:border-white/10 dark:shadow-2xl">
+          <BrandMark onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
+          <div className="flex items-center gap-8 text-slate-600 dark:text-slate-400 shrink-0">
             {NAV_ITEMS.map((item) => <NavItem key={item.id} item={item} />)}
           </div>
           <div className="flex items-center gap-4">
             <button onClick={toggleTheme} className="p-2 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500 transition-colors">
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <a href="#contact" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 rounded-full text-[11px] font-black uppercase text-white transition-all shadow-lg shadow-blue-600/20">ME CONTACTER</a>
+            <a href="#contact" className="px-6 py-3 bg-slate-800/80 dark:bg-white/10 hover:bg-slate-700 rounded-full text-[11px] font-black uppercase text-white transition-all border border-white/10">Contact</a>
+            <button
+              type="button"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open-collaborate-modal'));
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="px-8 py-3 bg-violet-600 hover:bg-violet-500 rounded-full text-[11px] font-black uppercase text-white transition-all shadow-lg shadow-violet-600/25"
+            >
+              Collaborons
+            </button>
           </div>
         </nav>
       </header>
@@ -113,7 +150,8 @@ const App: React.FC = () => {
         {NAV_ITEMS.map((item) => (
           <a
             key={item.id}
-            href={`#${item.id}`}
+            href={'href' in item && item.href ? item.href : `#${item.id}`}
+            onClick={'href' in item && item.href ? (e) => { e.preventDefault(); navigate(item.href!); } : undefined}
             className="text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 active:text-blue-500 dark:active:text-blue-400 transition-all flex flex-col items-center gap-1 md:gap-2"
           >
             <div className="p-1 hover:scale-110 transition-transform">
@@ -132,15 +170,17 @@ const App: React.FC = () => {
         <Experience />
         <LinkedInMarquee />
         <Testimonials />
-        {/* <Trust /> */}
-        {/* <Community /> */}
+        <Community />
+        <Trust />
         <Contact />
       </main>
 
       <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
 
       <footer className="py-16 md:py-24 text-center border-t border-slate-200 dark:border-white/5 px-6 bg-slate-50/50 dark:bg-slate-950/40">
-        <div className="text-2xl md:text-3xl font-black text-blue-600 dark:text-blue-500 mb-6 md:mb-8 uppercase tracking-tighter">Donchaminade</div>
+        <div className="flex justify-center mb-6 md:mb-8">
+          <BrandMark />
+        </div>
         <div className="flex justify-center gap-8 md:gap-10 mb-10 md:mb-12 text-slate-400 dark:text-slate-500">
           <a href={SOCIALS.github} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Github size={28} /></a>
           <a href={SOCIALS.linkedin} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Linkedin size={28} /></a>

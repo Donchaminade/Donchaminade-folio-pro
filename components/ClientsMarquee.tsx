@@ -1,32 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CLIENTS } from '../constants';
+import { fetchPortfolio } from '../lib/api';
+import type { Client } from '../types';
+
+function ClientItem({ client }: { client: Client }) {
+  return (
+    <div className="flex flex-col items-center gap-4 group">
+      <div className="w-16 h-16 md:w-24 md:h-24 glass rounded-2xl flex items-center justify-center p-4 md:p-5 grayscale group-hover:grayscale-0 transition-all border-slate-200 dark:border-white/5 group-hover:border-blue-500/30 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/5">
+        <img src={client.logo} alt={client.name} className="w-full h-full object-contain" />
+      </div>
+      <span className="text-[9px] md:text-xs font-black text-slate-600 dark:text-slate-500 uppercase tracking-widest group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        {client.name}
+      </span>
+    </div>
+  );
+}
 
 const ClientsMarquee: React.FC = () => {
+  const [clients, setClients] = useState<Client[]>(CLIENTS);
+
+  useEffect(() => {
+    fetchPortfolio<{ clients: Client[] }>()
+      .then((data) => {
+        if (data.clients?.length) setClients(data.clients);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="relative overflow-hidden w-full py-8 md:py-12 pause-marquee">
       <div className="flex w-max items-center animate-marquee-slow">
         <div className="flex gap-8 md:gap-12 pr-8 md:pr-12 items-center cursor-default">
-          {CLIENTS.map((client, i) => (
-            <div key={`oc-${i}`} className="flex flex-col items-center gap-4 group">
-              <div className="w-16 h-16 md:w-24 md:h-24 glass rounded-2xl flex items-center justify-center p-4 md:p-5 grayscale group-hover:grayscale-0 transition-all border-slate-200 dark:border-white/5 group-hover:border-blue-500/30 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/5">
-                <img src={client.logo} alt={client.name} className="w-full h-full object-contain" />
-              </div>
-              <span className="text-[9px] md:text-xs font-black text-slate-600 dark:text-slate-500 uppercase tracking-widest group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {client.name}
-              </span>
-            </div>
+          {clients.map((client, i) => (
+            <ClientItem key={`oc-${i}`} client={client} />
           ))}
         </div>
         <div className="flex gap-8 md:gap-12 pr-8 md:pr-12 items-center cursor-default" aria-hidden="true">
-          {CLIENTS.map((client, i) => (
-            <div key={`dc-${i}`} className="flex flex-col items-center gap-4 group">
-              <div className="w-16 h-16 md:w-24 md:h-24 glass rounded-2xl flex items-center justify-center p-4 md:p-5 grayscale group-hover:grayscale-0 transition-all border-slate-200 dark:border-white/5 group-hover:border-blue-500/30 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/5">
-                <img src={client.logo} alt={client.name} className="w-full h-full object-contain" />
-              </div>
-              <span className="text-[9px] md:text-xs font-black text-slate-600 dark:text-slate-500 uppercase tracking-widest group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {client.name}
-              </span>
-            </div>
+          {clients.map((client, i) => (
+            <ClientItem key={`dc-${i}`} client={client} />
           ))}
         </div>
       </div>

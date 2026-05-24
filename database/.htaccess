@@ -1,0 +1,4 @@
+# Interdit l'accès HTTP direct au schéma, migrations et scripts CLI
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>

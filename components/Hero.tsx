@@ -53,15 +53,15 @@ const Hero: React.FC = () => {
                     </div>
 
                     <div className="mb-6 md:mb-8">
-                        <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-white uppercase leading-none mb-2 md:mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-none mb-2 md:mb-4">
                             <GlitchText text="ADJOLOU" />
                         </h2>
-                        <h2 className="text-xl md:text-4xl font-black tracking-tighter text-blue-600 dark:text-blue-500 uppercase leading-none opacity-90">
+                        <h2 className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-blue-600 dark:text-blue-500 uppercase leading-none opacity-90">
                             <GlitchText text="Dondah Chaminade" />
                         </h2>
                     </div>
 
-                    <h1 className="text-3xl md:text-6xl lg:text-7xl font-black mb-6 md:mb-10 leading-[0.85] tracking-tighter text-slate-900 dark:text-white uppercase">
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black mb-6 md:mb-10 leading-[1.05] tracking-tight text-slate-900 dark:text-white uppercase">
                         Développeur <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300">Web & Mobile.</span>
                     </h1>

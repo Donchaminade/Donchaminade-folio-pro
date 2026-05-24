@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Code, Trophy, Server, Layout, Smartphone, BrainCircuit, CheckCircle2, Star, Users } from 'lucide-react';
 import { Section } from './Section';
 import { GlassCard } from './GlassCard';
 import { SKILL_BLOCKS, SOFT_SKILLS, EDUCATION, AWARDS } from '../constants';
+import { fetchPortfolio } from '../lib/api';
+import type { Award } from '../types';
 import ImageGalleryCarousel from './ImageGalleryCarousel';
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -16,6 +18,27 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 const About: React.FC = () => {
+  const [awards, setAwards] = useState<Award[]>(AWARDS);
+  const [education, setEducation] = useState(EDUCATION);
+  const [skillBlocks, setSkillBlocks] = useState(SKILL_BLOCKS);
+  const [softSkills, setSoftSkills] = useState(SOFT_SKILLS);
+
+  useEffect(() => {
+    fetchPortfolio<{
+      awards: Award[];
+      education: typeof EDUCATION;
+      skillBlocks: typeof SKILL_BLOCKS;
+      softSkills: typeof SOFT_SKILLS;
+    }>()
+      .then((data) => {
+        if (data.awards?.length) setAwards(data.awards);
+        if (data.education?.length) setEducation(data.education);
+        if (data.skillBlocks?.length) setSkillBlocks(data.skillBlocks);
+        if (data.softSkills?.length) setSoftSkills(data.softSkills);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <Section
       id="apropos"
@@ -26,7 +49,7 @@ const About: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
         {/* EDUCATION SECTION (Top) */}
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4">
-          {EDUCATION.map((edu, i) => (
+          {education.map((edu, i) => (
             <GlassCard key={i} className="p-6 md:p-8 rounded-[2rem] bg-blue-50/50 hover:bg-blue-100/50 dark:bg-blue-900/5 dark:hover:bg-blue-900/10 border-slate-200 dark:border-white/5 transition-all group">
               <div className="font-black text-slate-900 dark:text-white text-lg md:text-xl uppercase leading-tight tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{edu.degree}</div>
               <div className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-2 font-medium">{edu.field}</div>
@@ -43,7 +66,7 @@ const About: React.FC = () => {
           <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-8 md:mb-12 flex items-center gap-4"><Code size={28} className="text-blue-600 dark:text-blue-500" /> Stack Technique</h3>
 
           <div className="flex flex-col gap-10 lg:gap-14">
-            {SKILL_BLOCKS.map((block, i) => (
+            {skillBlocks.map((block, i) => (
               <motion.div
                 key={i}
                 variants={{
@@ -93,7 +116,7 @@ const About: React.FC = () => {
         <GlassCard className="lg:col-span-3 p-6 md:p-10 rounded-[2.5rem]">
           <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-8 flex items-center gap-4"><Star size={28} className="text-blue-600 dark:text-blue-500" /> Soft Skills</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {SOFT_SKILLS.map((skill, i) => (
+            {softSkills.map((skill, i) => (
               <div key={i} className="glass p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/5 transition-all group flex flex-col h-full shadow-sm hover:shadow-md">
                 <h4 className="text-sm md:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{skill.title}</h4>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mb-6 flex-grow leading-relaxed font-medium">"{skill.impact}"</p>
@@ -110,7 +133,7 @@ const About: React.FC = () => {
         <GlassCard className="lg:col-span-3 p-6 md:p-10 rounded-[2.5rem]">
           <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-6 md:mb-8 flex items-center gap-4"><Trophy size={28} className="text-blue-600 dark:text-blue-500" /> Distinctions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {AWARDS.map((award, i) => (
+            {awards.map((award, i) => (
               <div key={i} className="glass p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-500/30 hover:bg-blue-50/50 dark:hover:bg-blue-500/5 transition-all group flex flex-col justify-between">
                 <div>
                   <div className="text-[10px] font-black w-fit px-2 py-1 rounded-md bg-blue-100/50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 uppercase tracking-[0.2em] mb-3">{award.year}</div>

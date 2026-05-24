@@ -3,8 +3,12 @@ import React from 'react';
 import { Project } from '../types';
 import { GlassCard } from './GlassCard';
 import ParallaxImage from './ParallaxImage';
+import TechBadges from './TechBadges';
+import { normalizeProjectTags } from '../lib/projectTags';
 
-const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ project, onClick }) => (
+const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ project, onClick }) => {
+  const techTags = normalizeProjectTags(project.tags, project.tagDetails);
+  return (
   <GlassCard onClick={onClick} className="h-full flex flex-col p-0 overflow-hidden border-slate-200 dark:border-white/5 hover:border-blue-500/30 cursor-pointer group rounded-[2.5rem] shadow-2xl">
     <div className="relative aspect-video overflow-hidden">
       <ParallaxImage src={project.image} alt={project.title} />
@@ -13,13 +17,12 @@ const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ proj
     <div className="p-6 md:p-8">
       <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight leading-none">{project.title}</h3>
       <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm line-clamp-2 mt-3 md:mt-4 font-light leading-relaxed">{project.description}</p>
-      <div className="flex gap-3 md:gap-4 mt-6 md:mt-8 pt-5 md:pt-6 border-t border-slate-200 dark:border-white/5">
-        {project.tags.slice(0, 3).map(tag => (
-          <span key={tag} className="text-[9px] md:text-[10px] font-black uppercase text-slate-600 tracking-widest">{tag}</span>
-        ))}
+      <div className="mt-6 md:mt-8 pt-5 md:pt-6 border-t border-slate-200 dark:border-white/5">
+        <TechBadges tags={techTags} max={4} />
       </div>
     </div>
   </GlassCard>
-);
+  );
+};
 
 export default ProjectCard;

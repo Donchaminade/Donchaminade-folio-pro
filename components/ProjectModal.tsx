@@ -4,9 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Github, ExternalLink, Smartphone, Layout, Activity, Zap, X } from 'lucide-react';
 import { Project } from '../types';
 import ProjectCarousel from './ProjectCarousel';
-import { TECH_ICONS } from '../constants';
+import TechBadges from './TechBadges';
+import { normalizeProjectTags } from '../lib/projectTags';
 
-const ProjectModal: React.FC<{ project: Project | null, onClose: () => void }> = ({ project, onClose }) => (
+const ProjectModal: React.FC<{ project: Project | null, onClose: () => void }> = ({ project, onClose }) => {
+  const techTags = project ? normalizeProjectTags(project.tags, project.tagDetails) : [];
+  return (
   <AnimatePresence>
     {project && (
       <motion.div
@@ -52,7 +55,7 @@ const ProjectModal: React.FC<{ project: Project | null, onClose: () => void }> =
                   <div className="h-[1px] flex-1 bg-slate-200 dark:bg-white/5" />
                 </div>
 
-                <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none mb-10">
+                <h2 className="section-title font-black text-slate-900 dark:text-white uppercase leading-tight mb-10">
                   {project.title}
                 </h2>
 
@@ -72,14 +75,7 @@ const ProjectModal: React.FC<{ project: Project | null, onClose: () => void }> =
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500/60 flex items-center gap-2">
                       <Zap size={14} /> TECHNOLOGIES UTILISÉES
                     </p>
-                    <div className="flex flex-wrap gap-2 md:gap-3">
-                      {project.tags.map((tag) => (
-                        <div key={tag} className="flex items-center gap-2.5 px-4 py-2.5 glass rounded-2xl border border-slate-200 dark:border-white/5 text-[11px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                          {TECH_ICONS[tag] && <img src={TECH_ICONS[tag]} alt={tag} className="w-4 h-4" />}
-                          {tag}
-                        </div>
-                      ))}
-                    </div>
+                    <TechBadges tags={techTags} size="md" />
                   </div>
                 </div>
               </div>
@@ -128,6 +124,7 @@ const ProjectModal: React.FC<{ project: Project | null, onClose: () => void }> =
       </motion.div>
     )}
   </AnimatePresence>
-);
+  );
+};
 
 export default ProjectModal;

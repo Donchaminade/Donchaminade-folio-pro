@@ -1,0 +1,25 @@
+-- Archive audit des commentaires supprimés (conservation 7 jours)
+CREATE TABLE IF NOT EXISTS comment_audit_logs (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  comment_id INT UNSIGNED NOT NULL,
+  post_id INT UNSIGNED NOT NULL,
+  post_title VARCHAR(255) NOT NULL DEFAULT '',
+  post_slug VARCHAR(255) NOT NULL DEFAULT '',
+  author_name VARCHAR(120) NOT NULL,
+  author_email VARCHAR(255) NULL,
+  author_role VARCHAR(20) NOT NULL DEFAULT 'visitor',
+  content TEXT NOT NULL,
+  ip_address VARCHAR(45) NULL,
+  user_agent VARCHAR(512) NULL,
+  visitor_hash VARCHAR(64) NULL,
+  referrer VARCHAR(500) NULL,
+  geo_country VARCHAR(100) NULL,
+  geo_region VARCHAR(100) NULL,
+  geo_city VARCHAR(100) NULL,
+  is_hidden TINYINT(1) NOT NULL DEFAULT 0,
+  comment_created_at DATETIME NULL,
+  deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  expires_at DATETIME NOT NULL,
+  INDEX idx_expires (expires_at),
+  INDEX idx_deleted (deleted_at)
+) ENGINE=InnoDB;

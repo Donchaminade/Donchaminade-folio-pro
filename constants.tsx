@@ -1,4 +1,3 @@
-import { title } from 'process';
 import { Stat, Skill, SkillBlock, SoftSkill, Experience, Project, Community, Education, Testimonial, ManagedPage, Award, GalleryImage, Client } from './types';
 
 export const STATS: Stat[] = [
