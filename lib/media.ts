@@ -15,6 +15,10 @@ export function mediaUrl(path: string | null | undefined): string {
   if (normalized.startsWith('/public/uploads/')) {
     normalized = normalized.slice('/public'.length);
   }
+  // Sur Hostinger/XAMPP, les fichiers sont sous public/uploads/ (racine = projet PHP)
+  if (normalized.startsWith('/uploads/') && !normalized.startsWith('/public/')) {
+    normalized = `/public${normalized}`;
+  }
   const base = getApiBase();
   return base ? `${base}${normalized}` : normalized;
 }

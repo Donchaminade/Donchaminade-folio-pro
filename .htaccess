@@ -13,6 +13,8 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Fichiers uploadés (stockés dans public/uploads/)
+    RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
     RewriteRule ^(?:database|config|vendor|includes|node_modules)(?:/|$) - [F,L]
     RewriteRule ^\.git(?:/|$) - [F,L]
 </IfModule>

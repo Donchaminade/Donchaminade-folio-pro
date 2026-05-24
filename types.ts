@@ -1,4 +1,23 @@
 
+export interface SiteProfile {
+  full_name?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  bio?: string;
+  availability_text?: string;
+  experience_badge?: string;
+  experience_badge_label?: string;
+  email?: string;
+  phone?: string;
+  whatsapp?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  github_url?: string;
+  cv_path?: string;
+  photo_path?: string;
+  footer_year?: string;
+}
+
 export interface Stat {
   label: string;
   value: string;
