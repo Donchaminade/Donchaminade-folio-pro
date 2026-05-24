@@ -5,7 +5,7 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 const PHP_LOCAL = 'http://localhost/donchaminade-d%C3%A9veloppeur-web';
-const SHARE_PREVIEW_IMAGE = '/image.png';
+const SHARE_PREVIEW_IMAGE = '/og-share.jpg';
 
 /** Copie public/ vers dist/ sans uploads/ (médias servis par l'API Hostinger). */
 function copyPublicWithoutUploads() {

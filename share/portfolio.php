@@ -15,8 +15,8 @@ $frontendUrl = $frontendBase . '/';
 
 $title = 'Donchaminade | Développeur Web & Mobile Full-Stack';
 $description = 'Portfolio de ADJOLOU Dondah Chaminade — développeur web & mobile. Solutions digitales sur mesure, React, PHP, Flutter.';
-// Image unique : public/image.png sur le front Vercel
-$imageUrl = $frontendBase . '/image.png';
+// Image optimisée pour WhatsApp (JPEG ~100 Ko, depuis public/og-share.jpg)
+$imageUrl = $frontendBase . '/og-share.jpg';
 
 try {
     $repo = new PortfolioRepository(Database::connection());
