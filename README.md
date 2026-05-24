@@ -137,7 +137,7 @@ Fichiers modèles :
 | `DB_*` | Connexion MySQL |
 | `CORS_ORIGINS` | Origines autorisées (URL Vercel, séparées par des virgules) |
 | `SESSION_NAME` | Nom de session admin |
-| `VAPID_*` | Clés pour notifications push admin (optionnel) |
+| `VAPID_*` | Clés pour notifications push admin (**requis** pour alertes téléphone) |
 
 ### Front (Vercel)
 
@@ -329,9 +329,19 @@ Tables principales : profil, projets, expériences, blog, commentaires, contact,
    - `https://donchamfolio.grosbit.com/api/index.php?resource=portfolio`
    - `https://donchamfolio.grosbit.com/admin/login.php`
 
+### Notifications push (admin PWA)
+
+1. Générer les clés : `npx web-push generate-vapid-keys`
+2. Les coller dans le `.env` Hostinger (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`)
+3. Sur le téléphone : ouvrir l’app admin installée → cloche → **Activer les notifications push**
+4. Tester avec **Envoyer un test** (dans le panneau cloche)
+
+Alertes automatiques : nouveau message contact, commentaire blog, témoignage ou recommandation en attente.
+
 ### Checklist post-déploiement
 
 - [ ] `APP_DEBUG=false` sur Hostinger  
+- [ ] Clés `VAPID_*` dans `.env` Hostinger  
 - [ ] `CORS_ORIGINS` contient l’URL Vercel exacte  
 - [ ] `VITE_API_URL` configuré sur Vercel + redeploy  
 - [ ] `install.php` supprimé en production  

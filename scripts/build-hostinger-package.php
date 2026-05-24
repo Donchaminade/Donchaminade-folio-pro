@@ -10,7 +10,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__);
 $out = $root . DIRECTORY_SEPARATOR . 'hostinger-upload';
 
-$dirs = ['admin', 'api', 'blog', 'config', 'database', 'includes', 'uploads', 'vendor'];
+$dirs = ['admin', 'api', 'blog', 'share', 'config', 'database', 'includes', 'uploads', 'vendor'];
 $files = ['bootstrap.php', 'install.php', '.htaccess', 'composer.json', 'composer.lock'];
 
 function rrmdir(string $dir): void

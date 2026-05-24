@@ -59,11 +59,25 @@
   const bellList = document.getElementById('adminNotifList');
   const bellBadge = document.getElementById('adminNotifTotal');
   const pushBtn = document.getElementById('adminPushEnableBtn');
+  const pushTestBtn = document.getElementById('adminPushTestBtn');
   const pushStatus = document.getElementById('adminPushStatus');
 
   let lastTotal = 0;
   let swRegistration = null;
   let vapidPublicKey = '';
+  let pushServerEnabled = false;
+
+  function adminAbsoluteUrl(relativePath) {
+    try {
+      return new URL(relativePath || 'index.php', window.location.href).href;
+    } catch (_) {
+      return window.location.href;
+    }
+  }
+
+  function setPushTestVisible(show) {
+    if (pushTestBtn) pushTestBtn.classList.toggle('hidden', !show);
+  }
 
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -152,6 +166,7 @@
       const json = await res.json();
       if (pushStatus) pushStatus.textContent = json.message || 'Notifications push activées.';
       if (pushBtn) pushBtn.classList.add('hidden');
+      setPushTestVisible(pushServerEnabled);
       return true;
     } catch (e) {
       if (pushStatus) pushStatus.textContent = 'Erreur : ' + (e.message || 'abonnement impossible');
@@ -169,9 +184,13 @@
       const cfgRes = await fetch('push-config.php', { credentials: 'same-origin' });
       const cfg = await cfgRes.json();
       if (!cfg.success || !cfg.data.enabled) {
-        if (pushStatus) pushStatus.textContent = 'Configurez VAPID dans .env (voir generate-vapid-keys.php).';
+        if (pushStatus) {
+          pushStatus.textContent =
+            'Ajoutez VAPID_PUBLIC_KEY et VAPID_PRIVATE_KEY dans le .env Hostinger, puis rechargez.';
+        }
         return;
       }
+      pushServerEnabled = true;
       vapidPublicKey = cfg.data.publicKey;
       swRegistration = await navigator.serviceWorker.register('sw.js');
       await swRegistration.ready;
@@ -186,8 +205,9 @@
         });
         if (pushBtn) pushBtn.classList.add('hidden');
         if (pushStatus) pushStatus.textContent = 'Notifications push actives sur cet appareil.';
+        setPushTestVisible(true);
       } else if (pushStatus) {
-        pushStatus.textContent = 'Recevez les alertes sur votre téléphone (app installée).';
+        pushStatus.textContent = 'Appuyez ci-dessous pour recevoir les alertes sur ce téléphone.';
       }
 
       if (Notification.permission === 'default' && !localStorage.getItem(PUSH_ASKED_KEY)) {
@@ -203,6 +223,26 @@
     pushBtn.addEventListener('click', (e) => {
       e.preventDefault();
       subscribePush();
+    });
+  }
+
+  async function sendTestPush() {
+    if (pushStatus) pushStatus.textContent = 'Envoi du test…';
+    try {
+      const res = await fetch('push-test.php', { method: 'POST', credentials: 'same-origin' });
+      const json = await res.json();
+      if (pushStatus) {
+        pushStatus.textContent = json.message || json.error || (json.success ? 'Test envoyé.' : 'Échec du test.');
+      }
+    } catch (e) {
+      if (pushStatus) pushStatus.textContent = 'Erreur réseau : ' + (e.message || 'test impossible');
+    }
+  }
+
+  if (pushTestBtn) {
+    pushTestBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendTestPush();
     });
   }
 
@@ -233,7 +273,7 @@
           body: first ? `${first.label} (${first.count})` : 'Nouvelle activité',
           icon: '../public/favicon.png',
           tag: 'dc-admin-poll',
-          data: { url: first?.href || 'index.php' },
+          data: { url: adminAbsoluteUrl(first?.href || 'index.php') },
         });
       }
       lastTotal = total;

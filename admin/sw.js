@@ -46,12 +46,15 @@ self.addEventListener('push', (e) => {
 
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  const url = e.notification.data?.url || 'index.php';
+  const raw = e.notification.data?.url || 'index.php';
+  const url = new URL(raw, self.location.href).href;
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const client of list) {
         if ('focus' in client) {
-          client.navigate(url);
+          if ('navigate' in client) {
+            return client.navigate(url).then(() => client.focus());
+          }
           return client.focus();
         }
       }

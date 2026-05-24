@@ -6,6 +6,29 @@ import react from '@vitejs/plugin-react';
 
 const PHP_LOCAL = 'http://localhost/donchaminade-d%C3%A9veloppeur-web';
 
+/** Photo de profil pour og:image (build Vercel → aperçu WhatsApp du lien frontend). */
+async function resolveOgImage(apiUrl: string, explicit?: string): Promise<string> {
+  if (explicit?.trim()) return explicit.trim();
+  try {
+    const res = await fetch(`${apiUrl}/api/index.php?resource=profile`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    const json = (await res.json()) as { data?: { photo_path?: string } };
+    const path = json?.data?.photo_path?.trim();
+    if (path) {
+      let normalized = path.startsWith('/') ? path : `/${path}`;
+      if (normalized.startsWith('/uploads/') && !normalized.startsWith('/public/')) {
+        normalized = `/public${normalized}`;
+      }
+      return `${apiUrl}${normalized}`;
+    }
+  } catch {
+    // fallback ci-dessous
+  }
+  return `${apiUrl}/public/gallerie/pypicture.jpg`;
+}
+
 /** Copie public/ vers dist/ sans uploads/ (médias servis par l'API Hostinger). */
 function copyPublicWithoutUploads() {
   return {
@@ -25,6 +48,10 @@ function copyPublicWithoutUploads() {
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
+    const siteUrl = (env.VITE_SITE_URL || 'https://donchaminade-alpha.vercel.app').replace(/\/$/, '');
+    const apiUrl = (env.VITE_API_URL || 'https://donchamfolio.grosbit.com').replace(/\/$/, '');
+    const ogImage = env.VITE_OG_IMAGE || `${apiUrl}/public/gallerie/pypicture.jpg`;
+
     return {
       publicDir: false,
       server: {
@@ -36,7 +63,19 @@ export default defineConfig(({ mode }) => {
           '/uploads': { target: PHP_LOCAL, changeOrigin: true, rewrite: (p) => `/public${p}` },
         },
       },
-      plugins: [react(), copyPublicWithoutUploads()],
+      plugins: [
+        react(),
+        copyPublicWithoutUploads(),
+        {
+          name: 'inject-og-meta',
+          async transformIndexHtml(html) {
+            const ogImage = await resolveOgImage(apiUrl, resolvedOgImage);
+            return html
+              .replaceAll('__SITE_URL__', siteUrl)
+              .replaceAll('__OG_IMAGE__', ogImage);
+          },
+        },
+      ],
       build: {
         outDir: 'dist',
         emptyOutDir: true,

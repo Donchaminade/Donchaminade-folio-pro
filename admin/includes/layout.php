@@ -181,6 +181,9 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
                         <button type="button" id="adminPushEnableBtn" class="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest">
                             Activer les notifications push
                         </button>
+                        <button type="button" id="adminPushTestBtn" class="hidden w-full py-2 rounded-xl border border-white/15 text-slate-300 hover:bg-white/5 text-[10px] font-black uppercase tracking-widest">
+                            Envoyer un test
+                        </button>
                     </div>
                 </div>
             </div>

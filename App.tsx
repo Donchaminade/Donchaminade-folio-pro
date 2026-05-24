@@ -17,8 +17,9 @@ import {
 import { navigate } from './lib/navigation';
 import { fetchPortfolio } from './lib/api';
 import { mergeProjects } from './lib/mergeProjects';
+import { applyPortfolioSeo } from './lib/seo';
 import { PROJECTS } from './constants';
-import { Project } from './types';
+import { Project, SiteProfile } from './types';
 import BrandMark from './components/BrandMark';
 
 import Hero from './components/Hero';
@@ -81,9 +82,10 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    fetchPortfolio<{ projects: Project[] }>()
+    fetchPortfolio<{ projects: Project[]; profile: SiteProfile | null }>()
       .then((data) => {
         setProjects(mergeProjects(data.projects, PROJECTS));
+        if (data.profile) applyPortfolioSeo(data.profile);
       })
       .catch(() => {});
   }, []);
