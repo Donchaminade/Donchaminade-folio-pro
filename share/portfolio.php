@@ -11,7 +11,6 @@ require_once dirname(__DIR__) . '/bootstrap.php';
 
 $siteName = 'Donchaminade';
 $frontendBase = rtrim(frontendUrl(), '/');
-$frontendUrl = $frontendBase . '/';
 
 $title = 'Donchaminade | Développeur Web & Mobile Full-Stack';
 $description = 'Portfolio de ADJOLOU Dondah Chaminade — développeur web & mobile. Solutions digitales sur mesure, React, PHP, Flutter.';
@@ -35,7 +34,9 @@ try {
 
 $pageUrl = trim((string) ($_GET['from'] ?? ''));
 if ($pageUrl === '' || !str_starts_with($pageUrl, 'http')) {
-    $pageUrl = $frontendUrl;
+    $pageUrl = $frontendBase;
+} else {
+    $pageUrl = rtrim(strtok($pageUrl, '#'), '/');
 }
 
 header('Content-Type: text/html; charset=utf-8');

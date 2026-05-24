@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BlogPostDetail } from '../../lib/api';
-import { getSharePreviewImageUrl } from '../../lib/ogImage';
+import { getCanonicalShareUrl, getSharePreviewImageUrl } from '../../lib/ogImage';
 
 interface Props {
   post: BlogPostDetail;
@@ -12,7 +12,7 @@ const BlogMeta: React.FC<Props> = ({ post }) => {
     const title = `${post.title} — Donchaminade`;
     const description = post.excerpt || '';
     const image = getSharePreviewImageUrl();
-    const url = post.share_url || window.location.href;
+    const url = getCanonicalShareUrl(post.share_url || window.location.href);
 
     document.title = title;
 

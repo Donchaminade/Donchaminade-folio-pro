@@ -5,6 +5,17 @@ export const SHARE_PREVIEW_IMAGE = '/og-share.jpg';
 export const SHARE_PREVIEW_WIDTH = 1445;
 export const SHARE_PREVIEW_HEIGHT = 890;
 
+/** URL canonique du site (sans #fragment, sans slash final). */
+export function getCanonicalShareUrl(href?: string): string {
+  const raw =
+    href ||
+    (typeof window !== 'undefined' ? window.location.href : '') ||
+    (import.meta.env.VITE_SITE_URL as string | undefined) ||
+    'https://donchaminade-alpha.vercel.app';
+  const withoutHash = raw.split('#')[0];
+  return withoutHash.replace(/\/$/, '') || withoutHash;
+}
+
 export function getSharePreviewImageUrl(siteUrl?: string): string {
   const explicit = (import.meta.env.VITE_OG_IMAGE as string | undefined)?.trim();
   if (explicit) return explicit;

@@ -1,4 +1,9 @@
-import { getSharePreviewImageUrl, SHARE_PREVIEW_HEIGHT, SHARE_PREVIEW_WIDTH } from './ogImage';
+import {
+  getCanonicalShareUrl,
+  getSharePreviewImageUrl,
+  SHARE_PREVIEW_HEIGHT,
+  SHARE_PREVIEW_WIDTH,
+} from './ogImage';
 
 const SITE_NAME = 'Donchaminade';
 
@@ -13,14 +18,16 @@ function setMeta(attr: 'name' | 'property', key: string, content: string): void 
   el.setAttribute('content', content);
 }
 
-/** Balises sociales — image de preview toujours public/image.png */
+/** Balises sociales — même preview pour /, sans slash, ou #apropos */
 export function applyPortfolioSeo(profile: {
   full_name?: string;
   bio?: string;
   hero_title?: string;
 } | null): void {
-  const siteUrl = (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/$/, '') || window.location.origin;
-  const pageUrl = window.location.href.split('#')[0];
+  const siteUrl = getCanonicalShareUrl(
+    (import.meta.env.VITE_SITE_URL as string | undefined) || window.location.origin
+  );
+  const pageUrl = getCanonicalShareUrl(window.location.href);
   const title = profile?.full_name
     ? `${profile.full_name} — Développeur Web & Mobile`
     : 'Donchaminade | Développeur Web & Mobile Full-Stack';
