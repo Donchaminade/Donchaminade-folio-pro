@@ -12,7 +12,8 @@ import {
   Moon,
   Sun,
   BookOpen,
-  Users
+  Users,
+  CalendarCheck2
 } from 'lucide-react';
 import { navigate } from './lib/navigation';
 import { fetchPortfolio } from './lib/api';
@@ -41,6 +42,7 @@ const SOCIALS = {
   twitter: 'https://x.com/Donchaminde',
   github: 'https://github.com/Donchaminade',
 };
+const BOOKING_URL = 'https://doodle.com/bp/chaminadedondahadjolou/donchaminade';
 
 const NAV_ITEMS = [
   { name: 'Profil', id: 'apropos', icon: <User size={20} /> },
@@ -165,7 +167,7 @@ const App: React.FC = () => {
       </nav>
 
       <main className="pb-16 lg:pb-0">
-        <Hero />
+        <Hero bookingUrl={BOOKING_URL} />
         <Stats />
         <About />
         <Projects homeProjects={homeProjects} setSelectedProject={setSelectedProject} setShowAllProjects={setShowAllProjects} />
@@ -179,6 +181,16 @@ const App: React.FC = () => {
 
       <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
 
+      <a
+        href={BOOKING_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed right-3 md:right-5 top-1/2 -translate-y-1/2 z-[65] px-3 md:px-4 py-4 md:py-5 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white shadow-[0_20px_40px_rgba(124,58,237,0.35)] border border-white/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 md:gap-3"
+      >
+        <CalendarCheck2 size={18} />
+        <span className="hidden md:inline text-[10px] font-black uppercase tracking-widest">Réserver un créneau</span>
+      </a>
+
       <footer className="py-16 md:py-24 text-center border-t border-slate-200 dark:border-white/5 px-6 bg-slate-50/50 dark:bg-slate-950/40">
         <div className="flex justify-center mb-6 md:mb-8">
           <BrandMark />
@@ -188,6 +200,15 @@ const App: React.FC = () => {
           <a href={SOCIALS.linkedin} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Linkedin size={28} /></a>
           <a href={SOCIALS.twitter} target="_blank" className="hover:text-blue-600 dark:hover:text-blue-500 transition-all hover:scale-110"><Twitter size={28} /></a>
         </div>
+        <a
+          href={BOOKING_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 px-7 md:px-9 py-4 md:py-5 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white text-[10px] md:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(124,58,237,0.35)] mb-10 md:mb-12"
+        >
+          <CalendarCheck2 size={18} />
+          Réserver un créneau
+        </a>
         <div className="text-[10px] uppercase font-black tracking-[0.5em] text-slate-500 dark:text-white opacity-40 dark:opacity-30">© 2024 Donchaminade. Tous droits réservés.</div>
       </footer>
     </div>

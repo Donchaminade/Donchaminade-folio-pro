@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { Github, Linkedin, Twitter, Download, ShieldCheck, ArrowUpRight } from 'lucide-react';
+import { Github, Linkedin, Twitter, Download, ShieldCheck, ArrowUpRight, CalendarCheck2 } from 'lucide-react';
 import GlitchText from './GlitchText';
 import { fetchPortfolio } from '../lib/api';
 import { mediaUrl } from '../lib/media';
@@ -23,7 +23,11 @@ function splitFullName(fullName: string): [string, string] {
   return [parts[0].toUpperCase(), parts.slice(1).join(' ')];
 }
 
-const Hero: React.FC = () => {
+type HeroProps = {
+  bookingUrl: string;
+};
+
+const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
   const [profile, setProfile] = useState<SiteProfile | null>(null);
 
   useEffect(() => {
@@ -141,6 +145,15 @@ const Hero: React.FC = () => {
               className="px-8 md:px-10 py-5 md:py-6 glass text-slate-800 dark:text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-white/10 border-slate-200 dark:border-white/10 transition-all hover:scale-105 active:scale-95 shadow-xl dark:shadow-2xl"
             >
               <Download size={18} className="text-blue-400" /> TÉLÉCHARGER CV
+            </a>
+
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 md:px-10 py-5 md:py-6 bg-violet-600/95 hover:bg-violet-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(124,58,237,0.35)]"
+            >
+              <CalendarCheck2 size={18} /> RÉSERVER UN CRÉNEAU
             </a>
           </div>
 
