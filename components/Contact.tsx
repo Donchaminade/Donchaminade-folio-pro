@@ -86,19 +86,19 @@ const Contact: React.FC = () => {
           </button>
 
           <address className="not-italic space-y-4 md:space-y-6">
-            <div className="flex items-center gap-4 md:gap-6 text-slate-700 dark:text-slate-300 group/link">
-              <div className="p-3 md:p-4 glass rounded-2xl text-blue-600 dark:text-blue-400 border-slate-200 dark:border-white/10">
+            <div className="flex items-start gap-3 md:gap-6 text-slate-700 dark:text-slate-300 group/link min-w-0">
+              <div className="p-3 md:p-4 glass rounded-2xl text-blue-600 dark:text-blue-400 border-slate-200 dark:border-white/10 shrink-0">
                 <Mail size={20} />
               </div>
-              <a href="mailto:chaminade.dondah.adjolou@gmail.com" className="text-base md:text-lg hover:text-blue-600 dark:hover:text-blue-500 transition-colors font-medium break-all">
+              <a href="mailto:chaminade.dondah.adjolou@gmail.com" className="text-sm sm:text-base md:text-lg hover:text-blue-600 dark:hover:text-blue-500 transition-colors font-medium break-words min-w-0 pt-2.5 md:pt-3">
                 chaminade.dondah.adjolou@gmail.com
               </a>
             </div>
-            <div className="flex items-center gap-4 md:gap-6 text-slate-700 dark:text-slate-300 group/link">
-              <div className="p-3 md:p-4 glass rounded-2xl text-blue-600 dark:text-blue-500 border-slate-200 dark:border-white/10">
+            <div className="flex items-center gap-3 md:gap-6 text-slate-700 dark:text-slate-300 group/link">
+              <div className="p-3 md:p-4 glass rounded-2xl text-blue-600 dark:text-blue-500 border-slate-200 dark:border-white/10 shrink-0">
                 <Phone size={20} />
               </div>
-              <a href="tel:+22899181626" className="text-base md:text-lg hover:text-blue-600 dark:hover:text-blue-500 transition-colors font-medium">
+              <a href="tel:+22899181626" className="text-sm sm:text-base md:text-lg hover:text-blue-600 dark:hover:text-blue-500 transition-colors font-medium">
                 +228 99 18 16 26
               </a>
             </div>
