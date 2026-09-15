@@ -66,7 +66,7 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
   };
 
   return (
-    <section id="hero" className="relative pt-20 md:pt-48 lg:pt-64 pb-16 md:pb-48 px-4 sm:px-6 max-w-7xl mx-auto overflow-x-hidden min-w-0">
+    <section id="hero" className="relative pt-20 md:pt-48 lg:pt-64 pb-32 md:pb-56 lg:pb-48 px-4 sm:px-6 max-w-7xl mx-auto overflow-x-hidden min-w-0">
       <motion.div
         style={{ y: heroBgY }}
         className="absolute inset-0 -z-30 opacity-[0.05] pointer-events-none"
@@ -111,28 +111,28 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
           </div>
 
           <div className="mb-6 md:mb-8 min-w-0">
-            <h2 className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight mb-2 md:mb-4 break-words">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight mb-2 md:mb-4 break-words">
               <GlitchText text={firstName || fullName.toUpperCase()} />
             </h2>
             {lastName ? (
-              <h2 className="text-lg sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-blue-600 dark:text-blue-500 uppercase leading-tight opacity-90 break-words">
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-black tracking-tight text-blue-600 dark:text-blue-500 uppercase leading-tight opacity-90 break-words">
                 <GlitchText text={lastName} />
               </h2>
             ) : null}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black mb-6 md:mb-10 leading-[1.1] tracking-tight text-slate-900 dark:text-white uppercase break-words">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-6 md:mb-10 leading-[1.1] tracking-tight text-slate-900 dark:text-white uppercase break-words">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300">{heroTitle}</span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-2xl text-slate-600 dark:text-slate-300 mb-8 md:mb-14 max-w-xl font-light leading-relaxed whitespace-pre-line">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-8 md:mb-10 lg:mb-14 max-w-xl font-light leading-relaxed whitespace-pre-line">
             {bio}
           </p>
 
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-6 items-stretch sm:items-center">
+          <div className="flex flex-col lg:flex-row flex-wrap gap-3 md:gap-6 items-stretch lg:items-center">
             <a
               href="#projets"
-              className="group w-full sm:w-auto justify-center min-h-12 px-6 md:px-12 py-4 md:py-6 bg-blue-600 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-500 transition-all shadow-[0_20px_40px_rgba(37,99,235,0.3)] hover:scale-105 active:scale-95 flex items-center gap-3 touch-manipulation"
+              className="group w-full lg:w-auto justify-center min-h-12 px-6 md:px-12 py-4 md:py-6 bg-blue-600 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-500 transition-all shadow-[0_20px_40px_rgba(37,99,235,0.3)] hover:scale-105 active:scale-95 flex items-center gap-3 touch-manipulation"
             >
               MES RÉALISATIONS{' '}
               <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -143,7 +143,7 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
               download
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto justify-center min-h-12 px-6 md:px-10 py-4 md:py-6 glass text-slate-800 dark:text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-white/10 border-slate-200 dark:border-white/10 transition-all hover:scale-105 active:scale-95 shadow-xl dark:shadow-2xl touch-manipulation"
+              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-10 py-4 md:py-6 glass text-slate-800 dark:text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-white/10 border-slate-200 dark:border-white/10 transition-all hover:scale-105 active:scale-95 shadow-xl dark:shadow-2xl touch-manipulation"
             >
               <Download size={18} className="text-blue-400" /> TÉLÉCHARGER CV
             </a>
@@ -152,7 +152,7 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto justify-center min-h-12 px-6 md:px-10 py-4 md:py-6 bg-violet-600/95 hover:bg-violet-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(124,58,237,0.35)] touch-manipulation"
+              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-10 py-4 md:py-6 bg-violet-600/95 hover:bg-violet-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(124,58,237,0.35)] touch-manipulation"
             >
               <CalendarCheck2 size={18} /> RÉSERVER UN CRÉNEAU
             </a>

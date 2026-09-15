@@ -185,7 +185,7 @@ const App: React.FC = () => {
         href={BOOKING_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed right-3 bottom-24 lg:right-5 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 z-[55] px-3 md:px-4 py-3.5 md:py-5 min-h-11 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white shadow-[0_20px_40px_rgba(124,58,237,0.35)] border border-white/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 md:gap-3 touch-manipulation"
+        className="hidden lg:flex fixed right-5 bottom-8 z-[55] px-4 py-5 min-h-11 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white shadow-[0_20px_40px_rgba(124,58,237,0.35)] border border-white/20 transition-all hover:scale-105 active:scale-95 items-center gap-3"
       >
         <CalendarCheck2 size={18} />
         <span className="hidden md:inline text-[10px] font-black uppercase tracking-widest">Réserver un créneau</span>
