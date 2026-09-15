@@ -73,6 +73,7 @@ export interface BlogPostDetail extends BlogPostSummary {
   share_url?: string;
   og_image_url?: string;
   comments: BlogComment[];
+  is_preview?: boolean;
 }
 
 export interface BlogCommentResponse {
@@ -124,6 +125,13 @@ export async function fetchBlogList(
 export async function fetchBlogPost(slug: string): Promise<BlogPostDetail> {
   const res = await apiFetch<ApiResponse<BlogPostDetail>>(
     `/api/blog.php?action=post&slug=${encodeURIComponent(slug)}`
+  );
+  return res.data;
+}
+
+export async function fetchBlogPreview(token: string): Promise<BlogPostDetail & { is_preview?: boolean }> {
+  const res = await apiFetch<ApiResponse<BlogPostDetail & { is_preview?: boolean }>>(
+    `/api/blog.php?action=preview&token=${encodeURIComponent(token)}`
   );
   return res.data;
 }

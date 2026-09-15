@@ -67,6 +67,36 @@ final class BlogRepository
         return $post ?: null;
     }
 
+    public function getByPreviewToken(string $token): ?array
+    {
+        $token = trim($token);
+        if ($token === '' || strlen($token) < 16) {
+            return null;
+        }
+        try {
+            $stmt = $this->db->prepare('SELECT * FROM blog_posts WHERE preview_token = ? LIMIT 1');
+            $stmt->execute([$token]);
+            $post = $stmt->fetch();
+            return $post ?: null;
+        } catch (PDOException) {
+            return null;
+        }
+    }
+
+    public function ensurePreviewToken(int $postId, ?string $current = null): string
+    {
+        if (is_string($current) && strlen($current) >= 16) {
+            return $current;
+        }
+        $token = BlogShareCopy::newPreviewToken();
+        try {
+            $this->db->prepare('UPDATE blog_posts SET preview_token = ? WHERE id = ?')->execute([$token, $postId]);
+        } catch (PDOException) {
+            // colonne absente avant migration
+        }
+        return $token;
+    }
+
     public function incrementViews(int $postId): void
     {
         $this->db->prepare('UPDATE blog_posts SET views_count = views_count + 1 WHERE id = ?')->execute([$postId]);

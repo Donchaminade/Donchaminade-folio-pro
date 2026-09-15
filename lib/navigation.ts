@@ -9,6 +9,13 @@ export function navigate(path: string): void {
 
 export function getBlogSlugFromPath(): string | null {
   const match = window.location.pathname.match(/^\/blog\/([^/]+)\/?$/);
+  if (!match) return null;
+  const slug = decodeURIComponent(match[1]);
+  return slug === 'preview' ? null : slug;
+}
+
+export function getBlogPreviewTokenFromPath(): string | null {
+  const match = window.location.pathname.match(/^\/blog\/preview\/([^/]+)\/?$/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 

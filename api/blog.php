@@ -54,6 +54,27 @@ if ($method === 'GET') {
         ]);
     }
 
+    if ($action === 'preview') {
+        $token = trim((string) ($_GET['token'] ?? ''));
+        if ($token === '') {
+            Response::error('Jeton d’aperçu requis', 422);
+        }
+        $post = $repo->getByPreviewToken($token);
+        if (!$post) {
+            Response::error('Aperçu introuvable ou expiré', 404);
+        }
+        $post['liked'] = false;
+        $post['comments'] = [];
+        $post['comments_count'] = 0;
+        $post['is_preview'] = true;
+        $post['share_url'] = frontendUrl() . '/blog/preview/' . rawurlencode($token);
+        $post['og_image_url'] = absoluteMediaUrl((string) ($post['cover_image'] ?? ''));
+        if (empty($post['published_at'])) {
+            $post['published_at'] = $post['updated_at'] ?? date('Y-m-d H:i:s');
+        }
+        Response::json(['success' => true, 'data' => $post]);
+    }
+
     if ($action === 'post') {
         $slug = trim((string) ($_GET['slug'] ?? ''));
         if ($slug === '') {

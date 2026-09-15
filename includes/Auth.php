@@ -30,6 +30,7 @@ final class Auth
 
     public static function requireAdmin(): void
     {
+        AdminProvisioner::ensureFromEnv();
         if (!self::check()) {
             header('Location: login.php');
             exit;

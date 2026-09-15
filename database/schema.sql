@@ -355,13 +355,17 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   reading_time INT UNSIGNED DEFAULT 5,
   is_published TINYINT(1) NOT NULL DEFAULT 0,
   published_at DATETIME NULL,
+  preview_token VARCHAR(64) DEFAULT NULL,
+  share_facebook TEXT NULL,
+  share_x TEXT NULL,
   views_count INT UNSIGNED NOT NULL DEFAULT 0,
   likes_count INT UNSIGNED NOT NULL DEFAULT 0,
   shares_count INT UNSIGNED NOT NULL DEFAULT 0,
   comments_count INT UNSIGNED NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  INDEX idx_published (is_published, published_at)
+  INDEX idx_published (is_published, published_at),
+  UNIQUE KEY idx_blog_preview_token (preview_token)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS blog_category_labels (

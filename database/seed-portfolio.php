@@ -448,5 +448,6 @@ function seedPortfolio(PDO $db): array
         'clients' => seedClients($db),
         'gallery' => seedGallery($db),
         'blog_posts' => seedBlogPosts($db),
+        'blog_drafts' => seedBlogDrafts($db),
     ];
 }

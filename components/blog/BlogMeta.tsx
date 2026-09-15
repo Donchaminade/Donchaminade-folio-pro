@@ -4,10 +4,11 @@ import { getCanonicalShareUrl, getSharePreviewImageUrl } from '../../lib/ogImage
 
 interface Props {
   post: BlogPostDetail;
+  noIndex?: boolean;
 }
 
 /** Balises meta dynamiques (complète la page share.php pour les crawlers). */
-const BlogMeta: React.FC<Props> = ({ post }) => {
+const BlogMeta: React.FC<Props> = ({ post, noIndex = false }) => {
   useEffect(() => {
     const title = `${post.title} — Donchaminade`;
     const description = post.excerpt || '';
@@ -26,6 +27,7 @@ const BlogMeta: React.FC<Props> = ({ post }) => {
       el.content = value;
     };
 
+    setMeta('name', 'robots', noIndex ? 'noindex, nofollow' : 'index, follow');
     setMeta('name', 'description', description);
     setMeta('property', 'og:type', 'article');
     setMeta('property', 'og:title', post.title);

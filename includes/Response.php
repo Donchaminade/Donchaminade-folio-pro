@@ -20,12 +20,22 @@ final class Response
     public static function cors(): void
     {
         $origins = env('CORS_ORIGINS', 'http://localhost:3000');
-        $allowed = array_map('trim', explode(',', $origins));
+        $allowed = array_values(array_filter(array_map('trim', explode(',', $origins))));
+        $frontend = rtrim((string) env('FRONTEND_URL', ''), '/');
+        if ($frontend !== '' && !in_array($frontend, $allowed, true)) {
+            $allowed[] = $frontend;
+        }
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-        if ($origin !== '' && in_array($origin, $allowed, true)) {
+        $ok = $origin !== '' && (
+            in_array($origin, $allowed, true)
+            || self::isTrustedVercelOrigin($origin)
+        );
+
+        if ($ok) {
             header('Access-Control-Allow-Origin: ' . $origin);
             header('Access-Control-Allow-Credentials: true');
+            header('Vary: Origin');
         }
 
         header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
@@ -35,5 +45,18 @@ final class Response
             http_response_code(204);
             exit;
         }
+    }
+
+    private static function isTrustedVercelOrigin(string $origin): bool
+    {
+        $host = parse_url($origin, PHP_URL_HOST);
+        if (!is_string($host) || $host === '') {
+            return false;
+        }
+
+        return (bool) preg_match(
+            '/^(donchaminade(-[a-z0-9]+)*|donchaminade-git-[a-z0-9-]+)-chaminadegithubs-projects\.vercel\.app$/i',
+            $host
+        ) || strcasecmp($host, 'donchaminade-alpha.vercel.app') === 0;
     }
 }

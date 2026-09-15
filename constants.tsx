@@ -29,6 +29,8 @@ export const TECH_ICONS: Record<string, string> = {
   'Laravel': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',
   'Git': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',
   'GitHub': 'https://www.vectorlogo.zone/logos/github/github-icon.svg',
+  'Go': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg',
+  'Docker': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',
   'MySQL': 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',
   'Agile': 'https://www.vectorlogo.zone/logos/atlassian_jira/atlassian_jira-icon.svg',
   'Intelligence Artificielle': 'https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg',
@@ -316,6 +318,28 @@ export const EXPERIENCES: Experience[] = [
     ]
   },
   {
+    company: 'PyCon Togo 2026',
+    role: 'Bénévole — Chargé des Speakers',
+    period: '2026',
+    tags: ['Logistique', 'Événementiel', 'Python', 'Bénévolat'],
+    description: [
+      'Coordination de l’accueil des intervenants de PyCon Togo 2026 : arrivées, départs et suivi tout au long de la conférence.',
+      'Organisation du transport depuis la frontière et de la logistique speakers sur site.',
+      'Accompagnement des speakers internationaux et locaux pour garantir une expérience fluide et professionnelle.'
+    ]
+  },
+  {
+    company: '48h Hackathon YAS Togo | Next Gen',
+    role: 'Coach',
+    period: '2026',
+    tags: ['Coaching', 'Hackathon', 'Mentorat'],
+    description: [
+      'Coaching des équipes participantes au 48h Hackathon YAS Togo et à Next Gen.',
+      'Accompagnement sur le cadrage produit, les choix techniques et la préparation du pitch.',
+      'Transmission de méthodes de travail pour livrer un prototype viable dans un temps contraint.'
+    ]
+  },
+  {
     company: 'Tayba Market',
     role: 'Consultant IT & Lead Tech',
     period: '2025',
@@ -384,8 +408,8 @@ export const PROJECTS: Project[] = [
     tags: ['Flutter', 'Dart'],
     image: '/picon.png',
     additionalImages: [],
-    link: '#',
-    github: '#',
+    link: 'https://photopicon.vercel.app',
+    github: 'https://github.com/Donchaminade/photopicon',
     type: 'Mobile'
   },
 
@@ -414,7 +438,7 @@ export const PROJECTS: Project[] = [
       '/8tranch.png'
 
     ],
-    link: '8-me-tranche-delights.vercel.app',
+    link: 'https://8-me-tranche-delights.vercel.app',
     github: '#',
     type: 'Web'
   },
@@ -463,7 +487,7 @@ export const PROJECTS: Project[] = [
       '/payfff.png'
     ],
     link: 'https://pay-flex.vercel.app/',
-    github: '#',
+    github: 'https://github.com/Donchaminade/PayFlex',
     type: 'Web'
   },
 
@@ -578,7 +602,7 @@ export const PROJECTS: Project[] = [
       '/485.png'
     ],
     link: '#',
-    github: 'https://github.com/Donchaminade/',
+    github: 'https://github.com/Donchaminade/48laws',
     type: 'Mobile'
   },
 
@@ -596,8 +620,8 @@ export const PROJECTS: Project[] = [
       // '/ak3.jpeg',
       // '/ak4.jpeg'
     ],
-    link: 'https://procope-afriqueclosed.vercel.app',
-    github: 'https://github.com/Donchaminade/procope-afrique.git',
+    link: 'https://www.procopeafrique.org',
+    github: 'https://github.com/Donchaminade/procope-afrique',
     type: 'Web',
 
 
@@ -618,13 +642,119 @@ export const PROJECTS: Project[] = [
       // '/andy5.png'
     ],
     link: 'https://andykc.com',
-    github: '',
+    github: 'https://github.com/Donchaminade/andykc',
     type: 'Web',
-
-
+  },
+  {
+    title: 'TwinFlow',
+    description: 'Sidecar base de données : lisse les pics d’écriture PostgreSQL et sert les lectures non critiques depuis un miroir local.',
+    detailedDescription: 'TwinFlow s’interpose devant PostgreSQL : pool borné, file d’écriture et miroir SQLite synchronisé en environ une seconde. API HTTP JSON, indépendante du langage. La base centrale reste la source de vérité.',
+    tags: ['Go', 'PostgreSQL', 'SQLite', 'Docker'],
+    image: '',
+    additionalImages: [],
+    link: 'https://twinflow-eosin.vercel.app',
+    github: 'https://github.com/Donchaminade/twinflow',
+    type: 'Web'
+  },
+  {
+    title: 'Togo Communities Hub',
+    description: 'Annuaire public qui recense, valorise et connecte les communautés du Togo.',
+    detailedDescription: 'Vitrine des communautés togolaises (tech, culture, sport, citoyenneté) : fiches riches, contacts des leads, espace d’administration et signalements.',
+    tags: ['React', 'TypeScript', 'Tailwind'],
+    image: '',
+    additionalImages: [],
+    link: 'https://togo-communities-hub.vercel.app',
+    github: 'https://github.com/Donchaminade/togo-communities-hub',
+    type: 'Web'
+  },
+  {
+    title: 'TogoSaaS',
+    description: 'Hub qui recense les SaaS togolais, filtrable par ville et thématique.',
+    detailedDescription: 'Annuaire public des produits SaaS du Togo, avec fiches détaillées, espace lead, modération et signalements. Stack React + TypeScript, API PHP/MySQL.',
+    tags: ['React', 'TypeScript', 'PHP', 'MySQL'],
+    image: '',
+    additionalImages: [],
+    link: 'https://togosaas.vercel.app',
+    github: 'https://github.com/Donchaminade/togosaas',
+    type: 'Web'
+  },
+  {
+    title: 'Optibloc',
+    description: 'Site vitrine d’Optibloc, conçu et déployé pour présenter l’offre en ligne.',
+    detailedDescription: 'Site vitrine moderne pour Optibloc : mise en avant de l’identité, des services et du parcours utilisateur, déployé sur Vercel.',
+    tags: ['React', 'TypeScript', 'Vite'],
+    image: '',
+    additionalImages: [],
+    link: 'https://optibloc.vercel.app',
+    github: 'https://github.com/Donchaminade/Optibloc',
+    type: 'Web'
+  },
+  {
+    title: 'IEPP Tsévié',
+    description: 'Plateforme web réalisée pour l’inspection de l’enseignement (IEPP Tsévié).',
+    detailedDescription: 'Projet institutionnel pour l’IEPP Tsévié : digitalisation des processus de l’inspection et mise à disposition d’un site opérationnel.',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    image: '',
+    additionalImages: [],
+    link: 'https://iepp-tsevie.vercel.app',
+    github: 'https://github.com/Donchaminade/IEPP_TSEVIE',
+    type: 'Web'
+  },
+  {
+    title: 'CoachFlow',
+    description: 'Application mobile de coaching IA : personas expertes, contexte personnel et conversation vocale.',
+    detailedDescription: 'CoachFlow démocratise le coaching personnel via des personas IA, un contexte unique et Llama 3.1. Offline-first, biométrie, backend Supabase. Démo publique non publiée à ce jour.',
+    tags: ['Flutter', 'Dart', 'Supabase', 'Riverpod'],
+    image: '',
+    additionalImages: [],
+    link: '#',
+    github: 'https://github.com/Donchaminade/CoachFlow',
+    type: 'Mobile'
+  },
+  {
+    title: 'HorusSight',
+    description: 'Plateforme d’intelligence cybersécurité : scan, tableau de bord et rapports IA.',
+    detailedDescription: 'HorusSight relie un moteur de scan Python à un centre de commande Next.js. L’assistant EWABA (Gemini) transforme les findings en rapports métier. Démo publique non publiée à ce jour.',
+    tags: ['Next.js', 'TypeScript', 'Python', 'Tailwind'],
+    image: '',
+    additionalImages: [],
+    link: '#',
+    github: 'https://github.com/Donchaminade/HorusSight',
+    type: 'Web'
+  },
+  {
+    title: 'CredHub',
+    description: 'Coffre-fort d’identifiants 100 % local, chiffré, mobile et web.',
+    detailedDescription: 'Gestionnaire de credentials hors cloud : les secrets restent sur l’appareil. Flutter multiplateforme. Aucune démo hébergée — le produit est pensé pour rester privé.',
+    tags: ['Flutter', 'Dart', 'Sécurité'],
+    image: '',
+    additionalImages: [],
+    link: '#',
+    github: 'https://github.com/Donchaminade/CredHub',
+    type: 'Mobile'
+  },
+  {
+    title: 'ConseilBox',
+    description: 'Application mobile de partage de conseils et d’expériences, avec API PHP.',
+    detailedDescription: 'ConseilBox permet de découvrir, proposer et mettre en favoris des conseils. Frontend Flutter, backend API PHP. Pas d’URL publique de production à ce jour.',
+    tags: ['Flutter', 'Dart', 'PHP'],
+    image: '',
+    additionalImages: [],
+    link: '#',
+    github: 'https://github.com/Donchaminade/conseilbox',
+    type: 'Mobile'
+  },
+  {
+    title: 'Grosbit',
+    description: 'Site web de GROSBIT, entreprise d’infrastructures et de solutions IT.',
+    detailedDescription: 'Refonte du site de GROSBIT SARLU : présentation de l’entreprise, des services réseau et de l’accompagnement technique.',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    image: '',
+    additionalImages: [],
+    link: 'https://grosbit.vercel.app',
+    github: 'https://github.com/Donchaminade/grosbit',
+    type: 'Web'
   }
-
-
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -687,6 +817,12 @@ export const MANAGED_PAGES: ManagedPage[] = [
 ];
 
 export const COMMUNITIES: Community[] = [
+  {
+    name: 'PyCon Togo',
+    logo: '🎤',
+    role: 'Chargé des Speakers — 2026',
+    description: 'Bénévole chargé des speakers pour PyCon Togo 2026 : arrivées, départs, transport depuis la frontière et accompagnement logistique des intervenants tout au long de la conférence.'
+  },
   {
     name: 'Women Techmakers',
     logo: '👩‍💻',

@@ -15,6 +15,11 @@
     RewriteEngine On
     # Fichiers uploadés (stockés dans public/uploads/)
     RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
+    # Images catalogue / galerie servies depuis public/ (document root = racine PHP)
+    RewriteRule ^gallerie/(.*)$ public/gallerie/$1 [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+    RewriteRule ^((?:gallerie/)?[^/]+\.(?:png|jpe?g|gif|webp|svg|ico|pdf))$ public/$1 [L,NC]
     RewriteRule ^(?:database|config|vendor|includes|node_modules)(?:/|$) - [F,L]
     RewriteRule ^\.git(?:/|$) - [F,L]
 </IfModule>
