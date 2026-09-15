@@ -184,6 +184,10 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
                         <button type="button" id="adminPushTestBtn" class="hidden w-full py-2 rounded-xl border border-white/15 text-slate-300 hover:bg-white/5 text-[10px] font-black uppercase tracking-widest">
                             Envoyer un test
                         </button>
+                        <p id="adminEmailStatus" class="text-[10px] text-slate-500 leading-snug pt-1">Email : configuration en cours de lecture…</p>
+                        <button type="button" id="adminEmailTestBtn" class="w-full py-2 rounded-xl border border-white/15 text-slate-300 hover:bg-white/5 text-[10px] font-black uppercase tracking-widest">
+                            Tester l'email
+                        </button>
                     </div>
                 </div>
             </div>

@@ -115,8 +115,10 @@ DÉPLOIEMENT HOSTINGER — donchamfolio.grosbit.com
 3. VÉRIFIEZ : vous devez voir des DOSSIERS « admin », « api », « public »…
    PAS des fichiers nommés « admin\api\upload.php » (c’est incorrect)
 4. Renommer .env.exemple → .env et remplir DB_NAME, DB_USER, DB_PASS
-5. Supprimer install.php après installation
-6. Droits 755 sur public/uploads/ et uploads/
+5. Renseigner SMTP_* + NOTIFY_EMAIL pour les alertes email (voir README)
+6. php database/apply-pending-migrations.php
+7. Supprimer install.php après installation
+8. Droits 755 sur public/uploads/ et uploads/
 
 Test API :
 https://donchamfolio.grosbit.com/api/index.php?resource=portfolio

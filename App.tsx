@@ -118,30 +118,30 @@ const App: React.FC = () => {
     <div className="min-h-screen w-full overflow-x-hidden relative selection:bg-blue-500 selection:text-white dark:selection:text-white">
       {/* Mobile Top Controls */}
       <div className="fixed top-4 right-4 z-[70] lg:hidden">
-        <button onClick={toggleTheme} className="p-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-full shadow-lg border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
+        <button type="button" onClick={toggleTheme} aria-label="Changer le thème" className="p-3 min-h-11 min-w-11 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-full shadow-lg border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300">
           {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
 
       {/* Desktop Navigation */}
-      <header className="fixed top-8 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl hidden lg:block">
-        <nav className="glass-dark px-8 py-4 rounded-full flex items-center justify-between gap-6 border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:border-white/10 dark:shadow-2xl">
-          <BrandMark onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
-          <div className="flex items-center gap-8 text-slate-600 dark:text-slate-400 shrink-0">
+      <header className="fixed top-4 xl:top-8 left-1/2 -translate-x-1/2 z-50 w-[min(96%,72rem)] hidden lg:block">
+        <nav className="glass-dark px-4 xl:px-8 py-3 xl:py-4 rounded-full flex items-center justify-between gap-3 xl:gap-6 border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:border-white/10 dark:shadow-2xl min-w-0">
+          <BrandMark className="shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} />
+          <div className="flex items-center gap-4 xl:gap-8 text-slate-600 dark:text-slate-400 min-w-0 overflow-x-auto no-scrollbar">
             {NAV_ITEMS.map((item) => <NavItem key={item.id} item={item} />)}
           </div>
-          <div className="flex items-center gap-4">
-            <button onClick={toggleTheme} className="p-2 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500 transition-colors">
+          <div className="flex items-center gap-2 xl:gap-4 shrink-0">
+            <button type="button" onClick={toggleTheme} className="p-2 min-h-11 min-w-11 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-500 transition-colors" aria-label="Changer le thème">
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <a href="#contact" className="px-6 py-3 bg-slate-800/80 dark:bg-white/10 hover:bg-slate-700 rounded-full text-[11px] font-black uppercase text-white transition-all border border-white/10">Contact</a>
+            <a href="#contact" className="px-4 xl:px-6 py-2.5 xl:py-3 bg-slate-800/80 dark:bg-white/10 hover:bg-slate-700 rounded-full text-[11px] font-black uppercase text-white transition-all border border-white/10">Contact</a>
             <button
               type="button"
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('open-collaborate-modal'));
                 document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="px-8 py-3 bg-violet-600 hover:bg-violet-500 rounded-full text-[11px] font-black uppercase text-white transition-all shadow-lg shadow-violet-600/25"
+              className="px-4 xl:px-8 py-2.5 xl:py-3 bg-violet-600 hover:bg-violet-500 rounded-full text-[11px] font-black uppercase text-white transition-all shadow-lg shadow-violet-600/25"
             >
               Collaborons
             </button>
@@ -150,31 +150,31 @@ const App: React.FC = () => {
       </header>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[92%] max-w-md lg:hidden bg-gradient-to-b from-white/90 to-slate-50/90 dark:from-slate-900/60 dark:to-slate-950/90 backdrop-blur-3xl rounded-[2.5rem] border border-slate-200 dark:border-white/10 px-6 md:px-8 py-4 md:py-5 flex justify-between items-center shadow-[0_20px_60px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+      <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[60] w-[min(96%,28rem)] lg:hidden bg-gradient-to-b from-white/90 to-slate-50/90 dark:from-slate-900/60 dark:to-slate-950/90 backdrop-blur-3xl rounded-[1.75rem] border border-slate-200 dark:border-white/10 px-1.5 sm:px-3 py-2 flex justify-between items-stretch shadow-[0_20px_60px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
         {NAV_ITEMS.map((item) => (
           <a
             key={item.id}
             href={'href' in item && item.href ? item.href : `#${item.id}`}
             onClick={'href' in item && item.href ? (e) => { e.preventDefault(); navigate(item.href!); } : undefined}
-            className="text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 active:text-blue-500 dark:active:text-blue-400 transition-all flex flex-col items-center gap-1 md:gap-2"
+            className="min-w-0 flex-1 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 active:text-blue-500 dark:active:text-blue-400 transition-all flex flex-col items-center justify-center gap-0.5 py-1.5 min-h-11 touch-manipulation"
           >
-            <div className="p-1 hover:scale-110 transition-transform">
+            <div className="p-0.5">
               {React.cloneElement(item.icon as React.ReactElement<any>, { size: 18 })}
             </div>
-            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest opacity-80">{item.name}</span>
+            <span className="text-[8px] font-bold uppercase tracking-wide opacity-80 truncate max-w-full px-0.5">{item.name}</span>
           </a>
         ))}
       </nav>
 
-      <main className="pb-16 lg:pb-0">
+      <main className="pb-28 lg:pb-0">
         <Hero bookingUrl={BOOKING_URL} />
         <Stats />
         <About />
         <Projects homeProjects={homeProjects} setSelectedProject={setSelectedProject} setShowAllProjects={setShowAllProjects} />
         <Experience />
+        <Community />
         <LinkedInMarquee />
         <Testimonials />
-        <Community />
         <Trust />
         <Contact />
       </main>
@@ -185,13 +185,13 @@ const App: React.FC = () => {
         href={BOOKING_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed right-3 md:right-5 top-1/2 -translate-y-1/2 z-[65] px-3 md:px-4 py-4 md:py-5 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white shadow-[0_20px_40px_rgba(124,58,237,0.35)] border border-white/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 md:gap-3"
+        className="fixed right-3 bottom-24 lg:right-5 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 z-[55] px-3 md:px-4 py-3.5 md:py-5 min-h-11 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white shadow-[0_20px_40px_rgba(124,58,237,0.35)] border border-white/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2 md:gap-3 touch-manipulation"
       >
         <CalendarCheck2 size={18} />
         <span className="hidden md:inline text-[10px] font-black uppercase tracking-widest">Réserver un créneau</span>
       </a>
 
-      <footer className="py-16 md:py-24 text-center border-t border-slate-200 dark:border-white/5 px-6 bg-slate-50/50 dark:bg-slate-950/40">
+      <footer className="py-16 md:py-24 pb-32 lg:pb-24 text-center border-t border-slate-200 dark:border-white/5 px-4 sm:px-6 bg-slate-50/50 dark:bg-slate-950/40">
         <div className="flex justify-center mb-6 md:mb-8">
           <BrandMark />
         </div>
@@ -209,7 +209,7 @@ const App: React.FC = () => {
           <CalendarCheck2 size={18} />
           Réserver un créneau
         </a>
-        <div className="text-[10px] uppercase font-black tracking-[0.5em] text-slate-500 dark:text-white opacity-40 dark:opacity-30">© 2024 Donchaminade. Tous droits réservés.</div>
+        <div className="text-[10px] uppercase font-black tracking-[0.2em] md:tracking-[0.5em] text-slate-500 dark:text-white opacity-40 dark:opacity-30 break-words">© 2024 Donchaminade. Tous droits réservés.</div>
       </footer>
     </div>
   );

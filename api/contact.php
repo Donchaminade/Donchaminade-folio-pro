@@ -88,11 +88,28 @@ if ($type === 'collaboration') {
         Response::error($e->getMessage(), 422);
     }
 
-    PushNotifier::notifyAdmins(
-        'Demande Collaborons',
-        $name . ' a envoyé une demande de collaboration.',
-        'messages.php'
-    );
+    AdminNotifications::notifyAdmins([
+        'event' => 'collaboration',
+        'title' => 'Nouvelle demande de collaboration',
+        'body' => $name . ' a envoyé une demande de collaboration.',
+        'adminPath' => 'messages.php',
+        'entityKey' => 'collaboration-' . $messageId,
+        'replyTo' => $email,
+        'fields' => [
+            'Nom' => $name,
+            'Email' => $email,
+            'Téléphone' => $phone,
+            'Entreprise' => $company,
+            'Objet' => $subject,
+            'Projet' => $brief,
+            'Documents' => ($hasDocuments || $uploadedFiles !== []) ? 'Oui' : 'Non',
+            'Détail documents' => $documentsDetails,
+            'Plateforme' => $meetingPlatform,
+            'Créneaux' => $meetingSlots,
+            'Notes rendez-vous' => $meetingNotes,
+            'Fichiers' => $uploadedFiles !== [] ? (string) count($uploadedFiles) : '',
+        ],
+    ]);
 
     Response::json([
         'success' => true,
@@ -115,12 +132,20 @@ if (strlen($message) < 10) {
     Response::error('Message trop court.', 422);
 }
 
-$repo->createContact($name, $email, $message, $audit);
+$messageId = $repo->createContact($name, $email, $message, $audit);
 
-PushNotifier::notifyAdmins(
-    'Nouveau message',
-    $name . ' vous a écrit via le formulaire contact.',
-    'messages.php'
-);
+AdminNotifications::notifyAdmins([
+    'event' => 'contact',
+    'title' => 'Nouveau message de contact',
+    'body' => $name . ' vous a écrit via le formulaire contact.',
+    'adminPath' => 'messages.php',
+    'entityKey' => 'contact-' . $messageId,
+    'replyTo' => $email,
+    'fields' => [
+        'Nom' => $name,
+        'Email' => $email,
+        'Message' => $message,
+    ],
+]);
 
 Response::json(['success' => true, 'message' => 'Message enregistré. Je vous réponds très bientôt.']);

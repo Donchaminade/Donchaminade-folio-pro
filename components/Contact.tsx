@@ -67,7 +67,7 @@ const Contact: React.FC = () => {
     <>
       <CollaborateModal open={collaborateOpen} onClose={() => setCollaborateOpen(false)} />
 
-      <section id="contact" className="py-20 md:py-32 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
+      <section id="contact" className="py-16 md:py-32 px-4 sm:px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-start lg:items-center min-w-0">
         <div>
           <h2 className="section-title font-black uppercase leading-tight mb-8 md:mb-10 text-slate-900 dark:text-white max-w-xl">
             Prêt pour le{' '}
@@ -80,7 +80,7 @@ const Contact: React.FC = () => {
           <button
             type="button"
             onClick={() => setCollaborateOpen(true)}
-            className="mb-10 inline-flex items-center gap-3 px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-violet-600/30 transition-all hover:scale-[1.02]"
+            className="mb-10 inline-flex items-center justify-center min-h-12 gap-3 px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-violet-600/30 transition-all hover:scale-[1.02] touch-manipulation w-full sm:w-auto"
           >
             <Handshake size={20} /> Collaborons
           </button>
@@ -105,7 +105,7 @@ const Contact: React.FC = () => {
           </address>
         </div>
 
-        <GlassCard className="p-8 md:p-14 rounded-[3.5rem] bg-white/40 dark:bg-slate-900/40 border-slate-200 dark:border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_50px_100px_rgba(0,0,0,0.5)]">
+        <GlassCard className="p-6 sm:p-8 md:p-14 rounded-[2rem] md:rounded-[3.5rem] bg-white/40 dark:bg-slate-900/40 border-slate-200 dark:border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_50px_100px_rgba(0,0,0,0.5)] min-w-0">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6">Message rapide</p>
           <form className="space-y-6 md:space-y-8" onSubmit={handleContactSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
                   type="text"
                   value={contactForm.name}
                   onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                  className="w-full bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-3 md:py-4 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
+                  className="w-full min-h-12 bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 sm:px-6 py-3 md:py-4 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
                   placeholder="John Doe"
                 />
               </div>
@@ -125,7 +125,7 @@ const Contact: React.FC = () => {
                   type="email"
                   value={contactForm.email}
                   onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                  className="w-full bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-3 md:py-4 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
+                  className="w-full min-h-12 bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 sm:px-6 py-3 md:py-4 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
                   placeholder="contact@business.com"
                 />
               </div>
@@ -136,7 +136,7 @@ const Contact: React.FC = () => {
                 rows={4}
                 value={contactForm.message}
                 onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                className="w-full bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-6 py-3 md:py-4 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white resize-none"
+                className="w-full min-h-[8rem] bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 sm:px-6 py-3 md:py-4 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white resize-none"
                 placeholder="Une question courte…"
               />
             </div>
@@ -162,7 +162,7 @@ const Contact: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full py-5 md:py-6 font-black uppercase text-[10px] md:text-xs tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 transition-all shadow-2xl ${
+              className={`w-full min-h-12 py-5 md:py-6 font-black uppercase text-[10px] md:text-xs tracking-[0.2em] rounded-2xl flex items-center justify-center gap-3 transition-all shadow-2xl touch-manipulation ${
                 isSubmitting
                   ? 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed text-slate-500'
                   : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30'

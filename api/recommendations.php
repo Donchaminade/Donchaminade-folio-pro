@@ -74,11 +74,22 @@ try {
     Response::error($debug ? $e->getMessage() : 'Impossible d\'enregistrer la recommandation.', 500);
 }
 
-PushNotifier::notifyAdmins(
-    'Nouvelle recommandation',
-    $name . ' vous a recommandé (' . $rating . '/5 ★).',
-    'recommendations.php'
-);
+AdminNotifications::notifyAdmins([
+    'event' => 'recommendation',
+    'title' => 'Nouvelle recommandation',
+    'body' => $name . ' vous a recommandé (' . $rating . '/5).',
+    'adminPath' => 'recommendations.php',
+    'entityKey' => 'recommendation-' . $id,
+    'replyTo' => $email !== '' ? $email : null,
+    'fields' => [
+        'Nom' => $name,
+        'Email' => $email,
+        'Rôle' => $role,
+        'Entreprise' => $company,
+        'Note' => $rating . '/5',
+        'Message' => $body,
+    ],
+]);
 
 Response::json([
     'success' => true,

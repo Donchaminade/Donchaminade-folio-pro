@@ -63,7 +63,7 @@ const About: React.FC = () => {
 
         {/* STACK TECHNIQUE SECTION (Horizontal) */}
         <GlassCard className="lg:col-span-3 p-6 md:p-10 rounded-[2.5rem]">
-          <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-8 md:mb-12 flex items-center gap-4"><Code size={28} className="text-blue-600 dark:text-blue-500" /> Stack Technique</h3>
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase mb-8 md:mb-12 flex items-center gap-3 md:gap-4 min-w-0"><Code size={28} className="text-blue-600 dark:text-blue-500 shrink-0" /> <span className="break-words">Stack Technique</span></h3>
 
           <div className="flex flex-col gap-10 lg:gap-14">
             {skillBlocks.map((block, i) => (

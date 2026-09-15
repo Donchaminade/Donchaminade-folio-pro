@@ -86,7 +86,7 @@ const SocialProofCarousel: React.FC<Props> = ({ filter, onFilterChange, refreshK
             key={id}
             type="button"
             onClick={() => onFilterChange(id)}
-            className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${
+            className={`px-4 py-2.5 min-h-11 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border touch-manipulation ${
               filter === id
                 ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20'
                 : 'bg-white/60 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-blue-500/40'
@@ -189,7 +189,7 @@ const SocialProofCarousel: React.FC<Props> = ({ filter, onFilterChange, refreshK
               <button
                 type="button"
                 onClick={prev}
-                className="absolute -left-1 md:left-0 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 border-slate-200 dark:border-white/10"
+                className="absolute left-0 top-1/2 -translate-y-1/2 p-2.5 min-h-11 min-w-11 glass rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 border-slate-200 dark:border-white/10 touch-manipulation"
                 aria-label="Précédent"
               >
                 <ChevronLeft size={20} />
@@ -197,7 +197,7 @@ const SocialProofCarousel: React.FC<Props> = ({ filter, onFilterChange, refreshK
               <button
                 type="button"
                 onClick={next}
-                className="absolute -right-1 md:right-0 top-1/2 -translate-y-1/2 p-2 glass rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 border-slate-200 dark:border-white/10"
+                className="absolute right-0 top-1/2 -translate-y-1/2 p-2.5 min-h-11 min-w-11 glass rounded-full text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 border-slate-200 dark:border-white/10 touch-manipulation"
                 aria-label="Suivant"
               >
                 <ChevronRight size={20} />

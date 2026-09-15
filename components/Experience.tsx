@@ -29,12 +29,12 @@ const Experience: React.FC = () => {
       subtitle="Une expertise forgée au cœur de projets d'envergure."
       bgImage="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200"
     >
-      <div className="max-w-5xl mx-auto px-4 md:px-0">
-        <div className="relative border-l-2 md:border-l-4 border-blue-500/20 ml-4 md:ml-12 space-y-12 md:space-y-20">
+      <div className="max-w-5xl mx-auto min-w-0">
+        <div className="relative border-l-2 md:border-l-4 border-blue-500/20 ml-3 md:ml-12 space-y-10 md:space-y-20">
           {experiences.map((exp, i) => (
             <motion.div
               key={i}
-              className="relative pl-8 md:pl-16 group"
+              className="relative pl-6 md:pl-16 group min-w-0"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
@@ -53,14 +53,14 @@ const Experience: React.FC = () => {
                 <div className="relative z-10">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
                     <div>
-                      <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{exp.role}</h3>
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-2 break-words group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{exp.role}</h3>
                       <div className="text-lg md:text-xl text-slate-600 dark:text-slate-300 font-bold flex items-center gap-3">
                         <span className="w-8 h-[2px] bg-blue-500/50" /> {exp.company}
                       </div>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border-blue-500/30 whitespace-nowrap w-fit">
-                      <Calendar size={14} className="text-blue-500" />
-                      <span className="text-[10px] md:text-xs font-black text-blue-400 uppercase tracking-widest">{exp.period}</span>
+                    <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 glass rounded-full border-blue-500/30 w-fit max-w-full">
+                      <Calendar size={14} className="text-blue-500 shrink-0" />
+                      <span className="text-[10px] md:text-xs font-black text-blue-400 uppercase tracking-wide md:tracking-widest break-words">{exp.period}</span>
                     </div>
                   </div>
 

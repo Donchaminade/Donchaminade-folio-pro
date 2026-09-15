@@ -21,7 +21,7 @@ const Testimonials: React.FC = () => {
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/25 transition-all"
+          className="inline-flex items-center justify-center min-h-12 gap-2 px-8 py-3.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/25 transition-all touch-manipulation w-full sm:w-auto"
         >
           <HeartHandshake size={18} />
           Laisser un avis
