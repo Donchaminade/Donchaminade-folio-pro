@@ -37,7 +37,7 @@ Portfolio professionnel full-stack : interface **React + Vite + TypeScript** (h�
 Ce dépôt regroupe :
 
 - **Front** : SPA React (sections portfolio, blog, mode clair/sombre, animations Framer Motion).
-- **Back-end** : API JSON en PHP, formulaire de contact, blog avec commentaires, uploads, notifications push Web (admin).
+- **Back-end** : API JSON en PHP, formulaire de contact, blog avec commentaires, uploads, notifications **email** + push Web (admin).
 - **Admin** : panneau PHP pour gérer le contenu sans toucher au code.
 
 Les données affichées sur le site proviennent de la base MySQL via l’API. Des constantes TypeScript (`constants.tsx`) servent de **fallback** si l’API est indisponible en développement.
@@ -138,6 +138,12 @@ Fichiers modèles :
 | `CORS_ORIGINS` | Origines autorisées (URL Vercel, séparées par des virgules) |
 | `SESSION_NAME` | Nom de session admin |
 | `VAPID_*` | Clés pour notifications push admin (**requis** pour alertes téléphone) |
+| `NOTIFY_EMAIL` | Destinataire des alertes email (prioritaire). Sinon `ADMIN_EMAIL`, puis email du profil |
+| `NOTIFY_EMAIL_ENABLED` | `true` par défaut dès qu’un transport SMTP ou `mail()` est disponible |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | Serveur SMTP Hostinger (`smtp.hostinger.com`, `465`/`ssl` ou `587`/`tls`) |
+| `SMTP_USER` / `SMTP_PASS` | Identifiants SMTP (jamais en dur dans le code) |
+| `SMTP_FROM` / `SMTP_FROM_NAME` | Expéditeur. Par défaut : `SMTP_USER` |
+| `MAIL_FALLBACK` | `true` : si SMTP n’est pas configuré, utilise PHP `mail()` (moins fiable) |
 
 ### Front (Vercel)
 
@@ -165,6 +171,7 @@ Scripts PHP utiles :
 | `php database/apply-all-seeds.php` | Recharge tout le contenu catalogue en BDD |
 | `php database/apply-pending-migrations.php` | Applique les migrations SQL en attente |
 | `php database/generate-vapid-keys.php` | Génère les clés VAPID (push) |
+| `php scripts/test-notify-email.php` | Envoie un email de test (ou `--dry-run`) |
 
 ---
 
@@ -356,12 +363,45 @@ Tables principales : profil, projets, expériences, blog, commentaires, contact,
 3. Sur le téléphone : ouvrir l’app admin installée → cloche → **Activer les notifications push**
 4. Tester avec **Envoyer un test** (dans le panneau cloche)
 
-Alertes automatiques : nouveau message contact, commentaire blog, témoignage ou recommandation en attente.
+Alertes automatiques (push **et email**) : nouveau message contact, demande Collaborons, commentaire blog, témoignage à valider, nouvelle recommandation.
+
+### Notifications email (admin)
+
+Les emails sont envoyés **en français**, HTML + texte, avec un lien vers l’admin. L’API publique **réussit même si l’email échoue** (erreur journalisée).
+
+**Destinataire** (dans cet ordre) : `NOTIFY_EMAIL` → `ADMIN_EMAIL` → premier `users.email` → `site_profile.email`.
+
+**Transport recommandé (Hostinger)** : SMTP du compte mail hPanel.
+
+```
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=465
+SMTP_SECURE=ssl
+SMTP_USER=votre@domaine.com
+SMTP_PASS=********
+SMTP_FROM=votre@domaine.com
+NOTIFY_EMAIL=votre@domaine.com
+NOTIFY_EMAIL_ENABLED=true
+```
+
+**Fallback** : si `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` sont vides et `MAIL_FALLBACK=true`, PHP `mail()` est utilisé. Sur Hostinger c’est souvent moins fiable (spam, pas d’auth) — préférez SMTP.
+
+**Test sur le serveur** (après avoir mis à jour le `.env` et **redéployé** le code PHP) :
+
+1. Appliquer la migration : `php database/apply-pending-migrations.php`
+2. `php scripts/test-notify-email.php` **ou** cloche admin → **Tester l’email**
+3. Envoyer un message depuis https://donchaminade-alpha.vercel.app (contact / Collaborons)
+
+> Le site Hostinger **ne suit pas Git automatiquement**. Tant que vous n’avez pas uploadé / extraire le package (`npm run pack:hostinger`) ou synchronisé `donchamfolio/`, le live reste sur l’ancienne version.
+
+`NOTIFY_EMAIL_DRY_RUN=true` journalise sans envoyer (utile en local).
 
 ### Checklist post-déploiement
 
 - [ ] `APP_DEBUG=false` sur Hostinger  
 - [ ] Clés `VAPID_*` dans `.env` Hostinger  
+- [ ] SMTP / `NOTIFY_EMAIL` configurés si les alertes email sont voulues  
+- [ ] `SMTP_*` + `NOTIFY_EMAIL` dans `.env` Hostinger, puis test email  
 - [ ] `CORS_ORIGINS` contient l’URL Vercel exacte  
 - [ ] `VITE_API_URL` configuré sur Vercel + redeploy  
 - [ ] `install.php` supprimé en production  

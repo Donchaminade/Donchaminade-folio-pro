@@ -60,7 +60,7 @@ const BlogList: React.FC = () => {
 
   return (
     <BlogShell backLabel="Portfolio" backTo="/">
-      <main className="max-w-6xl mx-auto px-5 py-12 md:py-20">
+      <main className="max-w-6xl mx-auto px-4 sm:px-5 py-12 md:py-20 min-w-0 overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ const BlogList: React.FC = () => {
           <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${BLOG_BRAND.border} ${BLOG_BRAND.bgSoft} ${BLOG_BRAND.text} text-xs font-bold mb-6`}>
             <Sparkles size={14} /> Idées · Tech · Énergie · Foi
           </div>
-          <h1 className="font-serif-blog text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white tracking-tight leading-[1.05] mb-5">
+          <h1 className="font-serif-blog text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-5 break-words">
             Un espace pour{' '}
             <span className={BLOG_BRAND.text}>penser, créer et inspirer</span>
           </h1>

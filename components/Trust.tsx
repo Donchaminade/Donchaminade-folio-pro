@@ -8,7 +8,7 @@ const Trust: React.FC = () => {
         <Section 
           id="trust" 
           title="Ils m'ont fait confiance" 
-          subtitle="Une collaboration basée on the performance et l'innovation."
+          subtitle="Une collaboration basée sur la performance et l'innovation."
           bgImage="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200"
         >
           <ClientsMarquee />

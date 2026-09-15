@@ -30,7 +30,7 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
   const opacity = useTransform(smoothYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
-    <section id={id} ref={ref} className={`relative py-16 md:py-24 overflow-hidden w-full ${className}`}>
+    <section id={id} ref={ref} className={`relative py-14 md:py-24 overflow-x-hidden overflow-hidden w-full min-w-0 ${className}`}>
       {/* Parallax Background Layer */}
       <motion.div
         style={{ y, opacity, scale }}
@@ -64,7 +64,7 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="relative mb-10 md:mb-16 z-10 px-6 max-w-7xl mx-auto"
+        className="relative mb-8 md:mb-16 z-10 px-4 sm:px-6 max-w-7xl mx-auto min-w-0"
       >
         <h2 className="section-title font-black mb-4 md:mb-6 uppercase text-slate-900 dark:text-white max-w-4xl">
           {title}<span className="text-blue-600 dark:text-blue-500">.</span>
@@ -80,7 +80,7 @@ export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children,
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className={`relative z-10 ${className === 'full-width' ? '' : 'px-6 max-w-7xl mx-auto'}`}
+        className={`relative z-10 min-w-0 ${className === 'full-width' ? '' : 'px-4 sm:px-6 max-w-7xl mx-auto'}`}
       >
         {children}
       </motion.div>

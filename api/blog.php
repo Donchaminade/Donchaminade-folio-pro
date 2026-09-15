@@ -163,11 +163,22 @@ if ($method === 'POST') {
             Response::error($e->getMessage(), 422);
         }
 
-        PushNotifier::notifyAdmins(
-            $parentId ? 'Réponse sur le blog' : 'Nouveau commentaire blog',
-            $name . ' a commenté un article.',
-            'blog-comments.php'
-        );
+        AdminNotifications::notifyAdmins([
+            'event' => 'blog_comment',
+            'title' => $parentId ? 'Nouvelle réponse sur le blog' : 'Nouveau commentaire blog',
+            'body' => $name . ' a commenté « ' . (string) ($post['title'] ?? $slug) . ' ». Le commentaire est publié (modération possible depuis l’admin).',
+            'adminPath' => 'blog-comments.php',
+            'entityKey' => 'blog-comment-' . $commentId,
+            'replyTo' => $email !== '' ? $email : null,
+            'fields' => [
+                'Article' => (string) ($post['title'] ?? $slug),
+                'Slug' => $slug,
+                'Auteur' => $name,
+                'Email' => $email,
+                'Type' => $parentId ? 'Réponse' : 'Commentaire',
+                'Message' => $content,
+            ],
+        ]);
 
         Response::json([
             'success' => true,

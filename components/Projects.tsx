@@ -21,13 +21,13 @@ const Projects: React.FC<ProjectsProps> = ({ homeProjects, setSelectedProject, s
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {homeProjects.map((project, i) => <ProjectCard key={project.title} project={project} onClick={() => setSelectedProject(project)} />)}
-        <div className="flex flex-col items-center justify-center p-10 md:p-12 glass rounded-[2.5rem] border-dashed border-2 border-slate-300 dark:border-white/10 hover:border-blue-500/50 cursor-pointer group" onClick={() => setShowAllProjects(true)}>
+        <div className="flex flex-col items-center justify-center p-8 md:p-12 glass rounded-[2rem] md:rounded-[2.5rem] border-dashed border-2 border-slate-300 dark:border-white/10 hover:border-blue-500/50 cursor-pointer group min-w-0" onClick={() => setShowAllProjects(true)}>
           <div className="p-6 md:p-8 bg-blue-500/10 rounded-full mb-6 group-hover:scale-110 transition-transform">
             <Layers size={40} className="text-blue-500" />
           </div>
-          <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white uppercase mb-3">Plus de 10 Projets</h3>
+          <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white uppercase mb-3 text-center">Plus de 10 Projets</h3>
           <p className="text-slate-500 text-center text-sm mb-6 md:mb-8 font-light">Découvrez l'intégralité de mon portfolio.</p>
-          <button className="px-8 md:px-10 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-blue-600/20">VOIR TOUT</button>
+          <button type="button" className="min-h-11 px-8 md:px-10 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-blue-600/20 touch-manipulation">VOIR TOUT</button>
         </div>
       </div>
     </Section>

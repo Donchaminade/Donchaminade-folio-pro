@@ -64,11 +64,21 @@ try {
     Response::error($debug ? $e->getMessage() : 'Service indisponible', 503);
 }
 
-PushNotifier::notifyAdmins(
-    'Nouveau témoignage',
-    $name . ' a laissé un témoignage à valider.',
-    'testimonials.php?filter=pending'
-);
+AdminNotifications::notifyAdmins([
+    'event' => 'testimonial',
+    'title' => 'Nouveau témoignage à valider',
+    'body' => $name . ' a laissé un témoignage en attente de modération.',
+    'adminPath' => 'testimonials.php?filter=pending',
+    'entityKey' => 'testimonial-' . $id,
+    'replyTo' => $email !== '' ? $email : null,
+    'fields' => [
+        'Nom' => $name,
+        'Rôle' => $role,
+        'Entreprise' => $company,
+        'Email' => $email,
+        'Citation' => $quote,
+    ],
+]);
 
 Response::json([
     'success' => true,

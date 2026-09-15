@@ -61,6 +61,8 @@
   const pushBtn = document.getElementById('adminPushEnableBtn');
   const pushTestBtn = document.getElementById('adminPushTestBtn');
   const pushStatus = document.getElementById('adminPushStatus');
+  const emailTestBtn = document.getElementById('adminEmailTestBtn');
+  const emailStatus = document.getElementById('adminEmailStatus');
 
   let lastTotal = 0;
   let swRegistration = null;
@@ -246,6 +248,36 @@
     });
   }
 
+  function updateEmailStatus(data) {
+    if (!emailStatus || !data) return;
+    if (data.emailEnabled) {
+      const dest = data.emailRecipient ? ' → ' + data.emailRecipient : '';
+      emailStatus.textContent = 'Email actif (' + (data.emailTransport || 'smtp') + ')' + dest + '.';
+    } else {
+      emailStatus.textContent = 'Email inactif : renseignez SMTP_* ou MAIL_FALLBACK, et NOTIFY_EMAIL.';
+    }
+  }
+
+  async function sendTestEmail() {
+    if (emailStatus) emailStatus.textContent = 'Envoi du test email…';
+    try {
+      const res = await fetch('email-test.php', { method: 'POST', credentials: 'same-origin' });
+      const json = await res.json();
+      if (emailStatus) {
+        emailStatus.textContent = json.message || json.error || (json.success ? 'Test email envoyé.' : 'Échec du test email.');
+      }
+    } catch (e) {
+      if (emailStatus) emailStatus.textContent = 'Erreur réseau : ' + (e.message || 'test email impossible');
+    }
+  }
+
+  if (emailTestBtn) {
+    emailTestBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendTestEmail();
+    });
+  }
+
   if (bellBtn && bellPanel) {
     bellBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -266,6 +298,7 @@
       updateBellBadge(total);
       updateSidebarBadges(json.data);
       renderNotifList(json.data.items || []);
+      updateEmailStatus(json.data);
 
       if (total > lastTotal && lastTotal > 0 && swRegistration && Notification.permission === 'granted') {
         const first = (json.data.items || [])[0];

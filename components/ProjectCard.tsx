@@ -15,7 +15,7 @@ const ProjectCard: React.FC<{ project: Project; onClick: () => void }> = ({ proj
       <div className="absolute top-4 left-4 z-10"><span className="px-3 py-1 glass-dark text-slate-900 dark:text-white text-[8px] font-black uppercase rounded-lg border border-slate-200 dark:border-white/10">{project.type}</span></div>
     </div>
     <div className="p-6 md:p-8">
-      <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight leading-none">{project.title}</h3>
+      <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight leading-tight break-words">{project.title}</h3>
       <p className="text-slate-600 dark:text-slate-400 text-xs md:text-sm line-clamp-2 mt-3 md:mt-4 font-light leading-relaxed">{project.description}</p>
       <div className="mt-6 md:mt-8 pt-5 md:pt-6 border-t border-slate-200 dark:border-white/5">
         <TechBadges tags={techTags} max={4} />

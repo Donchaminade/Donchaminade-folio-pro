@@ -217,7 +217,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       >
         <motion.div
@@ -225,7 +225,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar rounded-[2rem] border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
+          className="w-full max-w-2xl max-h-[92vh] overflow-y-auto custom-scrollbar rounded-t-[1.5rem] sm:rounded-[2rem] border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
         >
           <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur">
             <div className="flex items-center gap-3">
@@ -299,8 +299,8 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                   }}
                   className="w-4 h-4 rounded border-slate-300 text-violet-600"
                 />
-                <span className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  <FileText size={16} className="text-violet-500" /> J'ai des documents à partager (cahier des charges, maquettes, devis…)
+                <span className="flex items-start gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200 leading-snug">
+                  <FileText size={16} className="text-violet-500 shrink-0 mt-0.5" /> J'ai des documents à partager (cahier des charges, maquettes, devis…)
                 </span>
               </label>
               {form.has_documents && (
@@ -383,7 +383,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                   <Calendar size={12} /> Date & heure (choix dans le calendrier)
                 </label>
                 {slotDates.map((slot, index) => (
-                  <div key={index} className="flex gap-2 items-center">
+                  <div key={index} className="flex gap-2 items-center min-w-0">
                     <input
                       type="datetime-local"
                       value={slot}
@@ -393,7 +393,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                         next[index] = e.target.value;
                         setSlotDates(next);
                       }}
-                      className={DATETIME_CLS}
+                      className={`${DATETIME_CLS} min-w-0`}
                       aria-label={`Créneau ${index + 1}`}
                     />
                     {slotDates.length > 1 && (
