@@ -11,14 +11,15 @@ import BlogShareActions from '../components/blog/BlogShareActions';
 import { fetchBlogCategories } from '../lib/api';
 import { getBlogCategory, setBlogCategoriesRegistry } from '../lib/blogCategories';
 import { mediaUrl } from '../lib/media';
-import { BlogPostDetail, fetchBlogPost, isApiConfigured } from '../lib/api';
+import { BlogPostDetail, fetchBlogPost, fetchBlogPreview, isApiConfigured } from '../lib/api';
 import { navigate } from '../lib/navigation';
 
 interface Props {
-  slug: string;
+  slug?: string;
+  previewToken?: string;
 }
 
-const BlogPostPage: React.FC<Props> = ({ slug }) => {
+const BlogPostPage: React.FC<Props> = ({ slug, previewToken }) => {
   const [post, setPost] = useState<BlogPostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,8 +33,9 @@ const BlogPostPage: React.FC<Props> = ({ slug }) => {
       setLoading(false);
       return;
     }
+    const loadPost = previewToken ? fetchBlogPreview(previewToken) : fetchBlogPost(slug!);
     Promise.all([
-      fetchBlogPost(slug),
+      loadPost,
       fetchBlogCategories().catch(() => []),
     ])
       .then(([data, cats]) => {
@@ -46,7 +48,7 @@ const BlogPostPage: React.FC<Props> = ({ slug }) => {
       })
       .catch((e) => setError(e instanceof Error ? e.message : 'Article introuvable'))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, previewToken]);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -89,9 +91,16 @@ const BlogPostPage: React.FC<Props> = ({ slug }) => {
     year: 'numeric',
   });
 
+  const isPreview = Boolean(previewToken || post.is_preview);
+
   return (
     <BlogShell backLabel="Blog" backTo="/blog" showProgress>
-      <BlogMeta post={post} />
+      <BlogMeta post={post} noIndex={isPreview} />
+      {isPreview && (
+        <div className="sticky top-0 z-40 border-b border-amber-500/40 bg-amber-500/15 text-amber-900 dark:text-amber-100 text-center text-sm font-semibold py-3 px-4">
+          Aperçu brouillon — non publié sur le portfolio. Relisez, puis validez dans l’admin pour mettre en ligne.
+        </div>
+      )}
 
       {post.cover_image && (
         <motion.div
@@ -150,6 +159,7 @@ const BlogPostPage: React.FC<Props> = ({ slug }) => {
                 </span>
               </div>
 
+              {!isPreview && (
               <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10 flex flex-wrap items-center gap-3">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
                   Partager
@@ -168,10 +178,12 @@ const BlogPostPage: React.FC<Props> = ({ slug }) => {
                   <p className="text-sm text-blue-600 dark:text-blue-400 mt-3 font-medium">{shareFeedback}</p>
                 )}
               </div>
+              )}
             </header>
 
             <BlogContent ref={contentRef} content={post.content} />
 
+            {!isPreview && (
             <motion.section
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -180,6 +192,7 @@ const BlogPostPage: React.FC<Props> = ({ slug }) => {
             >
               <BlogEngagement post={post} onUpdate={(patch) => setPost((p) => (p ? { ...p, ...patch } : p))} />
             </motion.section>
+            )}
           </motion.article>
 
           <BlogTableOfContents contentRef={contentRef} htmlContent={post.content} />

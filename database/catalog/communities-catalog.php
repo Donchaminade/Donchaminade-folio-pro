@@ -4,13 +4,22 @@ declare(strict_types=1);
 
 return [
     [
+        'name' => 'PyCon Togo',
+        'logo' => '🎤',
+        'role' => 'Chargé des Speakers — 2026',
+        'description' => "Bénévole chargé des speakers pour PyCon Togo 2026 : arrivées, départs, transport depuis la frontière et accompagnement logistique des intervenants tout au long de la conférence.",
+        'website_url' => null,
+        'linkedin_url' => null,
+        'sort_order' => 1,
+    ],
+    [
         'name' => 'Women Techmakers',
         'logo' => '👩‍💻',
         'role' => 'Mentor & Logistique',
         'description' => "En tant que mentor chez WTM Lomé, je soutiens activement les initiatives visant à réduire la fracture numérique de genre. Je participe à l'organisation logistique des meetups mensuels et j'accompagne les jeunes femmes dans leur initiation au code et aux outils du numérique.",
         'website_url' => null,
         'linkedin_url' => null,
-        'sort_order' => 1,
+        'sort_order' => 2,
     ],
     [
         'name' => 'Google Developer Groups',
@@ -19,7 +28,7 @@ return [
         'description' => "Membre actif du GDG Lomé, j'interviens régulièrement en tant que speaker sur des thématiques liées à Flutter et Firebase. J'aide également à la coordination d'événements majeurs comme le DevFest, favorisant le partage de connaissances tech au sein de l'écosystème local.",
         'website_url' => null,
         'linkedin_url' => null,
-        'sort_order' => 2,
+        'sort_order' => 3,
     ],
     [
         'name' => 'Python Togo',
@@ -28,6 +37,6 @@ return [
         'description' => 'Je contribue au rayonnement de Python Togo en gérant leur stratégie de contenu sur les réseaux sociaux. Mon rôle est de vulgariser le langage Python auprès des étudiants et des professionnels, tout en assurant le support logistique lors des ateliers pratiques.',
         'website_url' => null,
         'linkedin_url' => null,
-        'sort_order' => 3,
+        'sort_order' => 4,
     ],
 ];

@@ -6,6 +6,7 @@ import { Section } from './Section';
 import { GlassCard } from './GlassCard';
 import { EXPERIENCES } from '../constants';
 import { fetchPortfolio } from '../lib/api';
+import { mergeExperiences } from '../lib/mergeCatalog';
 import { normalizeProjectTags, techIconUrl } from '../lib/projectTags';
 import { mediaUrl } from '../lib/media';
 import type { Experience as ExperienceType } from '../types';
@@ -16,7 +17,7 @@ const Experience: React.FC = () => {
   useEffect(() => {
     fetchPortfolio<{ experiences: ExperienceType[] }>()
       .then((data) => {
-        if (data.experiences?.length) setExperiences(data.experiences);
+        setExperiences(mergeExperiences(data.experiences, EXPERIENCES));
       })
       .catch(() => {});
   }, []);

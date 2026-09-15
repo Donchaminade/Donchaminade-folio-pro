@@ -6,6 +6,7 @@ import { Section } from './Section';
 import { GlassCard } from './GlassCard';
 import { COMMUNITIES } from '../constants';
 import { fetchPortfolio } from '../lib/api';
+import { mergeCommunities } from '../lib/mergeCatalog';
 import { mediaUrl } from '../lib/media';
 import type { Community } from '../types';
 
@@ -24,7 +25,7 @@ const CommunitySection: React.FC = () => {
   useEffect(() => {
     fetchPortfolio<{ communities: Community[] }>()
       .then((data) => {
-        if (data.communities?.length) setCommunities(data.communities);
+        setCommunities(mergeCommunities(data.communities, COMMUNITIES));
       })
       .catch(() => {});
   }, []);

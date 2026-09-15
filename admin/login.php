@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = (string) ($_POST['password'] ?? '');
 
     try {
+        AdminProvisioner::ensureFromEnv();
         $db = Database::connection();
         $stmt = $db->prepare('SELECT id, email, password_hash, name FROM users WHERE email = ? LIMIT 1');
         $stmt->execute([$email]);

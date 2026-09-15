@@ -16,10 +16,34 @@ return [
         'tags' => ['Cisco', 'Support IT', 'Next.js', 'Flutter', 'Remote'],
     ],
     [
+        'company' => 'PyCon Togo 2026',
+        'role' => 'Bénévole — Chargé des Speakers',
+        'period' => '2026',
+        'sort_order' => 2,
+        'description' => [
+            'Coordination de l’accueil des intervenants de PyCon Togo 2026 : arrivées, départs et suivi tout au long de la conférence.',
+            'Organisation du transport depuis la frontière et de la logistique speakers sur site.',
+            'Accompagnement des speakers internationaux et locaux pour garantir une expérience fluide et professionnelle.',
+        ],
+        'tags' => ['Logistique', 'Événementiel', 'Python', 'Bénévolat'],
+    ],
+    [
+        'company' => '48h Hackathon YAS Togo | Next Gen',
+        'role' => 'Coach',
+        'period' => '2026',
+        'sort_order' => 3,
+        'description' => [
+            'Coaching des équipes participantes au 48h Hackathon YAS Togo et à Next Gen.',
+            'Accompagnement sur le cadrage produit, les choix techniques et la préparation du pitch.',
+            'Transmission de méthodes de travail pour livrer un prototype viable dans un temps contraint.',
+        ],
+        'tags' => ['Coaching', 'Hackathon', 'Mentorat'],
+    ],
+    [
         'company' => 'Tayba Market',
         'role' => 'Consultant IT & Lead Tech',
         'period' => '2025',
-        'sort_order' => 2,
+        'sort_order' => 4,
         'description' => [
             'Accompagnement dans la digitalisation globale des processus de travail et le choix des infrastructures.',
             'Audit technique et conseil sur l’adoption d’outils informatiques adaptés aux besoins du métier.',
@@ -31,7 +55,7 @@ return [
         'company' => 'Efficorpe',
         'role' => 'Développeur Frontend Mobile',
         'period' => 'Août 2025 - Octobre 2025',
-        'sort_order' => 3,
+        'sort_order' => 5,
         'description' => [
             'Création et intégration d’interfaces mobiles interactives sous Flutter.',
             'Optimisation du code et correction des anomalies techniques.',
@@ -43,7 +67,7 @@ return [
         'company' => 'ISF | WTM | Ecobank | GDG',
         'role' => 'Formateur en Informatique',
         'period' => 'Juillet 2025 - Octobre 2025',
-        'sort_order' => 4,
+        'sort_order' => 6,
         'description' => [
             'Animation d’ateliers sur l’IA, les réseaux sociaux et le développement web pour divers publics.',
             'Conception de supports pédagogiques interactifs favorisant l’apprentissage pratique.',
@@ -55,7 +79,7 @@ return [
         'company' => 'Axone Digital Company',
         'role' => 'Développeur Web/Mobile',
         'period' => 'Décembre 2024 - Juillet 2025',
-        'sort_order' => 5,
+        'sort_order' => 7,
         'description' => [
             'Réalisation d’applications web et mobiles dynamiques à forte valeur ajoutée.',
             'Amélioration de la stabilité front-end et back-end pour garantir une expérience utilisateur fluide.',
@@ -67,7 +91,7 @@ return [
         'company' => 'Hyver | Python Togo | ABC',
         'role' => 'Social Media & Community Manager',
         'period' => 'Depuis 2024 (Saisonnier)',
-        'sort_order' => 6,
+        'sort_order' => 8,
         'description' => [
             'Gestion stratégique et animation des réseaux sociaux pour accroître la visibilité communautaire.',
             'Création de visuels et de contenus vidéo attractifs adaptés aux audiences tech.',

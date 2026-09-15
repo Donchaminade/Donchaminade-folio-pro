@@ -24,6 +24,8 @@ require_once $root . '/includes/repositories/CommentAuditRepository.php';
 require_once $root . '/includes/blog_categories.php';
 require_once $root . '/includes/AdminNotifications.php';
 require_once $root . '/includes/PushNotifier.php';
+require_once $root . '/includes/AdminProvisioner.php';
+require_once $root . '/includes/BlogShareCopy.php';
 
 $vendorAutoload = $root . '/vendor/autoload.php';
 if (is_file($vendorAutoload)) {

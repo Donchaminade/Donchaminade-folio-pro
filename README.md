@@ -266,6 +266,26 @@ URL : **https://donchamfolio.grosbit.com/admin/login.php**
 
 Authentification par **session PHP** (email + mot de passe hashé en BDD).
 
+Pour provisionner un compte (APP BUILDER PRO / propriétaire) **sans commiter de secret** :
+
+1. Sur Hostinger, dans le `.env` de `donchamfolio/` :
+   - `ADMIN_EMAIL=...`
+   - `ADMIN_PASSWORD=` (12 caractères minimum)
+   - `ADMIN_NAME=Administrateur` (optionnel)
+2. Ouvrir `/admin/login.php` : le compte est créé ou mis à jour à la connexion.
+3. Ne jamais coller ce mot de passe dans Git.
+
+### Workflow blog (obligatoire)
+
+1. **Enregistrer le brouillon** — l’article n’apparaît pas sur le portfolio.
+2. **Prévisualiser** — lien `/blog/preview/{jeton}` (rendu public, `noindex`, hors liste).
+3. **Valider et publier** — seule action qui met l’article en ligne.
+4. **Kit de partage** — textes Facebook et X + liens d’intent, prêts à coller. Les connecteurs sociaux pourront poster plus tard.
+
+Un article de démonstration reste en brouillon : *« Agents IA en 2026 : écrire plus vite, publier seulement après validation »*.
+
+Resync catalogues / migrations (après deploy) : `GET /api/catalog-sync.php` avec session admin ou en-tête `X-Catalog-Sync-Token`.
+
 | Module | Fichier | Gestion |
 |--------|---------|---------|
 | Tableau de bord | `index.php` | Vue d’ensemble |
@@ -279,7 +299,7 @@ Authentification par **session PHP** (email + mot de passe hashé en BDD).
 | Témoignages | `testimonials.php` | Modération |
 | Recommandations | `recommendations.php` | Modération |
 | Communautés | `communities.php` | Événements & communautés |
-| Blog | `blog.php` | Articles (éditeur Quill) |
+| Blog | `blog.php` | Brouillons, aperçu public, validation puis publication + kit Facebook/X |
 | Commentaires blog | `blog-comments.php` | Modération |
 | Messages | `messages.php` | Contact reçu |
 | Notifications | `notifications.php` | Alertes admin |
