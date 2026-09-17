@@ -22,8 +22,7 @@
   ],
   "functions": {
     "api/chat.ts": {
-      "maxDuration": 30,
-      "includeFiles": "lib/chat/**"
+      "maxDuration": 30
     }
   },
   "rewrites": [
