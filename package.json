@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "bundle:chat": "node scripts/bundle-api-chat.mjs",
+    "build": "node scripts/bundle-api-chat.mjs && vite build",
     "preview": "vite preview",
     "pack:hostinger": "php scripts/build-hostinger-package.php",
-    "test:chat": "tsx --test tests/chat.test.ts"
+    "test:chat": "tsx --test tests/chat.test.ts tests/chat-api-bundle.test.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.74",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "esbuild": "^0.25.9",
     "tsx": "^4.23.13",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
