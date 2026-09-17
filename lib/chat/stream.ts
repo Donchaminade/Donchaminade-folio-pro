@@ -1,45 +1,55 @@
-import {
-  createUIMessageStream,
-  createUIMessageStreamResponse,
-  type UIMessage,
-} from 'ai';
+export type ChatUiMessage = {
+  id: string;
+  role: 'user' | 'assistant';
+  parts: Array<{ type: 'text'; text: string }>;
+};
 
+function encodeSse(payload: unknown): string {
+  return `data: ${typeof payload === 'string' ? payload : JSON.stringify(payload)}\n\n`;
+}
+
+/** Flux UI Message v1 sans importer le package `ai` (évite un crash CJS/ESM sur Vercel). */
 export function textToUiResponse(
   text: string,
   headers?: Record<string, string>
 ): Response {
-  const stream = createUIMessageStream({
-    execute({ writer }) {
-      writer.write({ type: 'start' });
-      writer.write({ type: 'text-start', id: 'answer' });
-      const chunkSize = 80;
-      for (let i = 0; i < text.length; i += chunkSize) {
-        writer.write({
-          type: 'text-delta',
-          id: 'answer',
-          delta: text.slice(i, i + chunkSize),
-        });
-      }
-      writer.write({ type: 'text-end', id: 'answer' });
-    },
-  });
+  const messageId = `msg-${Date.now().toString(36)}`;
+  const parts: string[] = [
+    encodeSse({ type: 'start', messageId }),
+    encodeSse({ type: 'text-start', id: 'answer' }),
+  ];
+  const chunkSize = 80;
+  for (let i = 0; i < text.length; i += chunkSize) {
+    parts.push(
+      encodeSse({
+        type: 'text-delta',
+        id: 'answer',
+        delta: text.slice(i, i + chunkSize),
+      })
+    );
+  }
+  parts.push(encodeSse({ type: 'text-end', id: 'answer' }));
+  parts.push(encodeSse('[DONE]'));
 
-  return createUIMessageStreamResponse({
-    stream,
+  return new Response(parts.join(''), {
+    status: 200,
     headers: {
-      'X-Chat-Mode': 'fallback',
+      'Content-Type': 'text/event-stream; charset=utf-8',
       'Cache-Control': 'no-store',
+      Connection: 'keep-alive',
+      'x-accel-buffering': 'no',
+      'X-Chat-Mode': 'fallback',
+      'x-vercel-ai-ui-message-stream': 'v1',
       ...headers,
     },
   });
 }
 
-export function lastUserText(messages: UIMessage[]): string {
+export function lastUserText(messages: ChatUiMessage[]): string {
   for (let i = messages.length - 1; i >= 0; i -= 1) {
     const message = messages[i];
     if (message.role !== 'user') continue;
-    const parts = message.parts ?? [];
-    const text = parts
+    const text = (message.parts ?? [])
       .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
       .map((part) => part.text)
       .join('\n')
@@ -49,16 +59,16 @@ export function lastUserText(messages: UIMessage[]): string {
   return '';
 }
 
-export function normalizeMessages(raw: unknown): UIMessage[] | null {
+export function normalizeMessages(raw: unknown): ChatUiMessage[] | null {
   if (!Array.isArray(raw) || raw.length === 0) return null;
   const sliced = raw.slice(-8);
-  const messages: UIMessage[] = [];
+  const messages: ChatUiMessage[] = [];
 
   for (let i = 0; i < sliced.length; i += 1) {
     const item = sliced[i] as Record<string, unknown>;
     if (!item || typeof item !== 'object') continue;
-    const role = item.role === 'assistant' || item.role === 'system' ? item.role : 'user';
-    if (role === 'system') continue;
+    const role = item.role === 'assistant' ? 'assistant' : 'user';
+    if (item.role === 'system') continue;
 
     let text = '';
     if (Array.isArray(item.parts)) {
