@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http';
+import { handleChatRequest } from '../lib/chat/handler';
 
 export const config = { maxDuration: 30 };
 
@@ -78,7 +79,6 @@ async function handleFetch(request: Request): Promise<Response> {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204 });
     }
-    const { handleChatRequest } = await import('../lib/chat/handler');
     return await handleChatRequest(request);
   } catch (error) {
     const detail = error instanceof Error ? error.message : 'chat_failed';
