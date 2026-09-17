@@ -2,9 +2,9 @@ import { createGoogle, google } from '@ai-sdk/google';
 import { groq } from '@ai-sdk/groq';
 import {
   convertToModelMessages,
+  createUIMessageStream,
   createUIMessageStreamResponse,
   streamText,
-  toUIMessageStream,
 } from 'ai';
 import { fallbackAnswer } from './fallback';
 import { detectLang } from './language';
@@ -77,25 +77,44 @@ export async function handleChatRequest(req: Request): Promise<Response> {
     return textToUiResponse(fallback);
   }
 
-  try {
-    const result = streamText({
-      model,
-      instructions: buildInstructions(contextText, lang),
-      messages: await convertToModelMessages(messages),
-      maxOutputTokens: 700,
-    });
+  const stream = createUIMessageStream({
+    async execute({ writer }) {
+      writer.write({ type: 'start' });
+      try {
+        const result = streamText({
+          model,
+          instructions: buildInstructions(contextText, lang),
+          messages: await convertToModelMessages(messages),
+          maxOutputTokens: 700,
+        });
+        let started = false;
+        for await (const delta of result.textStream) {
+          if (!started) {
+            writer.write({ type: 'text-start', id: 'answer' });
+            started = true;
+          }
+          writer.write({ type: 'text-delta', id: 'answer', delta });
+        }
+        if (started) {
+          writer.write({ type: 'text-end', id: 'answer' });
+          return;
+        }
+      } catch {
+        // Provider / réseau : on bascule sur les faits publics.
+      }
+      writer.write({ type: 'text-start', id: 'answer' });
+      for (let i = 0; i < fallback.length; i += 80) {
+        writer.write({ type: 'text-delta', id: 'answer', delta: fallback.slice(i, i + 80) });
+      }
+      writer.write({ type: 'text-end', id: 'answer' });
+    },
+  });
 
-    return createUIMessageStreamResponse({
-      stream: toUIMessageStream({
-        stream: result.stream,
-        onError: () => fallback,
-      }),
-      headers: {
-        'X-Chat-Mode': 'llm',
-        'Cache-Control': 'no-store',
-      },
-    });
-  } catch {
-    return textToUiResponse(fallback);
-  }
+  return createUIMessageStreamResponse({
+    stream,
+    headers: {
+      'X-Chat-Mode': 'llm',
+      'Cache-Control': 'no-store',
+    },
+  });
 }

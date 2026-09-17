@@ -55,7 +55,54 @@ function asStringList(value: unknown): string[] {
   return value.map((item) => (typeof item === 'string' ? item : '')).filter(Boolean);
 }
 
-function snapshotFacts(blogs: ChatBlogFact[] = []): PortfolioFacts {
+const SNAPSHOT_BLOGS: ChatBlogFact[] = [
+  {
+    title: 'Santé mentale : quand « ce n’est rien » coûte des vies',
+    slug: 'sante-mentale-ce-n-est-pas-rien',
+    excerpt:
+      'Dépression, silence, suicide : pourquoi tant de souffrances sont minimisées, comment repérer les signaux, et pourquoi demander de l’aide n’est jamais une faiblesse.',
+    category: 'sante',
+    published_at: '2026-05-23',
+  },
+  {
+    title: 'Construire un blog moderne : React côté public, PHP côté données',
+    slug: 'blog-react-php-architecture-moderne',
+    excerpt:
+      'Architecture du blog Donchaminade : MySQL, API PHP, React/Vite, Quill, images et déploiement.',
+    category: 'tech',
+    published_at: '2026-05-20',
+  },
+  {
+    title: 'Lâcher prise : retrouver l’équilibre quand tout va vite',
+    slug: 'lacher-prise-developpeur-equilibre',
+    excerpt: 'Guide sur le lâcher-prise pour développeurs et créatifs.',
+    category: 'spiritualite',
+    published_at: '2026-05-17',
+  },
+  {
+    title: 'Le bénévolat : pourquoi, comment, quand et où s’engager',
+    slug: 'bienfaits-benevolat-guide-complet',
+    excerpt: 'Guide pratique pour s’engager, en local ou en ligne, avec les compétences numériques.',
+    category: 'motivation',
+    published_at: '2026-05-14',
+  },
+  {
+    title: 'MCP et Cursor : comprendre les super-pouvoirs de l’IA dans votre IDE',
+    slug: 'mcp-cursor-avantages-fonctionnement',
+    excerpt: 'Model Context Protocol, architecture, sécurité et cas concrets pour connecter Cursor.',
+    category: 'tech',
+    published_at: '2026-05-11',
+  },
+  {
+    title: 'Quill : rédiger un blog professionnel sans écrire de HTML',
+    slug: 'quill-editeur-visuel-blog',
+    excerpt: 'Guide de l’éditeur Quill de l’admin : structure, images, code et checklist de publication.',
+    category: 'tech',
+    published_at: '2026-05-08',
+  },
+];
+
+function snapshotFacts(blogs: ChatBlogFact[] = SNAPSHOT_BLOGS): PortfolioFacts {
   return {
     profile: SNAPSHOT_PROFILE,
     projects: PROJECTS.map((p) => ({
@@ -107,7 +154,10 @@ async function fetchJson<T>(url: string, timeoutMs = 4500): Promise<T> {
   try {
     const res = await fetch(url, {
       signal: ctrl.signal,
-      headers: { Accept: 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'DonchaminadePortfolioChat/1.0',
+      },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()) as T;
@@ -260,7 +310,12 @@ async function loadLiveFacts(): Promise<PortfolioFacts> {
         description: e.description,
         tags: e.tags,
       })),
-      blogs: mapBlogs(blogRes?.data),
+      blogs: (() => {
+        const live = mapBlogs(blogRes?.data);
+        if (live.length === 0) return fallback.blogs;
+        const seen = new Set(live.map((b) => b.slug));
+        return [...live, ...fallback.blogs.filter((b) => !seen.has(b.slug))];
+      })(),
       testimonials: liveTestimonials.length ? liveTestimonials : fallback.testimonials,
       communities: mergedCommunities.map((c) => ({
         name: c.name,
