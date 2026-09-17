@@ -3,6 +3,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import { handleViteChat } from './lib/chat/devMiddleware';
 
 const PHP_LOCAL = 'http://localhost/donchaminade-d%C3%A9veloppeur-web';
 const SHARE_PREVIEW_IMAGE = '/og-share.jpg';
@@ -35,11 +36,39 @@ export default defineConfig(({ mode }) => {
         port: 3000,
         host: '0.0.0.0',
         proxy: {
-          '/api': { target: PHP_LOCAL, changeOrigin: true },
+          '/api': {
+            target: PHP_LOCAL,
+            changeOrigin: true,
+            bypass(req) {
+              if (req.url?.split('?')[0] === '/api/chat') return req.url;
+            },
+          },
           '/uploads': { target: PHP_LOCAL, changeOrigin: true, rewrite: (p) => `/public${p}` },
         },
       },
       plugins: [
+        {
+          name: 'portfolio-chat-dev',
+          configureServer(server) {
+            process.env.GROQ_API_KEY ||= env.GROQ_API_KEY;
+            process.env.GOOGLE_GENERATIVE_AI_API_KEY ||= env.GOOGLE_GENERATIVE_AI_API_KEY;
+            process.env.GEMINI_API_KEY ||= env.GEMINI_API_KEY;
+            process.env.PORTFOLIO_API_URL ||= env.PORTFOLIO_API_URL || env.VITE_API_URL;
+            server.middlewares.use(async (req, res, next) => {
+              if (req.url?.split('?')[0] === '/api/chat') {
+                try {
+                  await handleViteChat(req, res);
+                } catch (error) {
+                  res.statusCode = 500;
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify({ error: error instanceof Error ? error.message : 'Chat error' }));
+                }
+                return;
+              }
+              next();
+            });
+          },
+        },
         react(),
         copyPublicWithoutUploads(),
         {
@@ -54,10 +83,6 @@ export default defineConfig(({ mode }) => {
       build: {
         outDir: 'dist',
         emptyOutDir: true,
-      },
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
       },
       resolve: {
         alias: {

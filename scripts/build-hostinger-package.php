@@ -36,7 +36,7 @@ function rrmdir(string $dir): void
     rmdir($dir);
 }
 
-function copyDir(string $src, string $dst, array $skipDirNames = []): void
+function copyDir(string $src, string $dst, array $skipDirNames = [], array $skipExtensions = []): void
 {
     if (!is_dir($src)) {
         return;
@@ -58,7 +58,9 @@ function copyDir(string $src, string $dst, array $skipDirNames = []): void
         $from = $src . DIRECTORY_SEPARATOR . $item;
         $to = $dst . DIRECTORY_SEPARATOR . $item;
         if (is_dir($from)) {
-            copyDir($from, $to, $skipDirNames);
+            copyDir($from, $to, $skipDirNames, $skipExtensions);
+        } elseif ($skipExtensions !== [] && in_array(strtolower(pathinfo($item, PATHINFO_EXTENSION)), $skipExtensions, true)) {
+            continue;
         } else {
             copy($from, $to);
         }
@@ -78,7 +80,7 @@ foreach ($dirs as $dir) {
         echo "[SKIP] {$dir}/ (absent)\n";
         continue;
     }
-    copyDir($src, $out . DIRECTORY_SEPARATOR . $dir);
+    copyDir($src, $out . DIRECTORY_SEPARATOR . $dir, [], $dir === 'api' ? ['ts'] : []);
     echo "[OK] {$dir}/\n";
 }
 

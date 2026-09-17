@@ -22,6 +22,7 @@ Portfolio professionnel full-stack : interface **React + Vite + TypeScript** (h�
 - [Scripts disponibles](#scripts-disponibles)
 - [Structure du projet](#structure-du-projet)
 - [Pages du site (front)](#pages-du-site-front)
+- [Chatbot portfolio (gratuit)](#chatbot-portfolio-gratuit)
 - [API REST](#api-rest)
 - [Espace administration](#espace-administration)
 - [Base de données](#base-de-données)
@@ -51,7 +52,8 @@ Les données affichées sur le site proviennent de la base MySQL via l’API. De
 │  Vercel (React / Vite)      │  ──── VITE_API_URL ──►  │  Hostinger (PHP + MySQL)       │
 │  donchaminade-alpha…        │                         │  donchamfolio.grosbit.com      │
 │  • Pages publiques /blog    │                         │  • /api/*                      │
-│  • Redirect /admin → Host.  │                         │  • /admin/*                    │
+│  • POST /api/chat (LLM)     │  ── retrieval public ─► │  • /admin/*                    │
+│  • Redirect /admin → Host.  │                         │                                │
 └─────────────────────────────┘                         └──────────────────────────────┘
 ```
 
@@ -150,8 +152,15 @@ Fichiers modèles :
 | Variable | Description |
 |----------|-------------|
 | `VITE_API_URL` | URL de l’API Hostinger, ex. `https://donchamfolio.grosbit.com` |
+| `PORTFOLIO_API_URL` | Base API pour le retrieval du chatbot (serveur). Défaut : `https://donchamfolio.grosbit.com` |
+| `GROQ_API_KEY` | Clé **gratuite** Groq (Llama). [console.groq.com](https://console.groq.com) — prioritaire |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Clé **gratuite** Gemini. [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| `GEMINI_API_KEY` | Alias accepté pour Gemini (non exposé au navigateur) |
+| `GROQ_MODEL` | Optionnel. Défaut : `llama-3.1-8b-instant` |
+| `GOOGLE_GENERATIVE_AI_MODEL` | Optionnel. Défaut : `gemini-2.5-flash` |
+| `CHAT_RATE_LIMIT_PER_MIN` | Optionnel. Défaut : `12` |
 
-Ne jamais committer `.env` (déjà dans `.gitignore`).
+Sans `GROQ_API_KEY` ni clé Gemini, le widget **continue de répondre** à partir des faits publics (mode fallback). Ne jamais committer `.env` (déjà dans `.gitignore`). Ne pas préfixer les clés LLM par `VITE_` — elles resteraient visibles dans le bundle.
 
 ---
 
@@ -179,9 +188,10 @@ Scripts PHP utiles :
 
 ```
 ├── admin/              # Back-office PHP (session, CRUD contenu)
-├── api/                # Endpoints REST (portfolio, blog, contact…)
+├── api/                # Endpoints REST PHP + api/chat.ts (fonction Vercel)
 ├── blog/               # Partage public d’articles (share.php)
-├── components/         # Composants React
+├── components/         # Composants React (dont PortfolioChat)
+├── lib/chat/           # Retrieval, fallback, rate-limit, handler LLM
 ├── pages/              # BlogList, BlogPostPage
 ├── database/           # schema.sql, migrations/, catalog/, seeds
 ├── includes/           # Auth, Database, repositories…
@@ -205,6 +215,38 @@ Application **SPA** : une seule entrée HTML, routage côté client.
 | `/` | Accueil — Hero, stats, à propos, projets, expériences, témoignages, communautés, clients, contact |
 | `/blog` | Liste des articles (pagination, filtres par catégorie) |
 | `/blog/:slug` | Article détaillé (sommaire, likes, partage, commentaires) |
+
+Widget **Assistant** (bas gauche) : questions sur le contenu public du portfolio, toutes pages.
+
+---
+
+## Chatbot portfolio (gratuit)
+
+Assistant flottant (mobile-first) qui ne répond **qu’à propos de Donchaminade** : bio, projets, expériences (dont Coach 48h Hackathon YAS Togo & Next Gen, bénévole speakers PyCon Togo 2026), blogs, compétences, témoignages, contact public.
+
+### Comment ça marche
+
+1. **Retrieval** — la route Vercel `POST /api/chat` interroge les APIs publiques Hostinger (`/api/index.php?resource=portfolio`, `/api/blog.php?action=list`) avec un cache court (~5 min), puis fusionne le catalogue local (`constants.tsx`) pour les faits encore absents de la BDD (ex. PyCon / YAS).
+2. **LLM gratuit (optionnel)** — [Vercel AI SDK](https://ai-sdk.dev) + `@ai-sdk/groq` (Llama 3.1 8B Instant) ou `@ai-sdk/google` (Gemini 2.5 Flash). Streaming UI.
+3. **Fallback** — si aucune clé n’est définie ou si le provider échoue : réponses modèle/recherche à partir des faits déjà récupérés. Jamais de crash.
+
+Les conversations ne sont **pas stockées** (état éphémère du navigateur). Un bandeau précise que les réponses viennent du contenu public.
+
+### Variables à coller sur Vercel (projet `donchaminade`)
+
+Production + Preview :
+
+| Nom | Obligatoire | Valeur |
+|-----|-------------|--------|
+| `VITE_API_URL` | déjà en place | `https://donchamfolio.grosbit.com` |
+| `PORTFOLIO_API_URL` | recommandé | `https://donchamfolio.grosbit.com` |
+| `GROQ_API_KEY` **ou** `GOOGLE_GENERATIVE_AI_API_KEY` | pour le LLM | clé gratuite uniquement |
+
+Redeploy après ajout d’une clé. Le preview Git fonctionne sans clé (fallback).
+
+Local : ajouter la même clé dans `.env` (voir `.env.example`), puis `npm run dev`.
+
+Test retrieval / fallback : `npm run test:chat`.
 
 ### Sections de la page d’accueil (ancres)
 
@@ -332,8 +374,9 @@ Tables principales : profil, projets, expériences, blog, commentaires, contact,
 
 1. Connecter le dépôt GitHub à Vercel.
 2. Framework : **Vite** (détecté via `vercel.json`).
-3. Variable d’environnement :  
-   `VITE_API_URL=https://donchamfolio.grosbit.com`
+3. Variables d’environnement :  
+   `VITE_API_URL=https://donchamfolio.grosbit.com`  
+   Optionnel chatbot : `GROQ_API_KEY` **ou** `GOOGLE_GENERATIVE_AI_API_KEY` + `PORTFOLIO_API_URL`
 4. Branche de production : `master` (ou `main`).
 5. Chaque push déclenche un build (`npm run build` → `dist/`).
 
@@ -404,6 +447,7 @@ NOTIFY_EMAIL_ENABLED=true
 - [ ] `SMTP_*` + `NOTIFY_EMAIL` dans `.env` Hostinger, puis test email  
 - [ ] `CORS_ORIGINS` contient l’URL Vercel exacte  
 - [ ] `VITE_API_URL` configuré sur Vercel + redeploy  
+- [ ] (Chatbot IA) `GROQ_API_KEY` ou `GOOGLE_GENERATIVE_AI_API_KEY` sur le projet Vercel `donchaminade`  
 - [ ] `install.php` supprimé en production  
 - [ ] Mot de passe admin fort  
 - [ ] Dossier `uploads/` accessible en écriture (755/775)

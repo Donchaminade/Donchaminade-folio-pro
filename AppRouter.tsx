@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import App from './App';
 import BlogList from './pages/BlogList';
 import BlogPostPage from './pages/BlogPostPage';
 import { getBlogPreviewTokenFromPath, getBlogSlugFromPath, getPathname, isBlogListPath } from './lib/navigation';
+
+const PortfolioChat = React.lazy(() => import('./components/PortfolioChat'));
 
 const AppRouter: React.FC = () => {
   const [path, setPath] = useState(getPathname);
@@ -16,19 +18,23 @@ const AppRouter: React.FC = () => {
   const slug = getBlogSlugFromPath();
   const previewToken = getBlogPreviewTokenFromPath();
 
+  let page: React.ReactNode = <App />;
   if (isBlogListPath()) {
-    return <BlogList />;
+    page = <BlogList />;
+  } else if (previewToken) {
+    page = <BlogPostPage previewToken={previewToken} />;
+  } else if (slug) {
+    page = <BlogPostPage slug={slug} />;
   }
 
-  if (previewToken) {
-    return <BlogPostPage previewToken={previewToken} />;
-  }
-
-  if (slug) {
-    return <BlogPostPage slug={slug} />;
-  }
-
-  return <App />;
+  return (
+    <>
+      {page}
+      <Suspense fallback={null}>
+        <PortfolioChat />
+      </Suspense>
+    </>
+  );
 };
 
 export default AppRouter;
