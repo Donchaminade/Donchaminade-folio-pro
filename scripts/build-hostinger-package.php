@@ -80,7 +80,7 @@ foreach ($dirs as $dir) {
         echo "[SKIP] {$dir}/ (absent)\n";
         continue;
     }
-    copyDir($src, $out . DIRECTORY_SEPARATOR . $dir, [], $dir === 'api' ? ['ts'] : []);
+    copyDir($src, $out . DIRECTORY_SEPARATOR . $dir, [], $dir === 'api' ? ['ts', 'js'] : []);
     echo "[OK] {$dir}/\n";
 }
 

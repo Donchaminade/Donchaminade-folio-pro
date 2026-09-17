@@ -188,7 +188,7 @@ Scripts PHP utiles :
 
 ```
 ├── admin/              # Back-office PHP (session, CRUD contenu)
-├── api/                # Endpoints REST PHP + api/chat.ts (fonction Vercel)
+├── api/                # Endpoints REST PHP + api/chat.js (bundle Vercel)
 ├── blog/               # Partage public d’articles (share.php)
 ├── components/         # Composants React (dont PortfolioChat)
 ├── lib/chat/           # Retrieval, fallback, rate-limit, handler LLM
