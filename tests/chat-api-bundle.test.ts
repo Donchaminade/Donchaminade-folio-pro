@@ -60,3 +60,44 @@ test('POST /api/chat via le bundle répond en fallback sans clé LLM', async () 
     if (prevGemini) process.env.GEMINI_API_KEY = prevGemini;
   }
 });
+
+test('POST bundle répond Grosbit, formations et LinkedIn sans MODULE_NOT_FOUND', async () => {
+  const prevGroq = process.env.GROQ_API_KEY;
+  const prevGoogle = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const prevGemini = process.env.GEMINI_API_KEY;
+  delete process.env.GROQ_API_KEY;
+  delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  delete process.env.GEMINI_API_KEY;
+
+  try {
+    const { default: handler } = (await import('../api/chat.js')) as { default: ChatHandler };
+
+    async function ask(content: string): Promise<string> {
+      const response = await handler.fetch(
+        new Request('http://localhost/api/chat', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ messages: [{ role: 'user', content }] }),
+        })
+      );
+      assert.equal(response.status, 200);
+      const text = await response.text();
+      assert.doesNotMatch(text, /MODULE_NOT_FOUND|assistant_unavailable/);
+      return text;
+    }
+
+    const grosbit = await ask('Tu travailles chez Grosbit ?');
+    assert.match(grosbit, /GROSBIT/i);
+    assert.match(grosbit, /2026/);
+
+    const edu = await ask('Quelles sont tes formations ?');
+    assert.match(edu, /Lomé Business School|DEFITECH/i);
+
+    const linkedin = await ask('Quel est ton LinkedIn ?');
+    assert.match(linkedin, /linkedin\.com\/in\/chaminadeadjolou/i);
+  } finally {
+    if (prevGroq) process.env.GROQ_API_KEY = prevGroq;
+    if (prevGoogle) process.env.GOOGLE_GENERATIVE_AI_API_KEY = prevGoogle;
+    if (prevGemini) process.env.GEMINI_API_KEY = prevGemini;
+  }
+});

@@ -226,7 +226,7 @@ Assistant flottant (mobile-first) qui ne répond **qu’à propos de Donchaminad
 
 ### Comment ça marche
 
-1. **Retrieval** — la route Vercel `POST /api/chat` interroge les APIs publiques Hostinger (`/api/index.php?resource=portfolio`, `/api/blog.php?action=list`) avec un cache court (~5 min), puis fusionne le catalogue local (`constants.tsx`) pour les faits encore absents de la BDD (ex. PyCon / YAS).
+1. **Retrieval** — la route Vercel `POST /api/chat` interroge les APIs publiques Hostinger (`/api/index.php?resource=portfolio`, `/api/blog.php?action=list`) avec un cache court (~5 min), fusionne le catalogue local (`lib/chat/catalog.ts`) et les faits CV/LinkedIn (`lib/chat/knowledge.ts`). L’API portfolio prime pour les projets affichés et le poste actuel GROSBIT SARLU (fév. 2026 – présent).
 2. **LLM gratuit (optionnel)** — [Vercel AI SDK](https://ai-sdk.dev) + `@ai-sdk/groq` (Llama 3.1 8B Instant) ou `@ai-sdk/google` (Gemini 2.5 Flash). Streaming UI.
 3. **Fallback** — si aucune clé n’est définie ou si le provider échoue : réponses modèle/recherche à partir des faits déjà récupérés. Jamais de crash.
 

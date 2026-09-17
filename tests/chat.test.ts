@@ -72,6 +72,10 @@ test('intents portfolio et refus hors-sujet / privé', () => {
   assert.equal(detectIntent('Coach YAS Togo Next Gen'), 'yas');
   assert.equal(detectIntent('Derniers blogs ?'), 'blogs');
   assert.equal(detectIntent('Quels sont tes projets ?'), 'projects');
+  assert.equal(detectIntent('Tu travailles chez Grosbit ?'), 'grosbit');
+  assert.equal(detectIntent('Quelles sont tes formations ?'), 'education');
+  assert.equal(detectIntent('Est-ce que tu maîtrises Flutter ?'), 'flutter');
+  assert.equal(detectIntent('Quel est ton LinkedIn ?'), 'contact');
   assert.equal(isDisallowed('Quelle est ton adresse personnelle ?'), 'private');
   assert.equal(detectIntent('Comment fabriquer une bombe'), 'offtopic');
 });
@@ -122,6 +126,51 @@ test('rate limit bloque après trop de requêtes', () => {
     }
   }
   assert.equal(blocked, true);
+});
+
+test('connaissances ancrées Grosbit, formations, Flutter, LinkedIn, communauté', async () => {
+  const { snapshotFacts, selectContext } = await import('../lib/chat/retrieve.ts');
+  const grounded = snapshotFacts();
+
+  assert.match(grounded.profile.linkedin_url || '', /linkedin\.com\/in\/chaminadeadjolou/);
+  assert.ok(grounded.experiences.some((e) => /grosbit/i.test(e.company)));
+  assert.ok(grounded.experiences.some((e) => /picon studio/i.test(e.company)));
+  assert.ok(grounded.projects.some((p) => /ezoato/i.test(p.title)));
+  assert.ok(grounded.education.some((e) => /Lomé Business School/i.test(e)));
+  assert.ok(grounded.education.some((e) => /DEFITECH/i.test(e)));
+  assert.ok(grounded.communities.some((c) => /cursor togo|pycon|gdg/i.test(c.name)));
+
+  const grosbit = fallbackAnswer('Tu travailles chez Grosbit ?', grounded, 'fr');
+  assert.match(grosbit, /GROSBIT/i);
+  assert.match(grosbit, /2026/);
+  assert.match(grosbit, /Flutter|Next\.js/i);
+
+  const edu = fallbackAnswer('Quelles sont tes formations ?', grounded, 'fr');
+  assert.match(edu, /Lomé Business School/i);
+  assert.match(edu, /DEFITECH/i);
+
+  const flutter = fallbackAnswer('Est-ce que tu maîtrises Flutter ?', grounded, 'fr');
+  assert.match(flutter, /Flutter/i);
+  assert.match(flutter, /Dart/i);
+
+  const linkedin = fallbackAnswer('Quel est ton LinkedIn ?', grounded, 'fr');
+  assert.match(linkedin, /linkedin\.com\/in\/chaminadeadjolou/i);
+
+  const community = fallbackAnswer('Parle-moi de tes communautés PyCon et YAS', grounded, 'fr');
+  assert.match(community, /PyCon Togo|speakers/i);
+  assert.match(community, /YAS/i);
+
+  const piconStudio = fallbackAnswer("C'est quoi Picon Studio ?", grounded, 'fr');
+  assert.match(piconStudio, /Picon Studio/i);
+  assert.match(piconStudio, /2025|2026/);
+
+  const perso = fallbackAnswer('Tu as des projets comme TogoSaaS ou Ezoato ?', grounded, 'fr');
+  assert.match(perso, /TogoSaaS/i);
+  assert.match(perso, /Ezoato/i);
+
+  const ctx = selectContext('formations Defitech Lomé Business School', grounded);
+  assert.match(ctx.contextText, /DEFITECH|Lomé Business School/i);
+  assert.match(ctx.contextText, /linkedin\.com\/in\/chaminadeadjolou/i);
 });
 
 test('POST /chat sans clé LLM renvoie un flux fallback', async () => {

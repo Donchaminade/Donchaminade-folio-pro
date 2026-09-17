@@ -3,6 +3,9 @@ export type ChatLang = 'fr' | 'en';
 export type ChatIntent =
   | 'projects'
   | 'experience'
+  | 'grosbit'
+  | 'education'
+  | 'flutter'
   | 'pycon'
   | 'yas'
   | 'blogs'
@@ -61,14 +64,24 @@ export interface ChatAwardFact {
   description: string;
 }
 
+export interface ChatFaqFact {
+  q: string;
+  a: string;
+  tags: string[];
+}
+
 export interface ChatProfileFact {
   full_name: string;
+  aliases?: string[];
   hero_title: string;
+  headline?: string;
   bio: string;
+  location?: string;
   availability_text?: string;
   experience_badge?: string;
   email?: string;
   phone?: string;
+  phones?: string[];
   whatsapp?: string;
   linkedin_url?: string;
   twitter_url?: string;
@@ -86,6 +99,8 @@ export interface PortfolioFacts {
   awards: ChatAwardFact[];
   skills: string[];
   education: string[];
+  faq?: ChatFaqFact[];
+  notes?: string[];
   source: 'live' | 'snapshot' | 'mixed';
 }
 
