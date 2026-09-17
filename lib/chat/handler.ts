@@ -53,7 +53,7 @@ async function streamWithLlm(
           model,
           instructions: buildInstructions(contextText, lang),
           messages: await convertToModelMessages(messages!),
-          maxOutputTokens: 700,
+          maxOutputTokens: 1000,
         });
         let started = false;
         for await (const delta of result.textStream) {

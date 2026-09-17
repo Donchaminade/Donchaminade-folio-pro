@@ -1,3 +1,4 @@
+import { formatNetworkAnswer, formatSalaryAnswer, formatValueAnswer } from './knowledge';
 import { detectIntent, isDisallowed } from './language';
 import type { ChatExperienceFact, ChatLang, ChatProjectFact, PortfolioFacts } from './types';
 
@@ -51,6 +52,18 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
 
   const intent = detectIntent(query);
   const p = facts.profile;
+
+  if (intent === 'salary') {
+    return formatSalaryAnswer(lang);
+  }
+
+  if (intent === 'value') {
+    return formatValueAnswer(lang);
+  }
+
+  if (intent === 'network') {
+    return formatNetworkAnswer(lang);
+  }
 
   if (intent === 'offtopic') {
     return lang === 'en'

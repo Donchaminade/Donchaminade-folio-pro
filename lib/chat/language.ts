@@ -30,6 +30,25 @@ export function detectIntent(text: string): ChatIntent {
   const q = text.toLowerCase();
   if (isDisallowed(text)) return 'offtopic';
 
+  if (
+    /\b(prétentions? salariales?|fourchette(s)? (de |salariale|salaire)|salary (expectation|range)|compensation|rémunération|remuneration|package salarial|combien (demander|viser)|salaire (annuel|mensuel|indicatif)|prétention)\b/i.test(
+      q
+    ) ||
+    (/\b(salaire|salary)\b/i.test(q) && !/\b(exact|gagnes?|earn(s|ed|ing)?)\b/i.test(q))
+  ) {
+    return 'salary';
+  }
+  if (
+    /\b(valeur ajoutée|valeur ajoutee|plus-value|extra value|why hire|pourquoi l.?embauch|qu.?apporte|what (does|would) (he|she|this profile) bring)\b/i.test(
+      q
+    )
+  ) {
+    return 'value';
+  }
+  if (/\b(réseau|reseau|network|rayonnement|reach|influence communautaire)\b/i.test(q)) {
+    return 'network';
+  }
+
   if (/\b(pycon|speakers?|intervenants?|logistique speakers?)\b/i.test(q)) return 'pycon';
   if (/\b(yas|next gen|hackathon|coach(?:ing)?)\b/i.test(q)) return 'yas';
   if (/\b(grosbit|gros bit|cisco|photopicon|photo picon)\b/i.test(q)) return 'grosbit';

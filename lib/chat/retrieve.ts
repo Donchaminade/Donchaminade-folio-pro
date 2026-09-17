@@ -8,7 +8,15 @@ import {
   CATALOG_SKILLS,
   CATALOG_TESTIMONIALS,
 } from './catalog';
-import { KNOWLEDGE_FAQ, KNOWLEDGE_NOTES, KNOWLEDGE_PROFILE, withKnowledge } from './knowledge';
+import {
+  KNOWLEDGE_FAQ,
+  KNOWLEDGE_NETWORK_CONTEXT,
+  KNOWLEDGE_NOTES,
+  KNOWLEDGE_PROFILE,
+  KNOWLEDGE_SALARY_CONTEXT,
+  KNOWLEDGE_VALUE_CONTEXT,
+  withKnowledge,
+} from './knowledge';
 import { detectIntent } from './language';
 import type {
   ChatAwardFact,
@@ -433,8 +441,27 @@ export function selectContext(query: string, facts: PortfolioFacts): RetrievedCo
     if (intent === 'contact' && /linkedin|contact/i.test(text)) boost += 12;
     if (intent === 'pycon' && /pycon/i.test(text)) boost += 8;
     if (intent === 'yas' && /yas/i.test(text)) boost += 8;
+    if (intent === 'salary' && /salaire|xof|prétention|fourchette/i.test(text)) boost += 16;
+    if (intent === 'value' && /valeur|digitalisation|erp/i.test(text)) boost += 16;
+    if (intent === 'network' && /réseau|gdg|pycon|200|500/i.test(text)) boost += 16;
     chunks.push({ title: `FAQ ${faq.q}`, text, score: scoreText(query, text) + boost });
   }
+
+  chunks.push({
+    title: 'Prétentions salariales indicatives',
+    text: KNOWLEDGE_SALARY_CONTEXT,
+    score: scoreText(query, KNOWLEDGE_SALARY_CONTEXT) + (intent === 'salary' ? 20 : 0),
+  });
+  chunks.push({
+    title: 'Valeur ajoutée au-delà du code',
+    text: KNOWLEDGE_VALUE_CONTEXT,
+    score: scoreText(query, KNOWLEDGE_VALUE_CONTEXT) + (intent === 'value' ? 20 : 0),
+  });
+  chunks.push({
+    title: 'Force du réseau communautaire',
+    text: KNOWLEDGE_NETWORK_CONTEXT,
+    score: scoreText(query, KNOWLEDGE_NETWORK_CONTEXT) + (intent === 'network' || intent === 'community' ? 16 : 0),
+  });
 
   for (const blog of facts.blogs) {
     const text = `ARTICLE: ${blog.title}\n${blog.excerpt}\nCatégorie: ${blog.category}\nSlug: /blog/${blog.slug}`;
@@ -453,8 +480,9 @@ export function selectContext(query: string, facts: PortfolioFacts): RetrievedCo
 
   for (const c of facts.communities) {
     const text = `COMMUNAUTÉ: ${c.name} — ${c.role}. ${c.description}`;
-    let boost = intent === 'community' ? 5 : 0;
+    let boost = intent === 'community' || intent === 'network' ? 5 : 0;
     if (intent === 'pycon' && /pycon/i.test(text)) boost += 10;
+    if (intent === 'network' && /gdg|wtm|pycon|cursor|hyver|ethafrique/i.test(text)) boost += 8;
     chunks.push({ title: c.name, text, score: scoreText(query, text) + boost });
   }
 

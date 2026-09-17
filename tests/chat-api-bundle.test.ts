@@ -95,6 +95,14 @@ test('POST bundle répond Grosbit, formations et LinkedIn sans MODULE_NOT_FOUND'
 
     const linkedin = await ask('Quel est ton LinkedIn ?');
     assert.match(linkedin, /linkedin\.com\/in\/chaminadeadjolou/i);
+
+    const salary = await ask('Quelles sont tes prétentions salariales ?');
+    assert.match(salary, /XOF|FCFA/i);
+    assert.match(salary, /indicatif|indicative/i);
+
+    const network = await ask('Parle-moi de son réseau GDG et PyCon');
+    assert.match(network, /GDG/i);
+    assert.match(network, /PyCon/i);
   } finally {
     if (prevGroq) process.env.GROQ_API_KEY = prevGroq;
     if (prevGoogle) process.env.GOOGLE_GENERATIVE_AI_API_KEY = prevGoogle;
