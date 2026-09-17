@@ -7,17 +7,23 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "pack:hostinger": "php scripts/build-hostinger-package.php"
+    "pack:hostinger": "php scripts/build-hostinger-package.php",
+    "test:chat": "tsx --test tests/chat.test.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.74",
+    "@ai-sdk/groq": "^4.0.44",
+    "@ai-sdk/react": "^4.0.108",
+    "ai": "^7.0.105",
     "framer-motion": "^12.26.2",
-    "react-dom": "^19.2.3",
+    "lucide-react": "^0.562.0",
     "react": "^19.2.3",
-    "lucide-react": "^0.562.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "tsx": "^4.23.13",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }
