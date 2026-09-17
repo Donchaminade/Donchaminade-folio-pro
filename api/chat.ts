@@ -71,14 +71,19 @@ async function writeWebResponse(res: ServerResponse, response: Response): Promis
 }
 
 async function handleFetch(request: Request): Promise<Response> {
-  if (request.method === 'GET' || request.method === 'HEAD') {
-    return healthResponse();
+  try {
+    if (request.method === 'GET' || request.method === 'HEAD') {
+      return healthResponse();
+    }
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204 });
+    }
+    const { handleChatRequest } = await import('../lib/chat/handler');
+    return await handleChatRequest(request);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : 'chat_failed';
+    return Response.json({ error: 'assistant_unavailable', detail }, { status: 500 });
   }
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204 });
-  }
-  const { handleChatRequest } = await import('../lib/chat/handler');
-  return handleChatRequest(request);
 }
 
 async function handle(
