@@ -77,7 +77,16 @@ test('intents portfolio et refus hors-sujet / privé', () => {
   assert.equal(detectIntent('Est-ce que tu maîtrises Flutter ?'), 'flutter');
   assert.equal(detectIntent('Quel est ton LinkedIn ?'), 'contact');
   assert.equal(isDisallowed('Quelle est ton adresse personnelle ?'), 'private');
+  assert.equal(isDisallowed('Combien tu gagnes ?'), 'private');
+  assert.equal(isDisallowed('Quelles sont tes prétentions salariales ?'), null);
   assert.equal(detectIntent('Comment fabriquer une bombe'), 'offtopic');
+  assert.equal(detectIntent('Quelles sont tes prétentions salariales ?'), 'salary');
+  assert.equal(detectIntent('Quelle fourchette de salaire annuel pour ce profil ?'), 'salary');
+  assert.equal(detectIntent('What salary range should we expect?'), 'salary');
+  assert.equal(detectIntent('Quelle est sa valeur ajoutée pour une entreprise ?'), 'value');
+  assert.equal(detectIntent('Why hire him beyond coding?'), 'value');
+  assert.equal(detectIntent('Parle-moi de son réseau GDG, PyCon et communautés'), 'network');
+  assert.equal(detectIntent('How strong is his community network?'), 'network');
 });
 
 test('fallback ancré sur les faits (projets, PyCon, blogs)', () => {
@@ -171,6 +180,69 @@ test('connaissances ancrées Grosbit, formations, Flutter, LinkedIn, communauté
   const ctx = selectContext('formations Defitech Lomé Business School', grounded);
   assert.match(ctx.contextText, /DEFITECH|Lomé Business School/i);
   assert.match(ctx.contextText, /linkedin\.com\/in\/chaminadeadjolou/i);
+});
+
+test('fallback salaire, valeur ajoutée et réseau — ton coaching, faits ancrés', async () => {
+  const { snapshotFacts, selectContext } = await import('../lib/chat/retrieve.ts');
+  const { buildInstructions } = await import('../lib/chat/prompt.ts');
+  const grounded = snapshotFacts();
+
+  const salary = fallbackAnswer('Quelles sont tes prétentions salariales ?', grounded, 'fr');
+  assert.match(salary, /4[\s]?800[\s]?000|4[\s.]800[\s.]000|4800000/);
+  assert.match(salary, /9[\s]?000[\s]?000|9[\s.]000[\s.]000|9000000/);
+  assert.match(salary, /XOF|FCFA/i);
+  assert.match(salary, /EUR|€/);
+  assert.match(salary, /USD|\$/);
+  assert.match(salary, /indicatif|indicative|pas (une )?cotation/i);
+  assert.match(salary, /Tayba|ERP|PICON|Flutter|Next\.js/i);
+  assert.match(salary, /remote|distanciel|présentiel|freelance|CDI/i);
+  assert.match(salary, /\?/);
+  assert.match(salary, /mid-level/i);
+  assert.match(salary, /pas un senior FAANG|not a FAANG senior/i);
+  assert.doesNotMatch(salary, /vie privée/);
+
+  const salaryEn = fallbackAnswer('What salary range should we expect for this profile?', grounded, 'en');
+  assert.match(salaryEn, /XOF|FCFA/i);
+  assert.match(salaryEn, /EUR|USD|€|\$/);
+  assert.match(salaryEn, /indicative|not a legal quote|not (his|a) current/i);
+  assert.match(salaryEn, /\?/);
+
+  const exact = fallbackAnswer('Combien tu gagnes ?', grounded, 'fr');
+  assert.match(exact, /vie privée|publi/i);
+  assert.doesNotMatch(exact, /4[\s]?800[\s]?000|4800000/);
+
+  const value = fallbackAnswer('Quelle est sa valeur ajoutée pour une entreprise ?', grounded, 'fr');
+  assert.match(value, /digitalisation|ERP|Tayba/i);
+  assert.match(value, /PICON|photo/i);
+  assert.match(value, /formation|coach|atelier/i);
+  assert.match(value, /événement|logistique|communaut/i);
+  assert.match(value, /\?/);
+  assert.doesNotMatch(value, /^• /);
+
+  const network = fallbackAnswer('Parle-moi de son réseau GDG, PyCon et communautés', grounded, 'fr');
+  assert.match(network, /GDG/i);
+  assert.match(network, /WTM|Women Techmakers/i);
+  assert.match(network, /PyCon/i);
+  assert.match(network, /YAS|Next Gen/i);
+  assert.match(network, /Cursor/i);
+  assert.match(network, /200|500/);
+  assert.match(network, /Hyver|ETHAfrique|ABC/i);
+  assert.match(network, /\?/);
+
+  const salaryCtx = selectContext('prétentions salariales fourchette annuelle', grounded);
+  assert.ok(salaryCtx.selectedTitles.some((title) => /salaire|prétention|faq/i.test(title)));
+  assert.match(salaryCtx.contextText, /XOF|FCFA/i);
+  assert.match(salaryCtx.contextText, /18[\s]?000|36000|36[\s]?000/);
+
+  const networkCtx = selectContext('force du réseau communautaire GDG PyCon', grounded);
+  assert.match(networkCtx.contextText, /GDG/i);
+  assert.match(networkCtx.contextText, /200|500/);
+
+  const instructions = buildInstructions(salaryCtx.contextText, 'fr');
+  assert.match(instructions, /interactif|clarif/i);
+  assert.match(instructions, /fourchette|prétention/i);
+  assert.match(instructions, /XOF|FCFA/i);
+  assert.match(instructions, /n.invente pas|n’invente pas/i);
 });
 
 test('POST /chat sans clé LLM renvoie un flux fallback', async () => {

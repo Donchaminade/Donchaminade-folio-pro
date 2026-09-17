@@ -14,6 +14,9 @@ export type ChatIntent =
   | 'contact'
   | 'testimonials'
   | 'community'
+  | 'network'
+  | 'value'
+  | 'salary'
   | 'awards'
   | 'offtopic'
   | 'generic';

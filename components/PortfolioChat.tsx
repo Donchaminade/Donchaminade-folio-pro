@@ -6,8 +6,9 @@ import { Loader2, MessageCircle, Send, Sparkles, X } from 'lucide-react';
 
 const SUGGESTIONS = [
   'Quels sont tes projets ?',
-  'Parle-moi de ton expérience PyCon',
-  'Derniers blogs ?',
+  'Quelles sont tes prétentions salariales ?',
+  'Quelle est sa valeur ajoutée ?',
+  'Parle-moi de son réseau',
 ];
 
 function messageText(message: { parts?: Array<{ type: string; text?: string }> }): string {
