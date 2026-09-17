@@ -1,14 +1,13 @@
-import {
-  AWARDS,
-  COMMUNITIES,
-  EDUCATION,
-  EXPERIENCES,
-  PROJECTS,
-  RELATIONNELLES,
-  SKILLS,
-  TESTIMONIALS,
-} from '../../constants';
 import { mergeCommunities, mergeExperiences, mergeProjects } from '../mergeCatalog';
+import {
+  CATALOG_AWARDS,
+  CATALOG_COMMUNITIES,
+  CATALOG_EDUCATION,
+  CATALOG_EXPERIENCES,
+  CATALOG_PROJECTS,
+  CATALOG_SKILLS,
+  CATALOG_TESTIMONIALS,
+} from './catalog';
 import { detectIntent } from './language';
 import type {
   ChatAwardFact,
@@ -105,45 +104,14 @@ const SNAPSHOT_BLOGS: ChatBlogFact[] = [
 function snapshotFacts(blogs: ChatBlogFact[] = SNAPSHOT_BLOGS): PortfolioFacts {
   return {
     profile: SNAPSHOT_PROFILE,
-    projects: PROJECTS.map((p) => ({
-      title: p.title,
-      description: p.description,
-      detailedDescription: p.detailedDescription,
-      tags: p.tags ?? [],
-      type: p.type,
-      link: p.link,
-      github: p.github,
-    })),
-    experiences: EXPERIENCES.map((e) => ({
-      company: e.company,
-      role: e.role,
-      period: e.period,
-      description: e.description,
-      tags: e.tags,
-    })),
+    projects: CATALOG_PROJECTS,
+    experiences: CATALOG_EXPERIENCES,
     blogs,
-    testimonials: TESTIMONIALS.map((t) => ({
-      quote: t.quote,
-      name: t.name,
-      role: t.role,
-      company: t.company,
-    })),
-    communities: COMMUNITIES.map((c) => ({
-      name: c.name,
-      role: c.role,
-      description: c.description,
-    })),
-    awards: AWARDS.map((a) => ({
-      title: a.title,
-      issuer: a.issuer,
-      year: a.year,
-      description: a.description,
-    })),
-    skills: [
-      ...SKILLS.map((s) => s.name),
-      ...RELATIONNELLES,
-    ],
-    education: EDUCATION.map((ed) => `${ed.degree} — ${ed.field}, ${ed.school} (${ed.year})`),
+    testimonials: CATALOG_TESTIMONIALS,
+    communities: CATALOG_COMMUNITIES,
+    awards: CATALOG_AWARDS,
+    skills: CATALOG_SKILLS,
+    education: CATALOG_EDUCATION,
     source: 'snapshot',
   };
 }
@@ -274,9 +242,9 @@ async function loadLiveFacts(): Promise<PortfolioFacts> {
         }))
       : [];
 
-    const mergedProjects = mergeProjects(liveProjects as never, PROJECTS);
-    const mergedExperiences = mergeExperiences(liveExperiences as never, EXPERIENCES);
-    const mergedCommunities = mergeCommunities(liveCommunities as never, COMMUNITIES);
+    const mergedProjects = mergeProjects(liveProjects as never, CATALOG_PROJECTS as never);
+    const mergedExperiences = mergeExperiences(liveExperiences as never, CATALOG_EXPERIENCES as never);
+    const mergedCommunities = mergeCommunities(liveCommunities as never, CATALOG_COMMUNITIES as never);
 
     const profileRaw = (data.profile || {}) as Record<string, unknown>;
     const facts: PortfolioFacts = {
