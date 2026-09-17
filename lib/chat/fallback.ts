@@ -1,9 +1,39 @@
 import { detectIntent, isDisallowed } from './language';
-import type { ChatLang, PortfolioFacts } from './types';
+import type { ChatExperienceFact, ChatLang, ChatProjectFact, PortfolioFacts } from './types';
 
 function linkOrEmpty(url?: string): string {
   if (!url || url === '#') return '';
   return url;
+}
+
+function norm(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '');
+}
+
+function namedHits<T>(query: string, items: T[], label: (item: T) => string): T[] {
+  const q = norm(query);
+  return items.filter((item) => {
+    const tokens = norm(label(item))
+      .split(/[^a-z0-9+]+/i)
+      .filter((tok) => tok.length > 3);
+    return tokens.some((tok) => q.includes(tok));
+  });
+}
+
+function formatProjectLine(project: ChatProjectFact): string {
+  const extra = [linkOrEmpty(project.link), linkOrEmpty(project.github)].filter(Boolean).join(' · ');
+  const stack = project.tags?.length ? ` [${project.tags.join(', ')}]` : '';
+  return `• ${project.title} — ${project.description}${stack}${extra ? ` (${extra})` : ''}`;
+}
+
+function formatExperienceDetail(exp: ChatExperienceFact, lang: ChatLang): string {
+  const bullets = (exp.description || []).map((line) => `• ${line}`).join('\n');
+  return lang === 'en'
+    ? `${exp.role} at ${exp.company} (${exp.period}).\n${bullets}`
+    : `${exp.role} chez ${exp.company} (${exp.period}).\n${bullets}`;
 }
 
 export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatLang): string {
@@ -28,14 +58,64 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
       : 'Je ne réponds qu’aux questions sur Donchaminade Chamiande Adjolou : bio, projets, expériences, blogs, compétences et contact public. Que souhaitez-vous savoir sur le portfolio ?';
   }
 
+  if (intent === 'grosbit') {
+    const exp = facts.experiences.find((e) => /grosbit/i.test(e.company));
+    const picon = facts.projects.find((p) => /picon/i.test(p.title));
+    if (lang === 'en') {
+      return [
+        'I currently work at GROSBIT SARLU (February 2026 – present) as IT Support and web & mobile developer (Next.js, Flutter).',
+        exp ? exp.description.join(' ') : '',
+        'GROSBIT is a Cisco partner; I help deploy network solutions and keep infrastructure running.',
+        picon
+          ? `I also work on ${picon.title}: ${picon.description}`
+          : 'LinkedIn also mentions a mobile app for printed-photo order and delivery (PICON).',
+      ]
+        .filter(Boolean)
+        .join(' ');
+    }
+    return [
+      'Je travaille actuellement chez GROSBIT SARLU (février 2026 – présent) comme IT Support et développeur web & mobile (Next.js, Flutter).',
+      exp ? exp.description.join(' ') : '',
+      'GROSBIT est partenaire Cisco : assistance au déploiement réseau et maintien en conditions opérationnelles.',
+      picon
+        ? `Je contribue aussi à ${picon.title} : ${picon.description}`
+        : 'LinkedIn mentionne aussi l’app mobile de commande / livraison de photos imprimées (PICON).',
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  if (intent === 'education') {
+    const list = facts.education.join('\n• ');
+    return lang === 'en'
+      ? `Public education:\n• ${list}\nLomé Business School (Professional Bachelor, 2024) and École Polytechnique DEFITECH (BTS, 2023).`
+      : `Formations publiques :\n• ${list}\nLicence Pro à Lomé Business School (2024) et BTS à l’École Polytechnique DEFITECH (2023).`;
+  }
+
+  if (intent === 'flutter') {
+    const flutterProjects = facts.projects
+      .filter((p) => (p.tags || []).some((t) => /flutter|dart/i.test(t)))
+      .slice(0, 8)
+      .map((p) => p.title);
+    return lang === 'en'
+      ? `Yes — Flutter / Dart is a core mobile skill: interactive UIs, state, navigation. Used at GROSBIT, Picon Studio (Dec 2025 – Feb 2026) and Efficorpe (Aug–Oct 2025). Public apps include ${flutterProjects.join(', ') || 'PICON, Akontaa, CoachFlow'}. I also speak about Flutter and Firebase at GDG Lomé.`
+      : `Oui — Flutter / Dart est une compétence mobile centrale : interfaces interactives, état, navigation. Utilisé chez GROSBIT, Picon Studio (déc. 2025 – fév. 2026) et Efficorpe (août–oct. 2025). Apps publiques : ${flutterProjects.join(', ') || 'PICON, Akontaa, CoachFlow'}. J’interviens aussi sur Flutter et Firebase au GDG Lomé.`;
+  }
+
   if (intent === 'pycon') {
     const exp = facts.experiences.find((e) => /pycon/i.test(e.company + e.role));
     const community = facts.communities.find((c) => /pycon/i.test(c.name));
+    const yasNote = /\b(yas|next gen)\b/i.test(query)
+      ? lang === 'en'
+        ? 'I also coach teams at the 48h Hackathon YAS Togo | Next Gen (2026).'
+        : 'Je suis aussi coach au 48h Hackathon YAS Togo | Next Gen (2026).'
+      : '';
     if (lang === 'en') {
       return [
         'At PyCon Togo 2026 I volunteer as Speaker Coordinator.',
         exp ? exp.description.join(' ') : community?.description || '',
         'That includes arrivals, departures, transport from the border, and on-site speaker logistics.',
+        yasNote,
       ]
         .filter(Boolean)
         .join(' ');
@@ -44,6 +124,7 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
       'Pour PyCon Togo 2026, je suis bénévole — chargé des speakers.',
       exp ? exp.description.join(' ') : community?.description || '',
       'Concrètement : arrivées, départs, transport depuis la frontière et logistique speakers sur site.',
+      yasNote,
     ]
       .filter(Boolean)
       .join(' ');
@@ -70,14 +151,9 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
   }
 
   if (intent === 'projects') {
-    const list = facts.projects
-      .slice(0, 8)
-      .map((project) => {
-        const extra = [linkOrEmpty(project.link), linkOrEmpty(project.github)].filter(Boolean).join(' · ');
-        const stack = project.tags?.length ? ` [${project.tags.join(', ')}]` : '';
-        return `• ${project.title} — ${project.description}${stack}${extra ? ` (${extra})` : ''}`;
-      })
-      .join('\n');
+    const hits = namedHits(query, facts.projects, (project) => project.title);
+    const selected = (hits.length ? hits : facts.projects).slice(0, 8);
+    const list = selected.map(formatProjectLine).join('\n');
     return lang === 'en'
       ? `Here are some of my public projects:\n${list}\nAsk about a title if you want more detail.`
       : `Voici une sélection de mes projets publics :\n${list}\nDemandez un titre pour le détail.`;
@@ -99,10 +175,12 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
   }
 
   if (intent === 'experience') {
-    const list = facts.experiences
-      .slice(0, 8)
-      .map((e) => `• ${e.role} — ${e.company} (${e.period})`)
-      .join('\n');
+    const hits = namedHits(query, facts.experiences, (exp) => `${exp.company} ${exp.role}`);
+    if (hits.length === 1) {
+      return formatExperienceDetail(hits[0], lang);
+    }
+    const selected = (hits.length ? hits : facts.experiences).slice(0, 8);
+    const list = selected.map((e) => `• ${e.role} — ${e.company} (${e.period})`).join('\n');
     return lang === 'en'
       ? `My recent path:\n${list}\nAsk about PyCon, YAS, GROSBIT or another role for details.`
       : `Mon parcours récent :\n${list}\nDemandez PyCon, YAS, GROSBIT ou un autre poste pour le détail.`;
@@ -115,9 +193,11 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
   }
 
   if (intent === 'contact') {
+    const phones = (p.phones && p.phones.length ? p.phones : [p.phone]).filter(Boolean).join(' · ');
+    const linkedin = p.linkedin_url || 'https://www.linkedin.com/in/chaminadeadjolou';
     return lang === 'en'
-      ? `Public contact: ${p.email || ''} · ${p.phone || ''} · ${p.linkedin_url || ''} · booking via the “Réserver un créneau” button on the site.`
-      : `Contact public : ${p.email || ''} · ${p.phone || ''} · ${p.linkedin_url || ''} · réservation via le bouton « Réserver un créneau » du site.`;
+      ? `Public contact: ${p.email || ''} · ${phones} · LinkedIn ${linkedin} · GitHub ${p.github_url || ''} · booking via the “Réserver un créneau” button on the site.`
+      : `Contact public : ${p.email || ''} · ${phones} · LinkedIn ${linkedin} · GitHub ${p.github_url || ''} · réservation via le bouton « Réserver un créneau » du site.`;
   }
 
   if (intent === 'testimonials') {
@@ -144,7 +224,8 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
     return lang === 'en' ? `Public distinctions:\n${list}` : `Distinctions publiques :\n${list}`;
   }
 
+  const linkedin = p.linkedin_url || 'https://www.linkedin.com/in/chaminadeadjolou';
   return lang === 'en'
-    ? `I'm ${p.full_name}, ${p.hero_title} ${p.bio} I have ${p.experience_badge || 'several years'} of experience. Ask me about projects, PyCon, YAS coaching, or latest blogs.`
-    : `Je suis ${p.full_name}, ${p.hero_title} ${p.bio} ${p.experience_badge || ''} d’expérience. Demandez-moi les projets, PyCon, le coaching YAS ou les derniers blogs.`;
+    ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ''} ${p.bio} Current role: GROSBIT SARLU (Feb 2026 – present). Education: Lomé Business School (2024) and DEFITECH (2023). LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.`
+    : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Basé à ${p.location}.` : ''} ${p.bio} Poste actuel : GROSBIT SARLU (février 2026 – présent). Formations : Lomé Business School (2024) et DEFITECH (2023). LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
 }

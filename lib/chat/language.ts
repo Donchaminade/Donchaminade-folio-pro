@@ -32,18 +32,37 @@ export function detectIntent(text: string): ChatIntent {
 
   if (/\b(pycon|speakers?|intervenants?|logistique speakers?)\b/i.test(q)) return 'pycon';
   if (/\b(yas|next gen|hackathon|coach(?:ing)?)\b/i.test(q)) return 'yas';
+  if (/\b(grosbit|gros bit|cisco|photopicon|photo picon)\b/i.test(q)) return 'grosbit';
+  if (/\b(flutter|dart)\b/i.test(q)) return 'flutter';
+  if (
+    /\b(formations?|diplômes?|éducation|education|lbs|defitech|défitech|licence|bts|école|ecole|lomé business)\b/i.test(
+      q
+    )
+  ) {
+    return 'education';
+  }
   if (/\b(blogs?|articles?|écrits?|posts?)\b/i.test(q)) return 'blogs';
-  if (/\b(projets?|réalisations?|portfolio apps?|github)\b/i.test(q)) return 'projects';
+  if (/\b(projets?|réalisations?|portfolio apps?|github|ezoato|togosaas|akontaa|meneur)\b/i.test(q)) {
+    return 'projects';
+  }
   if (/\b(témoignages?|testimonials?|recommandations?|avis)\b/i.test(q)) return 'testimonials';
   if (/\b(compétences?|skills?|stack|techno)\b/i.test(q)) return 'skills';
   if (/\b(contact|email|mail|whatsapp|téléphone|phone|linkedin|cv|réserv)\b/i.test(q)) {
     return 'contact';
   }
-  if (/\b(communautés?|communities|gdg|wtm|python togo|bénévolat)\b/i.test(q)) {
+  if (
+    /\b(communautés?|communities|gdg|wtm|python togo|bénévolat|cursor togo|ethafrique|hyver|mlh)\b/i.test(
+      q
+    )
+  ) {
     return 'community';
   }
   if (/\b(prix|awards?|distinctions?|hackathon mlh|récompens)\b/i.test(q)) return 'awards';
-  if (/\b(expérience|experiences?|parcours|carrière|job|poste|travail)\b/i.test(q)) {
+  if (
+    /\b(expérience|experiences?|parcours|carrière|job|poste|travail|picon studio|axone|efficorpe)\b/i.test(
+      q
+    )
+  ) {
     return 'experience';
   }
   if (/\b(qui es[- ]tu|who are you|à propos|about you|bio|présentation|profil)\b/i.test(q)) {

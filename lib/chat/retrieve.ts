@@ -8,6 +8,7 @@ import {
   CATALOG_SKILLS,
   CATALOG_TESTIMONIALS,
 } from './catalog';
+import { KNOWLEDGE_FAQ, KNOWLEDGE_NOTES, KNOWLEDGE_PROFILE, withKnowledge } from './knowledge';
 import { detectIntent } from './language';
 import type {
   ChatAwardFact,
@@ -27,17 +28,7 @@ const CACHE_TTL_MS = Number(process.env.CHAT_CACHE_TTL_MS || 5 * 60 * 1000);
 let cache: { at: number; facts: PortfolioFacts } | null = null;
 
 const SNAPSHOT_PROFILE: ChatProfileFact = {
-  full_name: 'ADJOLOU Dondah Chaminade',
-  hero_title: 'Développeur Web & Mobile.',
-  bio: 'Ingénieur IT passionné, je conçois et déploie des solutions digitales sur mesure.',
-  availability_text: 'Disponible pour de nouveaux défis',
-  experience_badge: '3+ ans',
-  email: 'chaminade.dondah.adjolou@gmail.com',
-  phone: '+22899181626',
-  whatsapp: '22899181626',
-  linkedin_url: 'https://linkedin.com/in/chaminadeadjolou',
-  twitter_url: 'https://x.com/Donchaminde',
-  github_url: 'https://github.com/Donchaminade',
+  ...KNOWLEDGE_PROFILE,
 };
 
 function apiBase(): string {
@@ -102,7 +93,7 @@ const SNAPSHOT_BLOGS: ChatBlogFact[] = [
 ];
 
 function snapshotFacts(blogs: ChatBlogFact[] = SNAPSHOT_BLOGS): PortfolioFacts {
-  return {
+  return withKnowledge({
     profile: SNAPSHOT_PROFILE,
     projects: CATALOG_PROJECTS,
     experiences: CATALOG_EXPERIENCES,
@@ -112,8 +103,10 @@ function snapshotFacts(blogs: ChatBlogFact[] = SNAPSHOT_BLOGS): PortfolioFacts {
     awards: CATALOG_AWARDS,
     skills: CATALOG_SKILLS,
     education: CATALOG_EDUCATION,
+    faq: KNOWLEDGE_FAQ,
+    notes: KNOWLEDGE_NOTES,
     source: 'snapshot',
-  };
+  });
 }
 
 async function fetchJson<T>(url: string, timeoutMs = 4500): Promise<T> {
@@ -200,6 +193,23 @@ function flattenSkills(skillBlocks: unknown, softSkills: unknown): string[] {
   return names;
 }
 
+function mapEducation(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => {
+      const e = item as Record<string, unknown>;
+      if (typeof item === 'string') return item;
+      const degree = asString(e.degree);
+      const field = asString(e.field);
+      const school = asString(e.school);
+      const year = asString(e.year);
+      const line = [degree, field].filter(Boolean).join(' — ');
+      const place = [school, year ? `(${year})` : ''].filter(Boolean).join(' ');
+      return [line, place].filter(Boolean).join(', ');
+    })
+    .filter(Boolean);
+}
+
 async function loadLiveFacts(): Promise<PortfolioFacts> {
   const base = apiBase();
   const fallback = snapshotFacts();
@@ -247,15 +257,19 @@ async function loadLiveFacts(): Promise<PortfolioFacts> {
     const mergedCommunities = mergeCommunities(liveCommunities as never, CATALOG_COMMUNITIES as never);
 
     const profileRaw = (data.profile || {}) as Record<string, unknown>;
-    const facts: PortfolioFacts = {
+    const facts: PortfolioFacts = withKnowledge({
       profile: {
         full_name: asString(profileRaw.full_name, fallback.profile.full_name),
+        aliases: fallback.profile.aliases,
         hero_title: asString(profileRaw.hero_title, fallback.profile.hero_title),
+        headline: fallback.profile.headline,
         bio: asString(profileRaw.bio, fallback.profile.bio),
+        location: fallback.profile.location,
         availability_text: asString(profileRaw.availability_text, fallback.profile.availability_text),
         experience_badge: asString(profileRaw.experience_badge, fallback.profile.experience_badge),
         email: asString(profileRaw.email, fallback.profile.email),
         phone: asString(profileRaw.phone, fallback.profile.phone),
+        phones: fallback.profile.phones,
         whatsapp: asString(profileRaw.whatsapp, fallback.profile.whatsapp),
         linkedin_url: asString(profileRaw.linkedin_url, fallback.profile.linkedin_url),
         twitter_url: asString(profileRaw.twitter_url, fallback.profile.twitter_url),
@@ -294,9 +308,14 @@ async function loadLiveFacts(): Promise<PortfolioFacts> {
       skills: flattenSkills(data.skillBlocks, data.softSkills).length
         ? flattenSkills(data.skillBlocks, data.softSkills)
         : fallback.skills,
-      education: fallback.education,
+      education: (() => {
+        const liveEdu = mapEducation(data.education);
+        return liveEdu.length ? liveEdu : fallback.education;
+      })(),
+      faq: KNOWLEDGE_FAQ,
+      notes: KNOWLEDGE_NOTES,
       source: 'mixed',
-    };
+    });
     return facts;
   } catch {
     return fallback;
@@ -341,13 +360,21 @@ function publicLink(link?: string): string {
 
 function formatFactsBlock(facts: PortfolioFacts): string[] {
   const p = facts.profile;
+  const phones = (p.phones && p.phones.length ? p.phones : [p.phone]).filter(Boolean).join(' · ');
+  const current = facts.experiences.find((e) => /grosbit/i.test(e.company));
   const lines: string[] = [
-    `PROFIL: ${p.full_name} — ${p.hero_title} ${p.experience_badge || ''}`.trim(),
+    `PROFIL: ${p.full_name} (${(p.aliases || []).join(', ')}) — ${p.hero_title} ${p.experience_badge || ''}`.trim(),
+    p.headline ? `HEADLINE: ${p.headline}` : '',
+    p.location ? `LIEU: ${p.location}` : '',
     `BIO: ${p.bio}`,
+    current
+      ? `POSTE ACTUEL: ${current.role} @ ${current.company} (${current.period})`
+      : 'POSTE ACTUEL: GROSBIT SARLU — IT Support, Développeur Web & Mobile (Février 2026 – Présent)',
     p.availability_text ? `DISPO: ${p.availability_text}` : '',
-    `CONTACT: email ${p.email || ''} · tel ${p.phone || ''} · LinkedIn ${p.linkedin_url || ''} · GitHub ${p.github_url || ''} · X ${p.twitter_url || ''}`,
+    `CONTACT: email ${p.email || ''} · tel ${phones} · LinkedIn ${p.linkedin_url || 'https://www.linkedin.com/in/chaminadeadjolou'} · GitHub ${p.github_url || ''} · X ${p.twitter_url || ''}`,
     `FORMATION: ${facts.education.join(' | ')}`,
-    `COMPÉTENCES: ${facts.skills.slice(0, 40).join(', ')}`,
+    `COMPÉTENCES: ${facts.skills.slice(0, 48).join(', ')}`,
+    ...(facts.notes || []),
   ];
   return lines.filter(Boolean);
 }
@@ -367,7 +394,9 @@ export function selectContext(query: string, facts: PortfolioFacts): RetrievedCo
     ]
       .filter(Boolean)
       .join('\n');
-    const boost = intent === 'projects' ? 4 : 0;
+    let boost = intent === 'projects' ? 4 : 0;
+    if (intent === 'flutter' && /flutter|dart/i.test(text)) boost += 10;
+    if (intent === 'grosbit' && /picon|grosbit/i.test(text)) boost += 8;
     chunks.push({ title: project.title, text, score: scoreText(query, text) + boost });
   }
 
@@ -382,7 +411,29 @@ export function selectContext(query: string, facts: PortfolioFacts): RetrievedCo
     if (intent === 'yas' && /yas|next gen|hackathon|coach/i.test(exp.company + exp.role + text)) {
       boost += 12;
     }
+    if (intent === 'grosbit' && /grosbit/i.test(exp.company + text)) boost += 14;
+    if (intent === 'flutter' && /flutter|dart/i.test(text)) boost += 8;
+    if (intent === 'education' && /isf|formateur|defitech|lbs/i.test(text)) boost += 4;
     chunks.push({ title: `${exp.role} — ${exp.company}`, text, score: scoreText(query, text) + boost });
+  }
+
+  const educationText = `FORMATION:\n${facts.education.join('\n')}`;
+  chunks.push({
+    title: 'Formations',
+    text: educationText,
+    score: scoreText(query, educationText) + (intent === 'education' || intent === 'about' ? 12 : 0),
+  });
+
+  for (const faq of facts.faq || []) {
+    const text = `FAQ: ${faq.q}\n${faq.a}\nMots-clés: ${faq.tags.join(', ')}`;
+    let boost = 0;
+    if (intent === 'grosbit' && /grosbit|picon/i.test(text)) boost += 14;
+    if (intent === 'education' && /formation|lbs|defitech/i.test(text)) boost += 14;
+    if (intent === 'flutter' && /flutter/i.test(text)) boost += 14;
+    if (intent === 'contact' && /linkedin|contact/i.test(text)) boost += 12;
+    if (intent === 'pycon' && /pycon/i.test(text)) boost += 8;
+    if (intent === 'yas' && /yas/i.test(text)) boost += 8;
+    chunks.push({ title: `FAQ ${faq.q}`, text, score: scoreText(query, text) + boost });
   }
 
   for (const blog of facts.blogs) {
@@ -417,11 +468,11 @@ export function selectContext(query: string, facts: PortfolioFacts): RetrievedCo
   }
 
   chunks.sort((a, b) => b.score - a.score);
-  const picked = chunks.filter((c) => c.score > 0).slice(0, 10);
-  const selected = picked.length > 0 ? picked : chunks.slice(0, 6);
+  const picked = chunks.filter((c) => c.score > 0).slice(0, 12);
+  const selected = picked.length > 0 ? picked : chunks.slice(0, 8);
 
   const header = formatFactsBlock(facts).join('\n');
-  const contextText = [header, '', ...selected.map((c) => c.text)].join('\n\n').slice(0, 9000);
+  const contextText = [header, '', ...selected.map((c) => c.text)].join('\n\n').slice(0, 12000);
 
   return {
     facts,
@@ -438,3 +489,5 @@ export async function retrievePortfolioContext(query: string): Promise<Retrieved
 export function __resetChatCache(): void {
   cache = null;
 }
+
+export { snapshotFacts };
