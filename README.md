@@ -156,7 +156,7 @@ Fichiers modèles :
 | `GROQ_API_KEY` | Clé **gratuite** Groq (Llama). [console.groq.com](https://console.groq.com) — prioritaire |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Clé **gratuite** Gemini. [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `GEMINI_API_KEY` | Alias accepté pour Gemini (non exposé au navigateur) |
-| `GROQ_MODEL` | Optionnel. Défaut : `llama-3.1-8b-instant` |
+| `GROQ_MODEL` | Optionnel. Défaut : `openai/gpt-oss-20b` |
 | `GOOGLE_GENERATIVE_AI_MODEL` | Optionnel. Défaut : `gemini-2.5-flash` |
 | `CHAT_RATE_LIMIT_PER_MIN` | Optionnel. Défaut : `12` |
 
@@ -227,7 +227,7 @@ Assistant flottant (mobile-first) qui ne répond **qu’à propos de Donchaminad
 ### Comment ça marche
 
 1. **Retrieval** — la route Vercel `POST /api/chat` interroge les APIs publiques Hostinger (`/api/index.php?resource=portfolio`, `/api/blog.php?action=list`) avec un cache court (~5 min), fusionne le catalogue local (`lib/chat/catalog.ts`) et les faits CV/LinkedIn (`lib/chat/knowledge.ts`). L’API portfolio prime pour les projets affichés et le poste actuel GROSBIT SARLU (fév. 2026 – présent).
-2. **LLM gratuit (optionnel)** — [Vercel AI SDK](https://ai-sdk.dev) + `@ai-sdk/groq` (Llama 3.1 8B Instant) ou `@ai-sdk/google` (Gemini 2.5 Flash). Streaming UI.
+2. **LLM gratuit (optionnel)** — [Vercel AI SDK](https://ai-sdk.dev) + `@ai-sdk/groq` (GPT-OSS 20B) ou `@ai-sdk/google` (Gemini 2.5 Flash). Streaming UI.
 3. **Fallback** — si aucune clé n’est définie ou si le provider échoue : réponses modèle/recherche à partir des faits déjà récupérés. Jamais de crash.
 
 Les conversations ne sont **pas stockées** (état éphémère du navigateur). Un bandeau précise que les réponses viennent du contenu public.
