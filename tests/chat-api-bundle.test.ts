@@ -20,6 +20,11 @@ test('api/chat.js est un bundle ESM autonome (pas d’import relatif lib/chat)',
   assert.match(bundle, /assistant_unavailable|X-Chat-Mode|text\/event-stream/);
 });
 
+test('le bundle n’utilise plus le modèle Groq retiré llama-3.1-8b-instant', () => {
+  assert.doesNotMatch(bundle, /llama-3\.1-8b-instant/);
+  assert.match(bundle, /openai\/gpt-oss-20b/);
+});
+
 test('GET /api/chat via le bundle renvoie { ok, mode }', async () => {
   const { default: handler } = (await import('../api/chat.js')) as { default: ChatHandler };
   const response = await handler.fetch(new Request('http://localhost/api/chat', { method: 'GET' }));

@@ -38,7 +38,7 @@ async function streamWithLlm(
   } = await import('ai');
 
   const model = process.env.GROQ_API_KEY
-    ? groq(process.env.GROQ_MODEL || 'llama-3.1-8b-instant')
+    ? groq(process.env.GROQ_MODEL || 'openai/gpt-oss-20b')
     : process.env.GOOGLE_GENERATIVE_AI_API_KEY
       ? google(process.env.GOOGLE_GENERATIVE_AI_MODEL || 'gemini-2.5-flash')
       : createGoogle({ apiKey: process.env.GEMINI_API_KEY })(
