@@ -40,8 +40,8 @@ const ProjectModal: React.FC<{ project: Project | null, onClose: () => void }> =
             {/* Media Part */}
             <div className="lg:col-span-7 relative h-[380px] lg:h-[750px] bg-slate-100/50 dark:bg-black/40 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-white/5">
               <ProjectCarousel project={project} />
-              <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-white/70 dark:from-black/70 to-transparent pointer-events-none z-20" />
-              <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white/70 dark:from-black/70 to-transparent pointer-events-none z-20" />
+              <div className="absolute top-0 left-0 w-full h-24 bg-[var(--bg)]/70 pointer-events-none z-20" />
+              <div className="absolute bottom-0 left-0 w-full h-24 bg-[var(--bg)]/70 pointer-events-none z-20" />
             </div>
 
             {/* Information Part */}

@@ -132,14 +132,14 @@ const SocialProofCarousel: React.FC<Props> = ({ filter, onFilterChange, refreshK
                           <img
                             src={imageSrc}
                             alt={current.name}
-                            className="w-14 h-14 rounded-full border-2 border-violet-500/50 object-cover shrink-0"
+                            className="w-14 h-14 rounded-full border-2 border-[var(--accent-soft)]/50 object-cover shrink-0"
                           />
                         ) : (
                           <div
                             className={`w-14 h-14 rounded-full border-2 shrink-0 flex items-center justify-center text-2xl ${
                               isRec
                                 ? 'border-blue-500/40 bg-blue-500/10'
-                                : 'border-violet-500/30 bg-slate-200 dark:bg-slate-800'
+                                : 'border-[var(--accent-soft)]/30 bg-slate-200 dark:bg-slate-800'
                             }`}
                             aria-hidden
                           >
@@ -168,7 +168,7 @@ const SocialProofCarousel: React.FC<Props> = ({ filter, onFilterChange, refreshK
                             {(current.role || current.company) && (
                               <p
                                 className={`text-[9px] font-black uppercase tracking-widest mt-0.5 ${
-                                  isRec ? 'text-blue-400' : 'text-violet-400'
+                                  isRec ? 'text-blue-400' : 'text-[var(--accent-soft)]'
                                 }`}
                               >
                                 {[current.role, current.company].filter(Boolean).join(' — ')}

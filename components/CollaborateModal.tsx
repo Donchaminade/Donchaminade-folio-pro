@@ -24,7 +24,7 @@ const MEETING_PLATFORMS = [
 ];
 
 const INPUT_CLS =
-  'w-full mt-1 px-4 py-3 rounded-xl bg-slate-100/80 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20';
+  'w-full mt-1 px-4 py-3 rounded-xl bg-slate-100/80 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[var(--accent-soft)] focus:ring-2 focus:ring-[var(--accent-soft)]/20';
 
 const DATETIME_CLS =
   `${INPUT_CLS} dark:[color-scheme:dark] [color-scheme:light] cursor-pointer`;
@@ -108,7 +108,7 @@ const PlatformSelect: React.FC<PlatformSelectProps> = ({ value, onChange }) => {
                   }}
                   className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                     p.value === value
-                      ? 'bg-violet-600/15 text-violet-700 dark:text-violet-300 font-semibold'
+                      ? 'bg-[var(--ink)]/15 text-[var(--accent-muted)] dark:text-[var(--accent-soft)] font-semibold'
                       : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10'
                   }`}
                 >
@@ -229,7 +229,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
         >
           <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-violet-600/20 text-violet-600 dark:text-violet-400">
+              <div className="p-2 rounded-xl bg-[var(--ink)]/20 text-[var(--accent)] dark:text-[var(--accent-soft)]">
                 <Handshake size={22} />
               </div>
               <div>
@@ -297,10 +297,10 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                       if (fileInputRef.current) fileInputRef.current.value = '';
                     }
                   }}
-                  className="w-4 h-4 rounded border-slate-300 text-violet-600"
+                  className="w-4 h-4 rounded border-slate-300 text-[var(--accent)]"
                 />
                 <span className="flex items-start gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200 leading-snug">
-                  <FileText size={16} className="text-violet-500 shrink-0 mt-0.5" /> J'ai des documents à partager (cahier des charges, maquettes, devis…)
+                  <FileText size={16} className="text-[var(--accent-soft)] shrink-0 mt-0.5" /> J'ai des documents à partager (cahier des charges, maquettes, devis…)
                 </span>
               </label>
               {form.has_documents && (
@@ -319,9 +319,9 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full flex flex-col items-center justify-center gap-2 px-4 py-6 rounded-xl border-2 border-dashed border-violet-500/40 bg-violet-500/5 hover:bg-violet-500/10 hover:border-violet-500/60 transition-all"
+                    className="w-full flex flex-col items-center justify-center gap-2 px-4 py-6 rounded-xl border-2 border-dashed border-[var(--accent-soft)]/40 bg-[var(--accent-soft)]/5 hover:bg-[var(--ink-muted)]/10 hover:border-[var(--accent-soft)]/60 transition-all"
                   >
-                    <Upload size={28} className="text-violet-500" />
+                    <Upload size={28} className="text-[var(--accent-soft)]" />
                     <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
                       Cliquez pour ajouter des fichiers
                     </span>
@@ -338,7 +338,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                           className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10"
                         >
                           <span className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 min-w-0">
-                            <Paperclip size={14} className="shrink-0 text-violet-500" />
+                            <Paperclip size={14} className="shrink-0 text-[var(--accent-soft)]" />
                             <span className="truncate">{file.name}</span>
                             <span className="text-[10px] text-slate-500 shrink-0">
                               ({(file.size / 1024 / 1024).toFixed(1)} Mo)
@@ -412,7 +412,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                   <button
                     type="button"
                     onClick={() => setSlotDates((s) => [...s, ''])}
-                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400 hover:text-violet-500"
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--accent)] dark:text-[var(--accent-soft)] hover:text-[var(--accent-soft)]"
                   >
                     <Plus size={14} /> Ajouter un autre créneau
                   </button>
@@ -447,7 +447,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-violet-600/25"
+              className="w-full py-4 bg-[var(--ink)] hover:bg-[var(--ink-muted)] disabled:opacity-50 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-[var(--shadow-soft)]"
             >
               {loading ? (
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

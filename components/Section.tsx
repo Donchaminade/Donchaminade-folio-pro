@@ -7,79 +7,56 @@ interface SectionProps {
   subtitle?: string;
   children: React.ReactNode;
   className?: string;
-  bgImage?: string; // Optional background image for parallax
+  bgImage?: string;
 }
 
-export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children, className = "", bgImage }) => {
+export const Section: React.FC<SectionProps> = ({ id, title, subtitle, children, className = '', bgImage }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"]
+    offset: ['start end', 'end start'],
   });
 
-  // Use spring for smoother parallax transitions
   const smoothYProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
+    stiffness: 90,
+    damping: 32,
+    restDelta: 0.001,
   });
 
-  // Subtle parallax effect: moves the background layer slightly slower than the scroll
-  const y = useTransform(smoothYProgress, [0, 1], ["-12%", "12%"]);
-  const scale = useTransform(smoothYProgress, [0, 0.5, 1], [1.15, 1.05, 1.15]);
-  const opacity = useTransform(smoothYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = useTransform(smoothYProgress, [0, 1], ['-8%', '8%']);
+  const opacity = useTransform(smoothYProgress, [0, 0.18, 0.82, 1], [0.35, 1, 1, 0.35]);
 
   return (
-    <section id={id} ref={ref} className={`relative py-14 md:py-24 overflow-x-hidden overflow-hidden w-full min-w-0 ${className}`}>
-      {/* Parallax Background Layer */}
-      <motion.div
-        style={{ y, opacity, scale }}
-        className="absolute inset-0 -z-10 pointer-events-none h-[120%] -top-[10%]"
-      >
-        {/* Abstract Tech Decor Pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.03] md:opacity-[0.05] z-10" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 H90 V30 H70 V90' fill='none' stroke='%233b82f6' stroke-width='0.5'/%3E%3Ccircle cx='10' cy='10' r='2' fill='%233b82f6'/%3E%3Ccircle cx='70' cy='90' r='2' fill='%233b82f6'/%3E%3Cpath d='M20 50 H40 V70' fill='none' stroke='%233b82f6' stroke-width='0.5'/%3E%3Ccircle cx='40' cy='70' r='1.5' fill='%233b82f6'/%3E%3C/svg%3E")`,
-          backgroundSize: '300px 300px'
-        }} />
-
+    <section id={id} ref={ref} className={`relative py-16 md:py-28 overflow-x-hidden overflow-hidden w-full min-w-0 ${className}`}>
+      <motion.div style={{ y, opacity }} className="absolute inset-0 -z-10 pointer-events-none h-[115%] -top-[7.5%]">
         {bgImage ? (
-          <>
-            <img
-              src={bgImage}
-              alt=""
-              className="w-full h-full object-cover opacity-[0.03] dark:opacity-[0.07]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-transparent to-slate-50 dark:from-slate-950 dark:via-transparent dark:to-slate-950" />
-          </>
+          <img src={bgImage} alt="" className="w-full h-full object-cover opacity-[0.04] dark:opacity-[0.06]" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            {/* A subtle tech-inspired abstract shape if no image is provided */}
-            <div className="w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px]" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-[min(90vw,42rem)] h-[min(90vw,42rem)] rounded-full bg-[rgba(61,110,168,0.06)] dark:bg-[rgba(91,134,184,0.07)]" />
           </div>
         )}
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="relative mb-8 md:mb-16 z-10 px-4 sm:px-6 max-w-7xl mx-auto min-w-0"
+        viewport={{ once: true, margin: '-10% 0px' }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mb-10 md:mb-14 z-10 px-4 sm:px-6 max-w-7xl mx-auto min-w-0"
       >
-        <h2 className="section-title font-black mb-4 md:mb-6 uppercase text-slate-900 dark:text-white max-w-4xl">
-          {title}<span className="text-blue-600 dark:text-blue-500">.</span>
+        <h2 className="section-title mb-4 md:mb-5 text-[var(--ink)] max-w-3xl">
+          {title}
+          <span className="text-[var(--accent)]">.</span>
         </h2>
-        {subtitle && (
-          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg md:text-xl max-w-3xl font-light leading-relaxed">
-            {subtitle}
-          </p>
-        )}
+        {subtitle && <p className="section-lead">{subtitle}</p>}
       </motion.div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 22 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+        viewport={{ once: true, margin: '-6% 0px' }}
+        transition={{ duration: 0.65, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         className={`relative z-10 min-w-0 ${className === 'full-width' ? '' : 'px-4 sm:px-6 max-w-7xl mx-auto'}`}
       >
         {children}

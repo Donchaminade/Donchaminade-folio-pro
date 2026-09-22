@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface GlassCardProps {
@@ -10,20 +9,19 @@ interface GlassCardProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
-  className = "",
+  className = '',
   hoverEffect = true,
-  onClick
+  onClick,
 }) => {
-  const hasBrandBorder = className.includes('glass-brand-border');
-
   return (
     <div
       onClick={onClick}
       className={`
-      glass p-6 rounded-2xl transition-all duration-300 
-      ${hoverEffect ? `hover:bg-slate-200/50 dark:hover:bg-white/5 hover:-translate-y-1${hasBrandBorder ? '' : ' hover:border-slate-300 dark:hover:border-white/20'}` : ''}
+      glass p-5 sm:p-6 rounded-2xl transition-all duration-300
+      ${hoverEffect ? 'hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft-lg)]' : ''}
       ${className}
-    `}>
+    `}
+    >
       {children}
     </div>
   );

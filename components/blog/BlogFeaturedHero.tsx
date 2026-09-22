@@ -67,7 +67,7 @@ const BlogFeaturedHero: React.FC<Props> = ({ post }) => {
             <div className={`absolute inset-0 ${cat.bgSoft}`} />
           )}
           <div
-            className="absolute inset-x-0 bottom-0 h-12 lg:inset-y-0 lg:left-auto lg:right-0 lg:w-16 lg:h-full bg-gradient-to-t lg:bg-gradient-to-l from-[var(--blog-bg)]/85 to-transparent pointer-events-none"
+            className="absolute inset-x-0 bottom-0 h-12 lg:inset-y-0 lg:left-auto lg:right-0 lg:w-16 lg:h-full bg-[var(--bg-elevated)] lg:bg-[var(--bg-elevated)] pointer-events-none"
             aria-hidden
           />
         </div>

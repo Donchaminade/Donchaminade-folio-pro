@@ -9,7 +9,7 @@ interface Props {
 }
 
 const INPUT_CLS =
-  'w-full mt-0.5 px-3 py-2 rounded-lg bg-slate-100/80 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20';
+  'w-full mt-0.5 px-3 py-2 rounded-lg bg-slate-100/80 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[var(--accent-soft)] focus:ring-1 focus:ring-[var(--accent-soft)]/20';
 
 const LABEL_CLS = 'text-[9px] font-black uppercase tracking-widest text-slate-500';
 
@@ -88,7 +88,7 @@ const TestimonialSubmitModal: React.FC<Props> = ({ open, onClose }) => {
           >
             <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-200 dark:border-white/10">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="p-1.5 rounded-lg bg-violet-600/20 text-violet-400 shrink-0">
+                <div className="p-1.5 rounded-lg bg-[var(--ink)]/20 text-[var(--accent-soft)] shrink-0">
                   <MessageSquareQuote size={18} />
                 </div>
                 <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">
@@ -143,7 +143,7 @@ const TestimonialSubmitModal: React.FC<Props> = ({ open, onClose }) => {
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/gif"
                     onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
-                    className="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-violet-600 file:text-white file:font-bold"
+                    className="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-[var(--ink)] file:text-white file:font-bold"
                   />
                 </div>
               </div>
@@ -154,7 +154,7 @@ const TestimonialSubmitModal: React.FC<Props> = ({ open, onClose }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-[10px] font-black uppercase tracking-widest"
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--ink)] hover:bg-[var(--ink-muted)] disabled:opacity-50 text-white text-[10px] font-black uppercase tracking-widest"
               >
                 <Send size={14} />
                 {loading ? 'Envoi…' : 'Envoyer'}

@@ -41,7 +41,7 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
   return (
     <article className={`relative min-w-0 ${depth > 0 ? 'mt-4' : ''}`} style={{ marginLeft: depth > 0 ? Math.min(depth * 12, 36) : 0 }}>
       {depth > 0 && (
-        <div className="absolute -left-3 top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/40 to-transparent" aria-hidden />
+        <div className="absolute -left-3 top-0 bottom-0 w-px bg-[var(--bg-elevated)]" aria-hidden />
       )}
 
       <div

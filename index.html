@@ -38,12 +38,40 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="/index.css">
   <script>
     tailwind.config = {
       darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Manrope', 'system-ui', 'sans-serif'],
+            display: ['Fraunces', 'Georgia', 'serif'],
+            serif: ['Source Serif 4', 'Georgia', 'serif'],
+          },
+          colors: {
+            ink: {
+              50: '#f6f5f3',
+              100: '#ebe8e3',
+              200: '#d6d1c8',
+              800: '#2a2e35',
+              900: '#1a1d22',
+              950: '#121417',
+            },
+            accent: {
+              DEFAULT: '#3d6ea8',
+              soft: '#5b86b8',
+              muted: '#2c4f78',
+            },
+          },
+          boxShadow: {
+            soft: '0 12px 40px rgba(18, 20, 23, 0.06)',
+            'soft-lg': '0 24px 60px rgba(18, 20, 23, 0.1)',
+          },
+        },
+      },
     }
   </script>
   <script type="importmap">
@@ -59,17 +87,16 @@
 </script>
 </head>
 
-<body class="custom-scrollbar overflow-x-hidden">
-  <div class="tech-decor"></div>
-  <svg class="circuit-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <!-- Abstract unclosed lines -->
+<body class="custom-scrollbar overflow-x-hidden font-sans">
+  <div class="tech-decor" aria-hidden="true"></div>
+  <svg class="circuit-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
     <path d="M 0,100 H 200 L 250,150 V 300" />
     <path d="M 1000,0 V 100 L 950,150 H 800 L 750,200 V 500" />
     <path d="M 0,800 H 100 L 150,750 V 600 H 400" />
     <path d="M 1200,900 H 1000 L 950,850 V 700 L 900,650" />
-    <circle cx="250" cy="150" r="3" fill="rgba(59, 130, 246, 0.3)" />
-    <circle cx="950" cy="150" r="3" fill="rgba(59, 130, 246, 0.3)" />
-    <circle cx="150" cy="750" r="3" fill="rgba(59, 130, 246, 0.3)" />
+    <circle cx="250" cy="150" r="3" fill="rgba(61, 110, 168, 0.25)" />
+    <circle cx="950" cy="150" r="3" fill="rgba(61, 110, 168, 0.25)" />
+    <circle cx="150" cy="750" r="3" fill="rgba(61, 110, 168, 0.25)" />
   </svg>
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>

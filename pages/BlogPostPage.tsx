@@ -118,7 +118,7 @@ const BlogPostPage: React.FC<Props> = ({ slug, previewToken }) => {
           />
           {/* Léger fondu en bas uniquement — l'image reste ≥ 90 % visible */}
           <div
-            className="absolute inset-x-0 bottom-0 h-16 pointer-events-none bg-gradient-to-t from-[var(--blog-bg)]/90 to-transparent"
+            className="absolute inset-x-0 bottom-0 h-16 pointer-events-none bg-[var(--bg-elevated)]"
             aria-hidden
           />
         </motion.div>

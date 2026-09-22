@@ -69,69 +69,69 @@ ob_start();
 ?>
 <!-- Cartes KPI — alignées sur le menu latéral -->
 <div class="mb-3">
-    <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-500">Contenu du portfolio</h2>
+    <h2 class="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--a-muted)]">Contenu du portfolio</h2>
 </div>
 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
     <?php
     $contentCards = [
-        ['Projets', (int) ($counts['projects'] ?? 0), 'projects.php', 'folder-kanban', 'from-blue-600/20 to-blue-900/10', (int) ($counts['projects_active'] ?? 0) . ' actifs'],
-        ['Expériences', (int) ($counts['experiences'] ?? 0), 'experiences.php', 'briefcase', 'from-cyan-600/20 to-cyan-900/10', (int) ($counts['experiences_active'] ?? 0) . ' actives'],
-        ['Articles blog', $blogStats['total'], 'blog.php', 'newspaper', 'from-violet-600/20 to-violet-900/10', (int) $blogStats['published'] . ' publiés'],
-        ['Technologies', $techCount, 'technologies.php', 'cpu', 'from-emerald-600/20 to-emerald-900/10', 'Stack & icônes'],
-        ['Statistiques', (int) ($counts['stats'] ?? 0), 'stats.php', 'bar-chart-3', 'from-indigo-600/20 to-indigo-900/10', 'Chiffres du hero'],
-        ['Témoignages', (int) ($counts['testimonials'] ?? 0), 'testimonials.php', 'star', 'from-amber-600/20 to-amber-900/10', (int) ($counts['testimonials_published'] ?? 0) . ' en ligne'],
-        ['Recommandations', (int) ($counts['recommendations'] ?? 0), 'recommendations.php', 'thumbs-up', 'from-pink-600/20 to-pink-900/10', (int) ($counts['recommendations_visible'] ?? 0) . ' visibles'],
-        ['Communautés', (int) ($counts['communities'] ?? 0), 'communities.php', 'users', 'from-teal-600/20 to-teal-900/10', 'Logos & liens'],
-        ['Distinctions', (int) ($counts['awards'] ?? 0), 'awards.php', 'trophy', 'from-yellow-600/20 to-yellow-900/10', 'Prix & awards'],
+        ['Projets', (int) ($counts['projects'] ?? 0), 'projects.php', 'folder-kanban', (int) ($counts['projects_active'] ?? 0) . ' actifs'],
+        ['Expériences', (int) ($counts['experiences'] ?? 0), 'experiences.php', 'briefcase', (int) ($counts['experiences_active'] ?? 0) . ' actives'],
+        ['Articles blog', $blogStats['total'], 'blog.php', 'newspaper', (int) $blogStats['published'] . ' publiés'],
+        ['Technologies', $techCount, 'technologies.php', 'cpu', 'Stack & icônes'],
+        ['Statistiques', (int) ($counts['stats'] ?? 0), 'stats.php', 'bar-chart-3', 'Chiffres du hero'],
+        ['Témoignages', (int) ($counts['testimonials'] ?? 0), 'testimonials.php', 'star', (int) ($counts['testimonials_published'] ?? 0) . ' en ligne'],
+        ['Recommandations', (int) ($counts['recommendations'] ?? 0), 'recommendations.php', 'thumbs-up', (int) ($counts['recommendations_visible'] ?? 0) . ' visibles'],
+        ['Communautés', (int) ($counts['communities'] ?? 0), 'communities.php', 'users', 'Logos & liens'],
+        ['Distinctions', (int) ($counts['awards'] ?? 0), 'awards.php', 'trophy', 'Prix & awards'],
     ];
-    foreach ($contentCards as [$label, $val, $link, $icon, $grad, $hint]):
+    foreach ($contentCards as [$label, $val, $link, $icon, $hint]):
         $pending = ($label === 'Témoignages') ? (int) ($counts['testimonials_pending'] ?? 0) : 0;
     ?>
-    <a href="<?= e($link) ?>" class="group relative block p-5 rounded-2xl border border-white/10 bg-gradient-to-br <?= $grad ?> hover:border-blue-500/40 hover:scale-[1.02] transition-all">
+    <a href="<?= e($link) ?>" class="group relative block p-5 rounded-2xl border border-[var(--a-border)] bg-[var(--a-surface)] hover:border-[rgba(61,110,168,0.4)] transition-all">
         <?php if ($pending > 0): ?>
-            <span class="absolute top-3 right-3 min-w-[1.25rem] h-5 px-1.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-black text-slate-900"><?= $pending > 99 ? '99+' : $pending ?></span>
+            <span class="absolute top-3 right-3 min-w-[1.25rem] h-5 px-1.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-slate-900"><?= $pending > 99 ? '99+' : $pending ?></span>
         <?php endif; ?>
         <div class="flex items-center justify-between mb-3">
-            <?= adminIcon($icon, 'w-5 h-5 text-slate-400 group-hover:text-blue-400') ?>
-            <?= adminIcon('chevron-right', 'w-4 h-4 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity') ?>
+            <?= adminIcon($icon, 'w-5 h-5 text-[var(--a-muted)] group-hover:text-[var(--a-accent)]') ?>
+            <?= adminIcon('chevron-right', 'w-4 h-4 text-[var(--a-muted)] opacity-0 group-hover:opacity-100 transition-opacity') ?>
         </div>
-        <div class="text-3xl font-black text-white"><?= $val ?></div>
-        <div class="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-wider"><?= e($label) ?></div>
+        <div class="text-3xl font-semibold text-[var(--a-ink)]" style="font-family:var(--a-display)"><?= $val ?></div>
+        <div class="text-xs font-semibold text-[var(--a-muted)] mt-1 uppercase tracking-wider"><?= e($label) ?></div>
         <?php if ($hint): ?>
-            <div class="text-[10px] text-slate-500 mt-1.5"><?= e($hint) ?></div>
+            <div class="text-[10px] text-[var(--a-muted)] mt-1.5 opacity-80"><?= e($hint) ?></div>
         <?php endif; ?>
     </a>
     <?php endforeach; ?>
 </div>
 
 <div class="mb-3">
-    <h2 class="text-[10px] font-black uppercase tracking-widest text-slate-500">Modération & messages</h2>
+    <h2 class="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--a-muted)]">Modération & messages</h2>
 </div>
 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
     <?php
     $modCards = [
-        ['Messages non lus', (int) ($counts['unread_messages'] ?? 0), 'messages.php', 'mail', 'from-amber-600/20 to-amber-900/10', null],
-        ['Collab. en attente', (int) $collabUnread, 'messages.php?type=collaboration', 'handshake', 'from-violet-600/20 to-violet-900/10', 'Demandes partenariat'],
-        ['Commentaires masqués', (int) $hiddenComments, 'blog-comments.php', 'message-circle', 'from-rose-600/20 to-rose-900/10', 'À réviser'],
-        ['Vues blog', (int) $blogStats['views'], 'blog.php', 'eye', 'from-slate-600/20 to-slate-900/10', 'Engagement total'],
-        ['Likes blog', (int) $blogStats['likes'], 'blog.php', 'heart', 'from-red-600/20 to-red-900/10', 'Sur tous les articles'],
-        ['Journal d\'audit', null, 'audit-logs.php', 'shield', 'from-slate-600/20 to-slate-800/10', 'Supprimés & archivés'],
+        ['Messages non lus', (int) ($counts['unread_messages'] ?? 0), 'messages.php', 'mail', null],
+        ['Collab. en attente', (int) $collabUnread, 'messages.php?type=collaboration', 'handshake', 'Demandes partenariat'],
+        ['Commentaires masqués', (int) $hiddenComments, 'blog-comments.php', 'message-circle', 'À réviser'],
+        ['Vues blog', (int) $blogStats['views'], 'blog.php', 'eye', 'Engagement total'],
+        ['Likes blog', (int) $blogStats['likes'], 'blog.php', 'heart', 'Sur tous les articles'],
+        ['Journal d\'audit', null, 'audit-logs.php', 'shield', 'Supprimés & archivés'],
     ];
-    foreach ($modCards as [$label, $val, $link, $icon, $grad, $hint]):
+    foreach ($modCards as [$label, $val, $link, $icon, $hint]):
     ?>
-    <a href="<?= e($link) ?>" class="group block p-5 rounded-2xl border border-white/10 bg-gradient-to-br <?= $grad ?> hover:border-blue-500/40 transition-all">
+    <a href="<?= e($link) ?>" class="group block p-5 rounded-2xl border border-[var(--a-border)] bg-[var(--a-surface)] hover:border-[rgba(61,110,168,0.4)] transition-all">
         <div class="flex items-center justify-between mb-3">
-            <?= adminIcon($icon, 'w-5 h-5 text-slate-400 group-hover:text-blue-400') ?>
-            <?= adminIcon('chevron-right', 'w-4 h-4 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity') ?>
+            <?= adminIcon($icon, 'w-5 h-5 text-[var(--a-muted)] group-hover:text-[var(--a-accent)]') ?>
+            <?= adminIcon('chevron-right', 'w-4 h-4 text-[var(--a-muted)] opacity-0 group-hover:opacity-100 transition-opacity') ?>
         </div>
         <?php if ($val !== null): ?>
-            <div class="text-3xl font-black text-white"><?= (int) $val ?></div>
+            <div class="text-3xl font-semibold text-[var(--a-ink)]" style="font-family:var(--a-display)"><?= (int) $val ?></div>
         <?php else: ?>
-            <div class="text-lg font-bold text-blue-400 group-hover:text-blue-300">Ouvrir →</div>
+            <div class="text-lg font-bold text-[var(--a-accent)]">Ouvrir →</div>
         <?php endif; ?>
-        <div class="text-xs font-semibold text-slate-400 mt-1 uppercase tracking-wider"><?= e($label) ?></div>
+        <div class="text-xs font-semibold text-[var(--a-muted)] mt-1 uppercase tracking-wider"><?= e($label) ?></div>
         <?php if ($hint): ?>
-            <div class="text-[10px] text-slate-500 mt-1.5"><?= e($hint) ?></div>
+            <div class="text-[10px] text-[var(--a-muted)] mt-1.5 opacity-80"><?= e($hint) ?></div>
         <?php endif; ?>
     </a>
     <?php endforeach; ?>

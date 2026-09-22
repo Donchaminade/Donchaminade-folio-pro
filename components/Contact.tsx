@@ -80,7 +80,7 @@ const Contact: React.FC = () => {
           <button
             type="button"
             onClick={() => setCollaborateOpen(true)}
-            className="mb-10 inline-flex items-center justify-center min-h-12 gap-3 px-8 py-4 bg-violet-600 hover:bg-violet-500 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-violet-600/30 transition-all hover:scale-[1.02] touch-manipulation w-full sm:w-auto"
+            className="mb-10 inline-flex items-center justify-center min-h-12 gap-3 px-8 py-4 bg-[var(--ink)] hover:bg-[var(--ink-muted)] text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-[var(--shadow-soft)] transition-all hover:scale-[1.02] touch-manipulation w-full sm:w-auto"
           >
             <Handshake size={20} /> Collaborons
           </button>

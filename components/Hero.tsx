@@ -100,42 +100,42 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
           transition={{ duration: 1, ease: 'easeOut' }}
           className="min-w-0"
         >
-          <div className="inline-flex max-w-full items-center gap-3 px-4 py-2 glass rounded-full border-blue-500/20 mb-6 md:mb-8 backdrop-blur-md">
+          <div className="inline-flex max-w-full items-center gap-3 px-4 py-2 glass rounded-full mb-6 md:mb-8">
             <span className="relative flex h-2 w-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-soft)] opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
             </span>
-            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-wide md:tracking-widest text-blue-400 truncate">
+            <span className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)] truncate">
               {availability}
             </span>
           </div>
 
-          <div className="mb-6 md:mb-8 min-w-0">
-            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight mb-2 md:mb-4 break-words">
+          <div className="mb-5 md:mb-7 min-w-0">
+            <h2 className="font-display text-[clamp(1.75rem,5vw+0.5rem,4.25rem)] font-semibold tracking-tight text-[var(--ink)] leading-[1.05] mb-2 md:mb-3 break-words">
               <GlitchText text={firstName || fullName.toUpperCase()} />
             </h2>
             {lastName ? (
-              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-black tracking-tight text-blue-600 dark:text-blue-500 uppercase leading-tight opacity-90 break-words">
+              <h2 className="font-display text-[clamp(1.05rem,2.4vw+0.4rem,2.25rem)] font-medium tracking-tight text-[var(--accent)] leading-tight break-words">
                 <GlitchText text={lastName} />
               </h2>
             ) : null}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-6 md:mb-10 leading-[1.1] tracking-tight text-slate-900 dark:text-white uppercase break-words">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-300">{heroTitle}</span>
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-[2.85rem] font-semibold mb-6 md:mb-9 leading-[1.15] tracking-tight text-[var(--accent)] break-words">
+            {heroTitle}
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-8 md:mb-10 lg:mb-14 max-w-xl font-light leading-relaxed whitespace-pre-line">
+          <p className="text-[0.95rem] sm:text-base md:text-lg text-[var(--ink-muted)] mb-8 md:mb-10 lg:mb-12 max-w-xl font-normal leading-relaxed whitespace-pre-line">
             {bio}
           </p>
 
-          <div className="flex flex-col lg:flex-row flex-wrap gap-3 md:gap-6 items-stretch lg:items-center">
+          <div className="flex flex-col lg:flex-row flex-wrap gap-3 md:gap-4 items-stretch lg:items-center">
             <a
               href="#projets"
-              className="group w-full lg:w-auto justify-center min-h-12 px-6 md:px-12 py-4 md:py-6 bg-blue-600 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl hover:bg-blue-500 transition-all shadow-[0_20px_40px_rgba(37,99,235,0.3)] hover:scale-105 active:scale-95 flex items-center gap-3 touch-manipulation"
+              className="group btn-accent w-full lg:w-auto justify-center min-h-12 px-6 md:px-10 py-3.5 md:py-4 text-white font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] rounded-2xl flex items-center gap-3 touch-manipulation"
             >
-              MES RÉALISATIONS{' '}
-              <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              Mes réalisations{' '}
+              <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
 
             <a
@@ -143,18 +143,18 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
               download
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-10 py-4 md:py-6 glass text-slate-800 dark:text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 hover:bg-slate-200/50 dark:hover:bg-white/10 border-slate-200 dark:border-white/10 transition-all hover:scale-105 active:scale-95 shadow-xl dark:shadow-2xl touch-manipulation"
+              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-8 py-3.5 md:py-4 glass text-[var(--ink)] font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] rounded-2xl flex items-center gap-3 hover:bg-[var(--bg-elevated)] transition-all active:scale-[0.98] touch-manipulation"
             >
-              <Download size={18} className="text-blue-400" /> TÉLÉCHARGER CV
+              <Download size={18} className="text-[var(--accent)]" /> Télécharger CV
             </a>
 
             <a
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-10 py-4 md:py-6 bg-violet-600/95 hover:bg-violet-500 text-white font-black text-[10px] md:text-xs uppercase tracking-widest rounded-2xl flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(124,58,237,0.35)] touch-manipulation"
+              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-8 py-3.5 md:py-4 bg-[var(--ink)] hover:bg-[var(--ink-muted)] text-white font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] rounded-2xl flex items-center gap-3 transition-all active:scale-[0.98] touch-manipulation"
             >
-              <CalendarCheck2 size={18} /> RÉSERVER UN CRÉNEAU
+              <CalendarCheck2 size={18} /> Réserver un créneau
             </a>
           </div>
 
@@ -196,32 +196,32 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
           transition={{ duration: 1.2, ease: 'easeOut' }}
           className="relative flex flex-col items-center lg:items-end min-w-0 w-full"
         >
-          <div className="relative z-10 w-full max-w-[280px] sm:max-w-[340px] md:max-w-xl aspect-square rounded-[2.5rem] md:rounded-[4rem] overflow-hidden glass p-3 md:p-4 border-slate-200 dark:border-white/10 bg-white/40 dark:bg-slate-900/40 shadow-[0_30px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_50px_100px_rgba(0,0,0,0.7)] group">
+          <div className="relative z-10 w-full max-w-[280px] sm:max-w-[340px] md:max-w-xl aspect-square rounded-[2rem] md:rounded-[2.75rem] overflow-hidden glass p-2.5 md:p-3 group">
             <img
               src={photoSrc}
               alt="Portrait professionnel"
-              className="w-full h-full object-cover rounded-[2.5rem] md:rounded-[3.5rem] grayscale group-hover:grayscale-0 transition-all duration-700"
+              className="w-full h-full object-cover rounded-[1.65rem] md:rounded-[2.35rem] transition-transform duration-700 group-hover:scale-[1.02]"
               loading="lazy"
             />
           </div>
 
           <motion.div
-            animate={{ y: [0, -15, 0] }}
-            transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut' }}
-            className="mt-[-28px] md:mt-[-60px] z-20 max-w-[calc(100%-1rem)] glass-dark p-4 sm:p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border-blue-500/50 shadow-[0_30px_60px_rgba(0,0,0,0.5)] flex items-center gap-4 md:gap-8 backdrop-blur-3xl border-l-4 border-l-blue-500"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 5.5, ease: 'easeInOut' }}
+            className="mt-[-24px] md:mt-[-48px] z-20 max-w-[calc(100%-1rem)] glass-dark p-4 sm:p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-[var(--shadow-soft-lg)] flex items-center gap-4 md:gap-6 border-l-[3px] border-l-[var(--accent)]"
           >
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl bg-blue-500/20 flex items-center justify-center text-blue-500 border border-blue-500/30">
-              <ShieldCheck className="w-9 h-9 md:w-11 md:h-11" />
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-[rgba(61,110,168,0.12)] flex items-center justify-center text-[var(--accent)] border border-[rgba(61,110,168,0.2)]">
+              <ShieldCheck className="w-8 h-8 md:w-9 md:h-9" />
             </div>
             <div>
-              <div className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white leading-none">{expBadge}</div>
-              <div className="text-[10px] md:text-[11px] uppercase font-black text-blue-400 tracking-wider md:tracking-[0.4em] mt-2 md:mt-3 break-words">
+              <div className="font-display text-2xl md:text-4xl font-semibold text-[var(--ink)] leading-none">{expBadge}</div>
+              <div className="text-[10px] md:text-[11px] uppercase font-semibold text-[var(--accent)] tracking-[0.16em] mt-2 break-words">
                 {expLabel}
               </div>
             </div>
           </motion.div>
 
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160%] h-[160%] bg-blue-600/5 blur-[120px] md:blur-[150px] rounded-full -z-20" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-[rgba(61,110,168,0.06)] rounded-full -z-20" />
         </motion.div>
       </div>
     </section>

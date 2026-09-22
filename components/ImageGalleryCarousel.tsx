@@ -46,7 +46,7 @@ const ImageGalleryCarousel: React.FC = () => {
             className="w-full h-full object-cover"
           />
           {current.caption ? (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent flex items-end p-6 md:p-16">
+            <div className="absolute inset-0 bg-[var(--bg-elevated)] flex items-end p-6 md:p-16">
               <p className="text-white text-lg md:text-3xl font-black uppercase tracking-widest leading-none">
                 {current.caption}
               </p>

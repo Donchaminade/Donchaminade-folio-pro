@@ -11,7 +11,7 @@ const BrandMark: React.FC<BrandMarkProps> = ({ className = '', onClick }) => {
 
   const inner = imgFailed ? (
     <span
-      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-violet-600 text-sm font-black tracking-tighter text-white shadow-lg shadow-blue-600/30"
+      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-sm font-bold tracking-tighter text-white shadow-[var(--shadow-soft)]"
       aria-hidden
     >
       DC
@@ -20,7 +20,7 @@ const BrandMark: React.FC<BrandMarkProps> = ({ className = '', onClick }) => {
     <img
       src="/favicon.png"
       alt="Donchaminade"
-      className="h-10 w-10 shrink-0 rounded-xl object-cover shadow-lg shadow-blue-600/20"
+      className="h-10 w-10 shrink-0 rounded-xl object-cover shadow-[var(--shadow-soft)]"
       onError={() => setImgFailed(true)}
     />
   );

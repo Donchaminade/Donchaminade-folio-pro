@@ -41,8 +41,8 @@ const ClientsMarquee: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className="absolute inset-y-0 left-0 w-24 md:w-40 bg-gradient-to-r from-slate-100 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-24 md:w-40 bg-gradient-to-l from-slate-100 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-16 md:w-28 bg-[var(--bg)] z-10 pointer-events-none opacity-90" />
+      <div className="absolute inset-y-0 right-0 w-16 md:w-28 bg-[var(--bg)] z-10 pointer-events-none opacity-90" />
     </div>
   );
 };

@@ -126,7 +126,7 @@ const SocialProofSubmitModal: React.FC<Props> = ({
               <div className="flex items-center gap-2 min-w-0">
                 <div
                   className={`p-1.5 rounded-lg shrink-0 ${
-                    isTestimonial ? 'bg-violet-600/20 text-violet-400' : 'bg-blue-600/20 text-blue-500'
+                    isTestimonial ? 'bg-[var(--ink)]/20 text-[var(--accent-soft)]' : 'bg-blue-600/20 text-blue-500'
                   }`}
                 >
                   {isTestimonial ? <MessageSquareQuote size={18} /> : <ThumbsUp size={18} />}
@@ -154,7 +154,7 @@ const SocialProofSubmitModal: React.FC<Props> = ({
                   onClick={() => setKind('testimonial')}
                   className={`py-2 px-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                     isTestimonial
-                      ? 'bg-violet-600 text-white shadow-md'
+                      ? 'bg-[var(--ink)] text-white shadow-md'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                   }`}
                 >
@@ -237,7 +237,7 @@ const SocialProofSubmitModal: React.FC<Props> = ({
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/gif"
                       onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
-                      className="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-violet-600 file:text-white file:font-bold"
+                      className="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-[var(--ink)] file:text-white file:font-bold"
                     />
                   </div>
                 )}
@@ -250,7 +250,7 @@ const SocialProofSubmitModal: React.FC<Props> = ({
                 type="submit"
                 disabled={loading}
                 className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl disabled:opacity-50 text-white text-[10px] font-black uppercase tracking-widest ${
-                  isTestimonial ? 'bg-violet-600 hover:bg-violet-500' : 'bg-blue-600 hover:bg-blue-500'
+                  isTestimonial ? 'bg-[var(--ink)] hover:bg-[var(--ink-muted)]' : 'bg-blue-600 hover:bg-blue-500'
                 }`}
               >
                 <Send size={14} />
