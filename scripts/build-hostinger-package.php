@@ -112,15 +112,18 @@ $readme = <<<'TXT'
 DÉPLOIEMENT HOSTINGER — donchamfolio.grosbit.com
 ================================================
 
-1. Uploadez hostinger-upload.zip (à la racine de donchamfolio/)
-2. Extrayez le zip DANS donchamfolio/ (pas ailleurs)
-3. VÉRIFIEZ : vous devez voir des DOSSIERS « admin », « api », « public »…
-   PAS des fichiers nommés « admin\api\upload.php » (c’est incorrect)
-4. Renommer .env.exemple → .env et remplir DB_NAME, DB_USER, DB_PASS
-5. Renseigner SMTP_* + NOTIFY_EMAIL pour les alertes email (voir README)
-6. php database/apply-pending-migrations.php
-7. Supprimer install.php après installation
-8. Droits 755 sur public/uploads/ et uploads/
+1. Uploadez hostinger-upload.zip à la racine de donchamfolio/
+2. Extrayez le zip DANS donchamfolio/ (écrase le code, pas les fichiers absents du zip)
+3. NE SUPPRIMEZ PAS .env ni public/uploads/ (médias + secrets)
+4. VÉRIFIEZ : dossiers « admin », « api », « public » — pas de noms avec \\
+5. Ne touchez pas au .env existant. .env.exemple sert seulement à une 1re install
+6. SMTP_* + NOTIFY_EMAIL déjà dans .env pour les alertes email
+7. php database/apply-pending-migrations.php
+   (évitez catalog-sync.php : il réécrit le catalogue / profil)
+8. Article Next.js 16.3 : php database/publish-nextjs-16-3-article.php --draft
+   puis aperçu, puis --publish — ou admin → Blog → brouillon → Aperçu → Publier
+9. Supprimer install.php s’il est encore là
+10. Droits 755 sur public/uploads/ et uploads/
 
 Test API :
 https://donchamfolio.grosbit.com/api/index.php?resource=portfolio
@@ -178,5 +181,6 @@ $sizeMb = round(filesize($zipPath) / 1024 / 1024, 1);
 echo "\nPrêt.\n";
 echo "Dossier : {$out}\n";
 echo "Zip     : {$zipPath} ({$sizeMb} Mo)\n";
-echo "\nSur Hostinger : supprimez tout dans donchamfolio/, uploadez hostinger-upload.zip, extrayez.\n";
+echo "\nSur Hostinger : uploadez hostinger-upload.zip dans donchamfolio/, extrayez.\n";
+echo "Ne pas supprimer .env ni public/uploads/.\n";
 echo "Vous devez voir des DOSSIERS admin/ api/ (pas des noms avec \\\\).\n";
