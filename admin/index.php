@@ -71,7 +71,7 @@ ob_start();
 <div class="mb-3">
     <h2 class="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--a-muted)]">Contenu du portfolio</h2>
 </div>
-<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-8">
     <?php
     $contentCards = [
         ['Projets', (int) ($counts['projects'] ?? 0), 'projects.php', 'folder-kanban', (int) ($counts['projects_active'] ?? 0) . ' actifs'],
@@ -87,7 +87,7 @@ ob_start();
     foreach ($contentCards as [$label, $val, $link, $icon, $hint]):
         $pending = ($label === 'Témoignages') ? (int) ($counts['testimonials_pending'] ?? 0) : 0;
     ?>
-    <a href="<?= e($link) ?>" class="group relative block p-5 rounded-2xl border border-[var(--a-border)] bg-[var(--a-surface)] hover:border-[rgba(61,110,168,0.4)] transition-all">
+    <a href="<?= e($link) ?>" class="group relative block p-4 sm:p-5 rounded-2xl border border-[var(--a-border)] bg-[var(--a-surface)] hover:border-[rgba(61,110,168,0.4)] transition-all min-w-0">
         <?php if ($pending > 0): ?>
             <span class="absolute top-3 right-3 min-w-[1.25rem] h-5 px-1.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-slate-900"><?= $pending > 99 ? '99+' : $pending ?></span>
         <?php endif; ?>
@@ -95,8 +95,8 @@ ob_start();
             <?= adminIcon($icon, 'w-5 h-5 text-[var(--a-muted)] group-hover:text-[var(--a-accent)]') ?>
             <?= adminIcon('chevron-right', 'w-4 h-4 text-[var(--a-muted)] opacity-0 group-hover:opacity-100 transition-opacity') ?>
         </div>
-        <div class="text-3xl font-semibold text-[var(--a-ink)]" style="font-family:var(--a-display)"><?= $val ?></div>
-        <div class="text-xs font-semibold text-[var(--a-muted)] mt-1 uppercase tracking-wider"><?= e($label) ?></div>
+        <div class="text-2xl sm:text-3xl font-semibold text-[var(--a-ink)]" style="font-family:var(--a-display)"><?= $val ?></div>
+        <div class="text-[10px] sm:text-xs font-semibold text-[var(--a-muted)] mt-1 uppercase tracking-wider"><?= e($label) ?></div>
         <?php if ($hint): ?>
             <div class="text-[10px] text-[var(--a-muted)] mt-1.5 opacity-80"><?= e($hint) ?></div>
         <?php endif; ?>
@@ -107,7 +107,7 @@ ob_start();
 <div class="mb-3">
     <h2 class="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--a-muted)]">Modération & messages</h2>
 </div>
-<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-8">
     <?php
     $modCards = [
         ['Messages non lus', (int) ($counts['unread_messages'] ?? 0), 'messages.php', 'mail', null],

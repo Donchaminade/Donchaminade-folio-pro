@@ -152,7 +152,7 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full lg:w-auto justify-center min-h-12 px-6 md:px-8 py-3.5 md:py-4 bg-[var(--ink)] hover:bg-[var(--ink-muted)] text-white font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] rounded-2xl flex items-center gap-3 transition-all active:scale-[0.98] touch-manipulation"
+              className="btn-accent w-full lg:w-auto justify-center min-h-12 px-6 md:px-8 py-3.5 md:py-4 text-white font-bold text-[11px] md:text-xs uppercase tracking-[0.14em] rounded-2xl flex items-center gap-3 touch-manipulation"
             >
               <CalendarCheck2 size={18} /> Réserver un créneau
             </a>
@@ -194,7 +194,7 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}
-          className="relative flex flex-col items-center lg:items-end min-w-0 w-full"
+          className="relative flex flex-col items-center lg:items-end min-w-0 w-full overflow-hidden"
         >
           <div className="relative z-10 w-full max-w-[280px] sm:max-w-[340px] md:max-w-xl aspect-square rounded-[2rem] md:rounded-[2.75rem] overflow-hidden glass p-2.5 md:p-3 group">
             <img
@@ -221,7 +221,7 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
             </div>
           </motion.div>
 
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-[rgba(61,110,168,0.06)] rounded-full -z-20" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[28rem] aspect-square bg-[rgba(61,110,168,0.08)] rounded-full -z-20" />
         </motion.div>
       </div>
     </section>

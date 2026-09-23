@@ -170,7 +170,7 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
             <?php endif; ?>
         </header>
 
-        <div class="p-4 sm:p-6 lg:p-8 max-w-6xl">
+        <div class="p-4 sm:p-6 lg:p-8 w-full max-w-[90rem] mx-auto">
             <?php if (!$isDashboard): ?>
                 <a href="index.php" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--a-muted)] hover:text-[var(--a-accent)] mb-4 transition-colors">
                     <?= adminIcon('arrow-left', 'w-3.5 h-3.5') ?> Tableau de bord

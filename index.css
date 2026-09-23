@@ -34,6 +34,7 @@ html.dark {
 html {
   overflow-x: hidden;
   scroll-padding-top: 5.5rem;
+  max-width: 100%;
 }
 
 @media (max-width: 1023px) {
@@ -48,6 +49,7 @@ body {
   color: var(--ink);
   overflow-x: hidden;
   position: relative;
+  max-width: 100%;
   font-size: 1rem;
   line-height: 1.65;
   letter-spacing: -0.011em;
@@ -175,7 +177,7 @@ html.dark .circuit-svg {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -185,6 +187,14 @@ html.dark .circuit-svg {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(61, 110, 168, 0.35);
   border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(91, 134, 184, 0.4);
+  background-clip: padding-box;
+  border: 2px solid transparent;
 }
 
 @keyframes glitch-anim-1 {

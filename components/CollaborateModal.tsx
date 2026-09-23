@@ -447,7 +447,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-[var(--ink)] hover:bg-[var(--ink-muted)] disabled:opacity-50 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-[var(--shadow-soft)]"
+              className="btn-accent w-full py-4 disabled:opacity-50 text-white font-bold text-[10px] uppercase tracking-[0.14em] rounded-2xl flex items-center justify-center gap-2"
             >
               {loading ? (
                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

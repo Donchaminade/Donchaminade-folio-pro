@@ -185,13 +185,14 @@ const App: React.FC = () => {
         href={BOOKING_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="hidden lg:flex fixed right-5 bottom-8 z-[55] px-4 py-4 min-h-11 rounded-2xl bg-[var(--ink)] hover:bg-[var(--ink-muted)] text-white shadow-[var(--shadow-soft-lg)] border border-[var(--border)] transition-all active:scale-95 items-center gap-3"
+        className="btn-accent hidden lg:inline-flex fixed right-4 bottom-8 z-[55] max-w-[calc(100vw-2rem)] px-4 py-3.5 rounded-2xl text-white items-center gap-2.5"
+        aria-label="Réserver un créneau"
       >
-        <CalendarCheck2 size={18} />
-        <span className="hidden md:inline text-[10px] font-bold uppercase tracking-[0.14em]">Réserver un créneau</span>
+        <CalendarCheck2 size={18} className="shrink-0" />
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em] whitespace-nowrap">Réserver</span>
       </a>
 
-      <footer className="py-16 md:py-24 pb-32 lg:pb-24 text-center border-t border-[var(--border)] px-4 sm:px-6">
+      <footer className="py-16 md:py-24 pb-32 lg:pb-24 text-center border-t border-[var(--border)] px-4 sm:px-6 overflow-x-hidden">
         <div className="flex justify-center mb-6 md:mb-8">
           <BrandMark />
         </div>
@@ -204,7 +205,7 @@ const App: React.FC = () => {
           href={BOOKING_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 px-7 md:px-8 py-3.5 md:py-4 rounded-2xl bg-[var(--ink)] hover:bg-[var(--ink-muted)] text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.14em] transition-all active:scale-95 mb-10 md:mb-12"
+          className="btn-accent inline-flex items-center gap-3 px-7 md:px-8 py-3.5 md:py-4 rounded-2xl text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.14em] mb-10 md:mb-12"
         >
           <CalendarCheck2 size={18} />
           Réserver un créneau

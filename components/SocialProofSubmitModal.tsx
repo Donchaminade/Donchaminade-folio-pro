@@ -154,7 +154,7 @@ const SocialProofSubmitModal: React.FC<Props> = ({
                   onClick={() => setKind('testimonial')}
                   className={`py-2 px-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                     isTestimonial
-                      ? 'bg-[var(--ink)] text-white shadow-md'
+                      ? 'bg-[var(--accent)] text-white shadow-md'
                       : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                   }`}
                 >
@@ -250,7 +250,7 @@ const SocialProofSubmitModal: React.FC<Props> = ({
                 type="submit"
                 disabled={loading}
                 className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl disabled:opacity-50 text-white text-[10px] font-black uppercase tracking-widest ${
-                  isTestimonial ? 'bg-[var(--ink)] hover:bg-[var(--ink-muted)]' : 'bg-blue-600 hover:bg-blue-500'
+                  isTestimonial ? 'btn-accent' : 'bg-blue-600 hover:bg-blue-500'
                 }`}
               >
                 <Send size={14} />

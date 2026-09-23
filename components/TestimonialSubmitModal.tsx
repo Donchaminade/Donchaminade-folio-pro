@@ -154,7 +154,7 @@ const TestimonialSubmitModal: React.FC<Props> = ({ open, onClose }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--ink)] hover:bg-[var(--ink-muted)] disabled:opacity-50 text-white text-[10px] font-black uppercase tracking-widest"
+                className="btn-accent w-full flex items-center justify-center gap-2 py-2.5 rounded-xl disabled:opacity-50 text-white text-[10px] font-bold uppercase tracking-widest"
               >
                 <Send size={14} />
                 {loading ? 'Envoi…' : 'Envoyer'}
