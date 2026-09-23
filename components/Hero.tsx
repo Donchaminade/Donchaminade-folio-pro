@@ -221,7 +221,10 @@ const Hero: React.FC<HeroProps> = ({ bookingUrl }) => {
             </div>
           </motion.div>
 
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[28rem] aspect-square bg-[rgba(61,110,168,0.08)] rounded-full -z-20" />
+          <div
+            className="pointer-events-none absolute top-1/2 left-1/2 -z-20 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[rgba(61,110,168,0.06)]"
+            aria-hidden="true"
+          />
         </motion.div>
       </div>
     </section>
