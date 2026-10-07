@@ -635,3 +635,21 @@ html.dark .toc a.on, html.dark .blog-toc-link.is-active { background: rgba(139, 
 .btn-accent { background: var(--accent); color: var(--accent-ink); }
 .section-title { font-family: var(--font-display); font-size: var(--fs-2xl); }
 .section-kicker { color: var(--accent); font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.lang-switch { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); }
+.lang-switch button { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--muted); border-radius: 999px; padding: 4px 8px; font-weight: 800; font-size: 11px; letter-spacing: 0.06em; cursor: pointer; }
+.lang-switch button.on { background: var(--accent); color: var(--accent-ink, #fff); }
+.lang-switch .flag { width: 18px; height: 12px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.12); }
+.menu-panel .lang-switch { margin: 8px 16px 4px; }
+
+.marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.marquee-track { display: flex; gap: 14px; width: max-content; animation: marquee 42s linear infinite; padding: 4px 0 12px; }
+.page-tile { min-width: 180px; padding: 16px 18px; display: grid; gap: 4px; text-decoration: none; color: inherit; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.book-fab { position: fixed; right: 18px; bottom: 84px; z-index: 30; box-shadow: var(--shadow); }
+@media (min-width: 900px) { .book-fab { bottom: 24px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; flex-wrap: wrap; width: auto; padding: 0 24px 12px; }
+}

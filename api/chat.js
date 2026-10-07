@@ -1936,6 +1936,13 @@ function hasLlmKey() {
   );
 }
 __name(hasLlmKey, "hasLlmKey");
+function uiLang(req, body) {
+  const header = (req.headers.get("x-portfolio-lang") || "").toLowerCase();
+  const fromBody = body?.lang;
+  const explicit = typeof fromBody === "string" ? fromBody.toLowerCase() : header;
+  return explicit === "en" ? "en" : explicit === "fr" ? "fr" : "fr";
+}
+__name(uiLang, "uiLang");
 function jsonError(message, status, extra) {
   return new Response(JSON.stringify({ error: message }), {
     status,
@@ -1999,12 +2006,13 @@ async function handleChatRequest(req) {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204 });
   }
+  const headerLang = (req.headers.get("x-portfolio-lang") || "").toLowerCase() === "en" ? "en" : "fr";
   if (req.method !== "POST") {
-    return jsonError("M\xE9thode non autoris\xE9e", 405);
+    return jsonError(headerLang === "en" ? "Method not allowed" : "M\xE9thode non autoris\xE9e", 405);
   }
   const limit = consumeRateLimit(clientIp(req));
   if (limit.ok === false) {
-    return jsonError("Trop de messages. R\xE9essayez dans un instant.", 429, {
+    return jsonError(headerLang === "en" ? "Too many messages. Try again in a moment." : "Trop de messages. R\xE9essayez dans un instant.", 429, {
       "Retry-After": String(limit.retryAfter)
     });
   }
@@ -2012,17 +2020,19 @@ async function handleChatRequest(req) {
   try {
     body = await req.json();
   } catch {
-    return jsonError("Requ\xEAte invalide", 400);
+    return jsonError(headerLang === "en" ? "Invalid request" : "Requ\xEAte invalide", 400);
   }
+  const preferred = uiLang(req, body);
   const messages = normalizeMessages(body?.messages);
   if (!messages) {
-    return jsonError("Message utilisateur manquant ou trop long.", 400);
+    return jsonError(preferred === "en" ? "Missing or oversized user message." : "Message utilisateur manquant ou trop long.", 400);
   }
   const query = lastUserText(messages);
   if (!query) {
-    return jsonError("Message vide", 400);
+    return jsonError(preferred === "en" ? "Empty message" : "Message vide", 400);
   }
-  const lang = detectLang(query);
+  const explicit = body.lang;
+  const lang = explicit === "en" || explicit === "fr" ? explicit : req.headers.get("x-portfolio-lang") === "en" ? "en" : detectLang(query);
   const { facts, contextText } = await retrievePortfolioContext(query);
   const fallback = fallbackAnswer(query, facts, lang);
   if (!hasLlmKey()) {

@@ -11,6 +11,7 @@ import {
 } from '../../lib/api';
 import CommentThread from './CommentThread';
 import BlogShareActions from './BlogShareActions';
+import { shownApiMessage, useI18n } from '../../lib/i18n';
 
 interface Props {
   post: BlogPostDetail;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
+  const { lang, t } = useI18n();
   const [liked, setLiked] = useState(post.liked);
   const [likes, setLikes] = useState(post.likes_count);
   const [shares, setShares] = useState(post.shares_count);
@@ -42,7 +44,7 @@ const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
       setLikes(res.likes_count);
       onUpdate({ liked: res.liked, likes_count: res.likes_count });
     } catch {
-      setFeedback('Impossible de liker pour le moment.');
+      setFeedback(t.likeFail);
     }
   };
 
@@ -53,12 +55,12 @@ const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
     setFeedback('');
     try {
       const res = await postBlogComment(post.slug, name.trim(), content.trim());
-      setFeedback(res.message);
+      setFeedback(shownApiMessage(lang, res.message, t.commentSent));
       applyCommentsUpdate(res.comments, res.comments_count);
       setName('');
       setContent('');
     } catch (err) {
-      setFeedback(err instanceof Error ? err.message : 'Erreur envoi');
+      setFeedback(shownApiMessage(lang, err instanceof Error ? err.message : '', t.sendError));
     } finally {
       setLoading(false);
     }
@@ -66,7 +68,7 @@ const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
 
   const onReplyPosted = (tree: BlogComment[], count: number, message: string) => {
     applyCommentsUpdate(tree, count);
-    setFeedback(message);
+    setFeedback(shownApiMessage(lang, message, t.commentSent));
   };
 
   return (
@@ -109,13 +111,13 @@ const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
         <div className="px-6 py-5 border-b border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/[0.03]">
           <h3 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
             <MessageCircle size={22} className="text-blue-500" />
-            Discussion
+            {t.discussion}
             <span className="text-sm font-bold text-slate-500 normal-case tracking-normal">
-              ({totalComments} {totalComments <= 1 ? 'message' : 'messages'})
+              ({t.messageCount(totalComments)})
             </span>
           </h3>
           <p className="text-xs text-slate-500 mt-1">
-            Publiez ou répondez directement — visible tout de suite. Utilisez « Répondre » sous un message.
+            {t.discussionLead}
           </p>
         </div>
 
@@ -133,25 +135,25 @@ const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
               ))}
             </div>
           ) : (
-            <p className="text-slate-500 text-sm font-light text-center py-6">Soyez le premier à lancer la discussion.</p>
+            <p className="text-slate-500 text-sm font-light text-center py-6">{t.firstComment}</p>
           )}
 
           <form
             onSubmit={handleComment}
             className="mt-8 p-6 rounded-2xl border border-dashed border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900/40 space-y-4"
           >
-            <p className="text-xs font-black uppercase tracking-widest text-slate-500">Nouveau commentaire</p>
+            <p className="text-xs font-black uppercase tracking-widest text-slate-500">{t.newComment}</p>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Votre nom"
+              placeholder={t.yourName}
               className="w-full px-4 py-3 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
               required
             />
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Partagez votre avis sur cet article…"
+              placeholder={t.commentPlaceholder}
               rows={4}
               className="w-full px-4 py-3 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm resize-none focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
               required
@@ -161,7 +163,7 @@ const BlogEngagement: React.FC<Props> = ({ post, onUpdate }) => {
               disabled={loading}
               className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
             >
-              <Send size={16} /> Publier
+              <Send size={16} /> {t.publish}
             </button>
           </form>
         </div>

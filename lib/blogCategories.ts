@@ -12,23 +12,28 @@ export const BLOG_BRAND = {
 export interface BlogCategoryDef {
   id: string;
   label: string;
+  labelEn?: string;
   emoji: string;
 }
 
 export const BLOG_BUILTIN_CATEGORIES: BlogCategoryDef[] = [
-  { id: 'tech', label: 'Tech & Dev', emoji: '⚡' },
-  { id: 'energie', label: 'Énergie', emoji: '🔥' },
-  { id: 'motivation', label: 'Motivation', emoji: '🚀' },
-  { id: 'spiritualite', label: 'Spiritualité', emoji: '✨' },
-  { id: 'carriere', label: 'Carrière', emoji: '💼' },
-  { id: 'lifestyle', label: 'Lifestyle', emoji: '🌿' },
-  { id: 'sante', label: 'Santé mentale', emoji: '🧠' },
+  { id: 'tech', label: 'Tech & Dev', labelEn: 'Tech', emoji: '⚡' },
+  { id: 'energie', label: 'Énergie', labelEn: 'Energy', emoji: '🔥' },
+  { id: 'motivation', label: 'Motivation', labelEn: 'Motivation', emoji: '🚀' },
+  { id: 'spiritualite', label: 'Spiritualité', labelEn: 'Spirituality', emoji: '✨' },
+  { id: 'carriere', label: 'Carrière', labelEn: 'Career', emoji: '💼' },
+  { id: 'lifestyle', label: 'Lifestyle', labelEn: 'Lifestyle', emoji: '🌿' },
+  { id: 'sante', label: 'Santé mentale', labelEn: 'Mental health', emoji: '🧠' },
 ];
 
 let categoriesRegistry: BlogCategoryDef[] = [...BLOG_BUILTIN_CATEGORIES];
 
 export function setBlogCategoriesRegistry(cats: BlogCategoryDef[]): void {
-  categoriesRegistry = cats.length > 0 ? cats : [...BLOG_BUILTIN_CATEGORIES];
+  const source = cats.length > 0 ? cats : [...BLOG_BUILTIN_CATEGORIES];
+  categoriesRegistry = source.map((cat) => {
+    const builtin = BLOG_BUILTIN_CATEGORIES.find((item) => item.id === cat.id);
+    return { ...cat, labelEn: cat.labelEn || builtin?.labelEn };
+  });
 }
 
 export function getBlogCategoriesRegistry(): BlogCategoryDef[] {

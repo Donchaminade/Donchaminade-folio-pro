@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { fetchPortfolio } from './lib/api';
 import { applyPortfolioSeo } from './lib/seo';
-import { buildPortfolioView, type PortfolioBundle, type PortfolioView } from './lib/portfolioView';
+import { useI18n } from './lib/i18n';
+import { buildPortfolioView, type PortfolioBundle } from './lib/portfolioView';
 import HomeView from './components/home/HomeView';
 import AllProjects from './components/AllProjects';
 import { MobileNav, PageDecor, SiteFooter, SiteHeader } from './components/layout/SiteChrome';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<PortfolioView>(() => buildPortfolioView(null));
+  const { lang, t } = useI18n();
+  const [bundle, setBundle] = useState<PortfolioBundle | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const view = useMemo(() => buildPortfolioView(bundle, lang), [bundle, lang]);
 
   useEffect(() => {
     fetchPortfolio<PortfolioBundle>()
-      .then((data) => {
-        const next = buildPortfolioView(data);
-        setView(next);
-        applyPortfolioSeo({
-          full_name: next.name,
-          hero_title: next.roleLine,
-          bio: next.lead,
-        });
-      })
+      .then((data) => setBundle(data))
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    applyPortfolioSeo({
+      full_name: view.name,
+      hero_title: view.roleLine,
+      bio: view.lead,
+    }, lang);
+  }, [view, lang]);
+
   return (
     <div className="page-pad">
-      <a className="skip" href="#main">Aller au contenu</a>
+      <a className="skip" href="#main">{t.skip}</a>
       <PageDecor />
       <SiteHeader current="home" />
       <main id="main">

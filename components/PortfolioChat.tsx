@@ -3,13 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { Loader2, MessageCircle, Send, Sparkles, X } from 'lucide-react';
-
-const SUGGESTIONS = [
-  'Quels sont tes projets ?',
-  'Quelles sont tes prétentions salariales ?',
-  'Quelle est sa valeur ajoutée ?',
-  'Parle-moi de son réseau',
-];
+import { useI18n } from '../lib/i18n';
 
 function messageText(message: { parts?: Array<{ type: string; text?: string }> }): string {
   return (message.parts ?? [])
@@ -19,6 +13,7 @@ function messageText(message: { parts?: Array<{ type: string; text?: string }> }
 }
 
 const PortfolioChat: React.FC = () => {
+  const { lang, t } = useI18n();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const titleId = useId();
@@ -29,7 +24,10 @@ const PortfolioChat: React.FC = () => {
   const previousFocus = useRef<HTMLElement | null>(null);
 
   const { messages, sendMessage, status, error, stop, clearError } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+      headers: () => ({ 'X-Portfolio-Lang': lang }),
+    }),
   });
 
   const busy = status === 'submitted' || status === 'streaming';
@@ -116,7 +114,7 @@ const PortfolioChat: React.FC = () => {
             aria-haspopup="dialog"
             aria-expanded={open}
             aria-controls="portfolio-chat-dialog"
-            aria-label="Ouvrir l’assistant portfolio"
+            aria-label={t.chatOpen}
             className="chat-fab"
           >
             <MessageCircle size={22} />
@@ -135,7 +133,7 @@ const PortfolioChat: React.FC = () => {
           >
             <button
               type="button"
-              aria-label="Fermer l’assistant"
+              aria-label={t.chatClose}
               className="absolute inset-0 bg-slate-950/45 backdrop-blur-[2px]"
               onClick={() => setOpen(false)}
             />
@@ -158,7 +156,7 @@ const PortfolioChat: React.FC = () => {
                     <Sparkles size={12} /> Portfolio
                   </div>
                   <h2 id={titleId} className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-                    Assistant Donchaminade
+                    {t.chatTitle}
                   </h2>
                   <p id={descId} className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                     Questions sur le profil, les projets, le parcours et les blogs publics.
@@ -168,7 +166,7 @@ const PortfolioChat: React.FC = () => {
                   type="button"
                   onClick={() => setOpen(false)}
                   className="min-h-11 min-w-11 rounded-full border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white"
-                  aria-label="Fermer l’assistant"
+                  aria-label={t.chatClose}
                 >
                   <X size={18} />
                 </button>
@@ -177,7 +175,7 @@ const PortfolioChat: React.FC = () => {
               <div ref={listRef} className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-3 custom-scrollbar">
                 {messages.length === 0 && (
                   <div className="rounded-2xl bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/10 p-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Bonjour — je peux parler de mon parcours, de PyCon Togo, du coaching YAS / Next Gen, des projets et des derniers articles. Hors sujet, je passerai mon tour.
+                    {t.chatHello}
                   </div>
                 )}
 
@@ -203,19 +201,19 @@ const PortfolioChat: React.FC = () => {
                 {busy && (
                   <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                     <Loader2 size={14} className="animate-spin" />
-                    Rédaction en cours…
+                    {t.chatWriting}
                   </div>
                 )}
 
                 {error && (
                   <p className="text-xs text-rose-600 dark:text-rose-400" role="alert">
-                    {error.message || 'Impossible de répondre pour le moment. Réessayez.'}
+                    {t.chatError}
                   </p>
                 )}
 
                 {messages.length === 0 && (
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {SUGGESTIONS.map((suggestion) => (
+                    {t.suggestions.map((suggestion) => (
                       <button
                         key={suggestion}
                         type="button"
@@ -230,7 +228,7 @@ const PortfolioChat: React.FC = () => {
               </div>
 
               <p className="px-4 sm:px-5 pb-2 text-[10px] leading-relaxed text-slate-400 dark:text-slate-500">
-                Réponses à partir du contenu public du portfolio. Les échanges ne sont pas conservés.
+                {t.chatNote}
               </p>
 
               <form
@@ -239,7 +237,7 @@ const PortfolioChat: React.FC = () => {
               >
                 <div className="flex items-end gap-2">
                   <label htmlFor="portfolio-chat-input" className="sr-only">
-                    Votre question
+                    {t.chatAsk}
                   </label>
                   <textarea
                     id="portfolio-chat-input"
@@ -254,7 +252,7 @@ const PortfolioChat: React.FC = () => {
                       }
                     }}
                     maxLength={800}
-                    placeholder="Ex. Quels sont tes projets ?"
+                    placeholder={t.chatPlaceholder}
                     className="flex-1 resize-none rounded-2xl bg-slate-100/90 dark:bg-slate-900 border border-slate-200 dark:border-white/10 px-3.5 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 min-h-11 max-h-28"
                   />
                   {busy ? (
@@ -269,7 +267,7 @@ const PortfolioChat: React.FC = () => {
                     <button
                       type="submit"
                       disabled={!input.trim()}
-                      aria-label="Envoyer le message"
+                      aria-label={t.chatSend}
                       className="min-h-11 min-w-11 rounded-2xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white flex items-center justify-center"
                     >
                       <Send size={16} />

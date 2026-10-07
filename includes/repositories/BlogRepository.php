@@ -20,8 +20,12 @@ final class BlogRepository
 
     public function listPublished(int $limit = 50, int $offset = 0, ?string $category = null): array
     {
+        $enCols = dbOptionalColumns($this->db, 'blog_posts', ['title_en', 'excerpt_en']);
+        $hasEnglish = dbHasColumn($this->db, 'blog_posts', 'content_en')
+            ? ", (CASE WHEN COALESCE(content_en, '') <> '' THEN 1 ELSE 0 END) AS has_english"
+            : ', 0 AS has_english';
         $sql = 'SELECT id, slug, title, excerpt, category, cover_image, reading_time, published_at,
-                       views_count, likes_count, shares_count, comments_count
+                       views_count, likes_count, shares_count, comments_count' . $enCols . $hasEnglish . '
                 FROM blog_posts
                 WHERE is_published = 1 AND published_at IS NOT NULL AND published_at <= NOW()';
         $params = [];

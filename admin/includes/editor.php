@@ -3,15 +3,20 @@
 declare(strict_types=1);
 
 /** Éditeur visuel Quill — pas besoin de connaître le HTML */
-function adminEditor(string $fieldName, string $content = ''): void
+function adminEditor(string $fieldName, string $content = '', bool $required = true, string $instance = 'main', string $mirror = ''): void
 {
     $safeContent = htmlspecialchars($content, ENT_QUOTES, 'UTF-8');
     $uploadUrl = 'api/upload.php';
     $appBase = rtrim(env('APP_URL', ''), '/');
+    $uid = preg_replace('/[^a-z0-9_-]/i', '', $instance) ?: 'main';
+    static $quillAssets = false;
     ?>
+    <?php if (!$quillAssets): $quillAssets = true; ?>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
-    <div class="rounded-xl border border-white/10 bg-slate-950 overflow-hidden">
-        <div id="quill-toolbar" class="border-b border-white/10 bg-slate-900 flex flex-wrap gap-0.5 px-1 py-1">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <?php endif; ?>
+    <div class="rounded-xl border border-[var(--a-border)] bg-[var(--a-bg)] overflow-hidden">
+        <div id="quill-toolbar-<?= e($uid) ?>" class="border-b border-[var(--a-border)] bg-[var(--a-elevated)] flex flex-wrap gap-0.5 px-1 py-1">
             <span class="ql-formats">
                 <select class="ql-header">
                     <option selected></option>
@@ -49,17 +54,21 @@ function adminEditor(string $fieldName, string $content = ''): void
                 <button type="button" class="ql-clean" title="Effacer la mise en forme"></button>
             </span>
         </div>
-        <div id="quill-editor" class="min-h-[280px] text-slate-100"></div>
+        <div id="quill-editor-<?= e($uid) ?>" class="min-h-[280px]"></div>
     </div>
-    <textarea name="<?= e($fieldName) ?>" id="quill-content" class="hidden" tabindex="-1" aria-hidden="true"><?= $safeContent ?></textarea>
-    <p id="quill-content-error" class="hidden mt-2 text-sm font-semibold text-red-400" role="alert"></p>
+    <textarea name="<?= e($fieldName) ?>" id="quill-field-<?= e($uid) ?>" class="hidden" tabindex="-1" aria-hidden="true"<?= $mirror !== '' ? ' data-i18n-src="' . e($mirror) . '"' : '' ?>><?= $safeContent ?></textarea>
+    <p id="quill-error-<?= e($uid) ?>" class="hidden mt-2 text-sm font-semibold" style="color:var(--a-danger)" role="alert"></p>
     <p class="text-xs text-slate-500 mt-2">Rédigez normalement : titres, listes, images (icône image), citations, code…</p>
 
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script>
     (function () {
         const APP_BASE = <?= json_encode($appBase, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         const UPLOAD_URL = <?= json_encode($uploadUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        const REQUIRED = <?= $required ? 'true' : 'false' ?>;
+        const EDITOR_ID = <?= json_encode('#quill-editor-' . $uid) ?>;
+        const TOOLBAR_ID = <?= json_encode('#quill-toolbar-' . $uid) ?>;
+        const FIELD_ID = <?= json_encode('quill-field-' . $uid) ?>;
+        const ERROR_ID = <?= json_encode('quill-error-' . $uid) ?>;
 
         function displayUrl(pathOrUrl) {
             if (!pathOrUrl) return '';
@@ -122,7 +131,7 @@ function adminEditor(string $fieldName, string $content = ''): void
             return text === '';
         }
 
-        const quill = new Quill('#quill-editor', {
+        const quill = new Quill(EDITOR_ID, {
             theme: 'snow',
             formats: [
                 'header', 'bold', 'italic', 'underline', 'strike',
@@ -131,7 +140,7 @@ function adminEditor(string $fieldName, string $content = ''): void
             ],
             modules: {
                 toolbar: {
-                    container: '#quill-toolbar',
+                    container: TOOLBAR_ID,
                     handlers: {
                         image: function () {
                             const input = document.createElement('input');
@@ -176,8 +185,8 @@ function adminEditor(string $fieldName, string $content = ''): void
             return delta;
         });
 
-        const field = document.getElementById('quill-content');
-        const errorEl = document.getElementById('quill-content-error');
+        const field = document.getElementById(FIELD_ID);
+        const errorEl = document.getElementById(ERROR_ID);
 
         function serializeContent() {
             let html = stripInlineColors(quill.root.innerHTML.trim());
@@ -222,7 +231,7 @@ function adminEditor(string $fieldName, string $content = ''): void
         form?.addEventListener('submit', (event) => {
             const html = serializeContent();
             if (field) field.value = html;
-            if (!html) {
+            if (REQUIRED && !html) {
                 event.preventDefault();
                 showContentError('Rédigez le contenu de l’article avant d’enregistrer.');
                 quill.focus();
@@ -230,15 +239,6 @@ function adminEditor(string $fieldName, string $content = ''): void
         });
     })();
     </script>
-    <style>
-        .ql-toolbar.ql-snow, .ql-container.ql-snow { border: none; }
-        .ql-editor { min-height: 260px; font-size: 15px; line-height: 1.7; color: #e2e8f0; }
-        .ql-editor img { max-width: 100%; height: auto; border-radius: 12px; margin: 12px 0; display: block; }
-        .ql-snow .ql-stroke { stroke: #94a3b8; }
-        .ql-snow .ql-fill { fill: #94a3b8; }
-        .ql-snow .ql-picker { color: #94a3b8; }
-        .ql-snow .ql-picker-options { background: #0f172a; border-color: rgba(255,255,255,0.1); }
-    </style>
     <?php
 }
 

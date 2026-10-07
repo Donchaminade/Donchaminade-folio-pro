@@ -319,3 +319,82 @@
     if (document.visibilityState === 'visible') pollNotifications();
   });
 })();
+
+(function () {
+  const themeBtn = document.getElementById('adminThemeToggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const light = document.documentElement.classList.toggle('admin-light');
+      try { localStorage.setItem('admin-theme', light ? 'light' : 'dark'); } catch (_) {}
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', light ? '#f7f8fa' : '#0e1520');
+    });
+  }
+
+  const host = document.getElementById('adminToasts');
+  function showToast(message, type) {
+    if (!host || !message) return;
+    const toast = document.createElement('div');
+    toast.className = 'admin-toast ' + (type === 'error' ? 'err' : 'ok');
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    const text = document.createElement('p');
+    text.textContent = message;
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Fermer');
+    close.textContent = '×';
+    close.addEventListener('click', () => toast.remove());
+    toast.append(text, close);
+    host.appendChild(toast);
+    window.setTimeout(() => toast.remove(), 5200);
+  }
+  const flash = document.getElementById('adminFlashData');
+  if (flash) showToast(flash.dataset.message || '', flash.dataset.type || 'ok');
+
+  document.querySelectorAll('[data-lang-tabs]').forEach((root) => {
+    const buttons = root.querySelectorAll('[data-lang-tab]');
+    const panes = root.querySelectorAll('[data-lang-pane]');
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const lang = button.getAttribute('data-lang-tab');
+        buttons.forEach((item) => {
+          const on = item === button;
+          item.classList.toggle('is-on', on);
+          item.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        panes.forEach((pane) => {
+          pane.hidden = pane.getAttribute('data-lang-pane') !== lang;
+        });
+      });
+    });
+    const translate = root.querySelector('[data-lang-translate]');
+    if (!translate) return;
+    translate.addEventListener('click', async () => {
+      const sources = [...root.querySelectorAll('[data-i18n-src]')];
+      if (!sources.length) return;
+      translate.disabled = true;
+      try {
+        const res = await fetch('api/translate.php', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texts: sources.map((field) => field.value || '') }),
+        });
+        const json = await res.json();
+        const list = json.translations || [];
+        sources.forEach((field, index) => {
+          const name = field.getAttribute('data-i18n-src');
+          const target = name ? root.querySelector('[name="' + (window.CSS && CSS.escape ? CSS.escape(name) : name) + '"]') : null;
+          if (target && list[index]) target.value = list[index];
+        });
+        const en = root.querySelector('[data-lang-tab="en"]');
+        if (en) en.click();
+        showToast(json.success ? 'Traduction proposée. Relisez avant d’enregistrer.' : 'Traduction indisponible.', json.success ? 'ok' : 'error');
+      } catch (_) {
+        showToast('Traduction indisponible.', 'error');
+      } finally {
+        translate.disabled = false;
+      }
+    });
+  });
+})();

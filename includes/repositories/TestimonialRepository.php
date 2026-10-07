@@ -9,8 +9,9 @@ final class TestimonialRepository
     public function listPublic(): array
     {
         $stmt = $this->db->query(
-            'SELECT quote, name, role, company, image
-             FROM testimonials
+            'SELECT quote, name, role, company, image'
+            . dbOptionalColumns($this->db, 'testimonials', ['quote_en', 'role_en'])
+            . ' FROM testimonials
              WHERE is_active = 1 AND is_approved = 1
              ORDER BY sort_order ASC, id DESC'
         );

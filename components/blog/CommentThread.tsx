@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Reply, Send, ShieldCheck, X } from 'lucide-react';
 import { BlogComment, postBlogComment } from '../../lib/api';
+import { looksFrench } from '../../lib/enText';
+import { shownApiMessage, useI18n } from '../../lib/i18n';
 
 interface Props {
   comment: BlogComment;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPosted, onError }) => {
+  const { lang, t } = useI18n();
   const [replyOpen, setReplyOpen] = useState(false);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
@@ -32,7 +35,7 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
       setContent('');
       setReplyOpen(false);
     } catch (err) {
-      onError?.(err instanceof Error ? err.message : 'Erreur envoi');
+      onError?.(shownApiMessage(lang, err instanceof Error ? err.message : '', t.sendError));
     } finally {
       setLoading(false);
     }
@@ -65,12 +68,12 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
                 <span className="font-bold text-slate-900 dark:text-white text-sm">{comment.author_name}</span>
                 {isAdmin && (
                   <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-black px-2 py-0.5 rounded-full bg-blue-600/20 text-blue-600 dark:text-blue-300 border border-blue-500/30">
-                    <ShieldCheck size={10} /> Auteur
+                    <ShieldCheck size={10} /> {t.author}
                   </span>
                 )}
               </div>
               <time className="text-[10px] text-slate-500 uppercase tracking-widest">
-                {new Date(comment.created_at).toLocaleDateString('fr-FR', {
+                {new Date(comment.created_at).toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', {
                   day: 'numeric',
                   month: 'short',
                   year: 'numeric',
@@ -82,7 +85,9 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
           </div>
         </header>
 
-        <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+        <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
+          {lang === 'en' && looksFrench(comment.content) ? t.commentFrench : comment.content}
+        </p>
 
         {canReply && (
           <button
@@ -91,7 +96,7 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
             className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
           >
             {replyOpen ? <X size={14} /> : <Reply size={14} />}
-            {replyOpen ? 'Annuler' : 'Répondre'}
+            {replyOpen ? t.cancel : t.reply}
           </button>
         )}
 
@@ -105,19 +110,19 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
               className="mt-4 pt-4 border-t border-slate-200 dark:border-white/10 space-y-3 overflow-hidden"
             >
               <p className="text-xs text-slate-500">
-                En réponse à <strong className="text-slate-700 dark:text-slate-300">{comment.author_name}</strong>
+                {t.replyTo} <strong className="text-slate-700 dark:text-slate-300">{comment.author_name}</strong>
               </p>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Votre nom"
+                placeholder={t.yourName}
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
               />
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Votre réponse…"
+                placeholder={t.yourReply}
                 rows={3}
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm resize-none focus:outline-none focus:border-blue-500 text-slate-900 dark:text-white"
@@ -127,7 +132,7 @@ const CommentThread: React.FC<Props> = ({ comment, slug, depth = 0, onReplyPoste
                 disabled={loading}
                 className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-black text-[10px] uppercase tracking-widest rounded-xl"
               >
-                <Send size={14} /> Envoyer
+                <Send size={14} /> {t.submit}
               </button>
             </motion.form>
           )}

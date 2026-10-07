@@ -3,6 +3,7 @@ import { MotionConfig } from 'framer-motion';
 import App from './App';
 import { getBlogPreviewTokenFromPath, getBlogSlugFromPath, getPathname, isBlogListPath } from './lib/navigation';
 import { ThemeProvider } from './lib/theme';
+import { LanguageProvider } from './lib/i18n';
 
 const BlogList = React.lazy(() => import('./pages/BlogList'));
 const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));
@@ -28,6 +29,7 @@ const AppRouter: React.FC = () => {
 
   return (
     <ThemeProvider>
+      <LanguageProvider>
       <MotionConfig reducedMotion="user">
         <Suspense fallback={<div className="wrap" style={{ padding: '48px 0' }}>Chargement…</div>}>
           {page}
@@ -36,6 +38,7 @@ const AppRouter: React.FC = () => {
           <PortfolioChat />
         </Suspense>
       </MotionConfig>
+      </LanguageProvider>
     </ThemeProvider>
   );
 };

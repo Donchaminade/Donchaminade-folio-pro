@@ -54,6 +54,9 @@ export interface BlogPostSummary {
   likes_count: number;
   shares_count: number;
   comments_count: number;
+  title_en?: string;
+  excerpt_en?: string;
+  has_english?: number | string | boolean;
 }
 
 export interface BlogComment {
@@ -69,6 +72,7 @@ export interface BlogComment {
 
 export interface BlogPostDetail extends BlogPostSummary {
   content: string;
+  content_en?: string;
   liked: boolean;
   share_url?: string;
   og_image_url?: string;
@@ -86,6 +90,7 @@ export interface BlogCommentResponse {
 export interface BlogCategoryApi {
   slug: string;
   label: string;
+  label_en?: string;
   emoji: string;
 }
 

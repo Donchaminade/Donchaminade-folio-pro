@@ -9,8 +9,9 @@ final class RecommendationRepository
     public function listPublic(): array
     {
         $stmt = $this->db->query(
-            'SELECT name, role, company, body, rating, created_at AS createdAt
-             FROM recommendations
+            'SELECT name, role, company, body, rating, created_at AS createdAt'
+            . dbOptionalColumns($this->db, 'recommendations', ['body_en', 'role_en'])
+            . ' FROM recommendations
              WHERE is_active = 1 AND is_hidden = 0
              ORDER BY created_at DESC'
         );

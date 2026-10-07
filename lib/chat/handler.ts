@@ -15,6 +15,13 @@ function hasLlmKey(): boolean {
   );
 }
 
+function uiLang(req: Request, body?: unknown): 'fr' | 'en' {
+  const header = (req.headers.get('x-portfolio-lang') || '').toLowerCase();
+  const fromBody = (body as { lang?: unknown } | undefined)?.lang;
+  const explicit = typeof fromBody === 'string' ? fromBody.toLowerCase() : header;
+  return explicit === 'en' ? 'en' : explicit === 'fr' ? 'fr' : 'fr';
+}
+
 function jsonError(message: string, status: number, extra?: Record<string, string>): Response {
   return new Response(JSON.stringify({ error: message }), {
     status,
@@ -91,13 +98,14 @@ export async function handleChatRequest(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204 });
   }
+  const headerLang = (req.headers.get('x-portfolio-lang') || '').toLowerCase() === 'en' ? 'en' : 'fr';
   if (req.method !== 'POST') {
-    return jsonError('Méthode non autorisée', 405);
+    return jsonError(headerLang === 'en' ? 'Method not allowed' : 'Méthode non autorisée', 405);
   }
 
   const limit = consumeRateLimit(clientIp(req));
   if (limit.ok === false) {
-    return jsonError('Trop de messages. Réessayez dans un instant.', 429, {
+    return jsonError(headerLang === 'en' ? 'Too many messages. Try again in a moment.' : 'Trop de messages. Réessayez dans un instant.', 429, {
       'Retry-After': String(limit.retryAfter),
     });
   }
@@ -106,20 +114,22 @@ export async function handleChatRequest(req: Request): Promise<Response> {
   try {
     body = await req.json();
   } catch {
-    return jsonError('Requête invalide', 400);
+    return jsonError(headerLang === 'en' ? 'Invalid request' : 'Requête invalide', 400);
   }
+  const preferred = uiLang(req, body);
 
   const messages = normalizeMessages((body as { messages?: unknown })?.messages);
   if (!messages) {
-    return jsonError('Message utilisateur manquant ou trop long.', 400);
+    return jsonError(preferred === 'en' ? 'Missing or oversized user message.' : 'Message utilisateur manquant ou trop long.', 400);
   }
 
   const query = lastUserText(messages);
   if (!query) {
-    return jsonError('Message vide', 400);
+    return jsonError(preferred === 'en' ? 'Empty message' : 'Message vide', 400);
   }
 
-  const lang = detectLang(query);
+  const explicit = (body as { lang?: unknown }).lang;
+  const lang = explicit === 'en' || explicit === 'fr' ? explicit : (req.headers.get('x-portfolio-lang') === 'en' ? 'en' : detectLang(query));
   const { facts, contextText } = await retrievePortfolioContext(query);
   const fallback = fallbackAnswer(query, facts, lang);
 

@@ -12,8 +12,14 @@ export const SHARE_PLATFORMS: {
   { id: 'linkedin', label: 'LinkedIn', shortLabel: 'in' },
   { id: 'twitter', label: 'X / Twitter', shortLabel: 'X' },
   { id: 'email', label: 'Email', shortLabel: '@' },
-  { id: 'copy', label: 'Copier le lien', shortLabel: '⎘' },
+  { id: 'copy', label: 'Copy link', shortLabel: '⎘' },
 ];
+
+function shareMessage(copied: boolean): string {
+  const english = typeof document !== 'undefined' && document.documentElement.lang === 'en';
+  if (copied) return english ? 'Link copied.' : 'Lien copié.';
+  return english ? 'Share recorded.' : 'Partagé.';
+}
 
 export function getBlogShareUrl(slug: string, shareUrl?: string): string {
   if (shareUrl) return shareUrl;
@@ -56,12 +62,12 @@ export async function shareBlogPost(
     if (isApiConfigured()) {
       try {
         const sharesCount = await recordBlogShare(slug, platform);
-        return { message: 'Lien copié !', sharesCount };
+        return { message: shareMessage(true), sharesCount };
       } catch {
-        return { message: 'Lien copié !' };
+        return { message: shareMessage(true) };
       }
     }
-    return { message: 'Lien copié !' };
+    return { message: shareMessage(true) };
   }
 
   openSharePlatform(platform, title, url);
@@ -69,11 +75,11 @@ export async function shareBlogPost(
   if (isApiConfigured()) {
     try {
       const sharesCount = await recordBlogShare(slug, platform);
-      return { message: 'Partagé !', sharesCount };
+      return { message: shareMessage(false), sharesCount };
     } catch {
-      return { message: 'Partagé !' };
+      return { message: shareMessage(false) };
     }
   }
 
-  return { message: 'Partagé !' };
+  return { message: shareMessage(false) };
 }

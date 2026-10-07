@@ -55,10 +55,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             adminSetFlash('Expérience créée.');
         }
 
+        dbUpdatePresentColumns($db, 'experiences', $expId, [
+            'role_en' => trim((string) ($_POST['role_en'] ?? '')),
+            'period_en' => trim((string) ($_POST['period_en'] ?? '')),
+        ]);
+
+        $descriptionsEn = array_values(array_map('trim', preg_split('/\r\n|\r|\n/', (string) ($_POST['descriptions_en'] ?? '')) ?: []));
         $db->prepare('DELETE FROM experience_descriptions WHERE experience_id = ?')->execute([$expId]);
-        $descStmt = $db->prepare('INSERT INTO experience_descriptions (experience_id, content, sort_order) VALUES (?,?,?)');
+        $hasContentEn = dbHasColumn($db, 'experience_descriptions', 'content_en');
+        if ($hasContentEn) {
+            $descStmt = $db->prepare('INSERT INTO experience_descriptions (experience_id, content, content_en, sort_order) VALUES (?,?,?,?)');
+        } else {
+            $descStmt = $db->prepare('INSERT INTO experience_descriptions (experience_id, content, sort_order) VALUES (?,?,?)');
+        }
         foreach ($descriptions as $i => $content) {
-            $descStmt->execute([$expId, $content, $i]);
+            if ($hasContentEn) {
+                $descStmt->execute([$expId, $content, $descriptionsEn[$i] ?? '', $i]);
+            } else {
+                $descStmt->execute([$expId, $content, $i]);
+            }
         }
 
         $db->prepare('DELETE FROM experience_tags WHERE experience_id = ?')->execute([$expId]);
@@ -81,9 +96,11 @@ if ($action === 'create' || $action === 'edit') {
         $stmt->execute([$id]);
         if ($row = $stmt->fetch()) {
             $exp = $row;
-            $d = $db->prepare('SELECT content FROM experience_descriptions WHERE experience_id = ? ORDER BY sort_order');
+            $d = $db->prepare('SELECT * FROM experience_descriptions WHERE experience_id = ? ORDER BY sort_order');
             $d->execute([$id]);
-            $exp['descriptions'] = implode("\n", array_column($d->fetchAll(), 'content'));
+            $descRows = $d->fetchAll();
+            $exp['descriptions'] = implode("\n", array_column($descRows, 'content'));
+            $exp['descriptions_en'] = implode("\n", array_map(fn ($row) => (string) ($row['content_en'] ?? ''), $descRows));
             $t = $db->prepare('SELECT tag FROM experience_tags WHERE experience_id = ?');
             $t->execute([$id]);
             $exp['selectedTechs'] = array_column($t->fetchAll(), 'tag');
@@ -96,9 +113,15 @@ if ($action === 'create' || $action === 'edit') {
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="id" value="<?= (int) ($exp['id'] ?? 0) ?>">
             <?= adminLabel('Entreprise *') ?><input name="company" <?= $ia ?> value="<?= e($exp['company']) ?>" required>
-            <?= adminLabel('Rôle *') ?><input name="role" <?= $ia ?> value="<?= e($exp['role']) ?>" required>
-            <?= adminLabel('Période *') ?><input name="period" <?= $ia ?> value="<?= e($exp['period']) ?>" placeholder="Février 2026 - Présent" required>
-            <?= adminLabel('Descriptions (une par ligne)') ?><textarea name="descriptions" rows="6" <?= $ia ?>><?= e($exp['descriptions'] ?? '') ?></textarea>
+            <?php adminLangOpen(); ?>
+            <?php adminField('role', 'Rôle *', (string) $exp['role'], 'text', true, 'role_en'); ?>
+            <?php adminField('period', 'Période *', (string) $exp['period'], 'text', true, 'period_en'); ?>
+            <?php adminField('descriptions', 'Descriptions (une par ligne)', (string) ($exp['descriptions'] ?? ''), 'textarea', false, 'descriptions_en'); ?>
+            <?php adminLangSwitch(); ?>
+            <?php adminField('role_en', 'Role', (string) ($exp['role_en'] ?? '')); ?>
+            <?php adminField('period_en', 'Period', (string) ($exp['period_en'] ?? '')); ?>
+            <?php adminField('descriptions_en', 'Descriptions (one per line)', (string) ($exp['descriptions_en'] ?? ''), 'textarea'); ?>
+            <?php adminLangClose(); ?>
             <?= adminLabel('Technologies') ?>
             <?php adminTechPicker($db, $exp['selectedTechs'] ?? []); ?>
             <?= adminLabel('Ordre') ?><input type="number" name="sort_order" <?= $ia ?> value="<?= (int) ($exp['sort_order'] ?? 0) ?>">

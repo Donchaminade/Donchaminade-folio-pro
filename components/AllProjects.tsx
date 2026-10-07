@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import type { ProjectView } from '../lib/portfolioView';
+import { useI18n } from '../lib/i18n';
 
 const External = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" width="14" height="14">
@@ -8,9 +9,10 @@ const External = () => (
 );
 
 const AllProjects: React.FC<{ projects: ProjectView[]; onBack: () => void }> = ({ projects, onBack }) => {
-  const [filter, setFilter] = useState('Tous');
+  const { t } = useI18n();
+  const [filter, setFilter] = useState('all');
   const visible = useMemo(() => {
-    if (filter === 'Tous') return projects;
+    if (filter === 'all') return projects;
     return projects.filter((project) => {
       const blob = `${project.type} ${project.tags.join(' ')} ${project.kicker}`.toLowerCase();
       if (filter === 'Web') return /web|react|next/.test(blob) || project.type === 'Web';
@@ -23,17 +25,23 @@ const AllProjects: React.FC<{ projects: ProjectView[]; onBack: () => void }> = (
   return (
     <section className="section">
       <div className="wrap">
-        <button type="button" className="btn btn-link" onClick={onBack}>← Retour à l’accueil</button>
+        <button type="button" className="btn btn-link" onClick={onBack}>← {t.backHome}</button>
         <div className="section-head">
           <div>
-            <p className="kicker">Catalogue</p>
-            <h2>{projects.length} projets</h2>
+            <p className="kicker">{t.catalog}</p>
+            <h2>{t.projectCount(projects.length)}</h2>
           </div>
         </div>
-        <div className="filters" role="tablist" aria-label="Filtrer le catalogue">
-          {['Tous', 'Web', 'Mobile', 'Backend', 'Open source'].map((item) => (
-            <button key={item} type="button" className={filter === item ? 'chip on' : 'chip'} onClick={() => setFilter(item)} aria-selected={filter === item}>
-              {item}
+        <div className="filters" role="tablist" aria-label={t.filterCatalog}>
+          {([
+            ['all', t.filters.all],
+            ['Web', t.filters.web],
+            ['Mobile', t.filters.mobile],
+            ['Backend', t.filters.backend],
+            ['Open source', t.filters.oss],
+          ] as const).map(([key, label]) => (
+            <button key={key} type="button" className={filter === key ? 'chip on' : 'chip'} onClick={() => setFilter(key)} aria-selected={filter === key}>
+              {label}
             </button>
           ))}
         </div>
@@ -53,7 +61,7 @@ const AllProjects: React.FC<{ projects: ProjectView[]; onBack: () => void }> = (
                 <p className="pdesc">{project.description}</p>
                 {project.detail ? (
                   <details className="pdetail">
-                    <summary>Description détaillée</summary>
+                    <summary>{t.detail}</summary>
                     <p>{project.detail}</p>
                   </details>
                 ) : null}

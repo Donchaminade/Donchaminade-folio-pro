@@ -1,9 +1,14 @@
 import {
   AWARDS,
+  CLIENTS,
   COMMUNITIES,
+  EDUCATION,
   EXPERIENCES,
+  MANAGED_PAGES,
   PROJECTS,
+  SOFT_SKILLS,
 } from '../constants';
+import { enText } from './enText';
 import { mergeCommunities } from './mergeCatalog';
 import { mediaUrl } from './media';
 import type { Award, Community, Experience, Project, Recommendation, SiteProfile, SkillBlock, Stat, Testimonial } from '../types';
@@ -59,6 +64,10 @@ export interface PortfolioBundle {
   stats?: Stat[];
   skillBlocks?: SkillBlock[];
   techIcons?: Record<string, string>;
+  education?: typeof EDUCATION;
+  softSkills?: typeof SOFT_SKILLS;
+  managedPages?: typeof MANAGED_PAGES;
+  clients?: typeof CLIENTS;
 }
 
 export interface ProjectLink {
@@ -131,6 +140,11 @@ export interface PortfolioView {
   stacks: StackGroup[];
   playCaption: PlayCaption | null;
   year: string;
+  education: typeof EDUCATION;
+  awards: Award[];
+  softSkills: typeof SOFT_SKILLS;
+  managedPages: typeof MANAGED_PAGES;
+  clients: Array<{ name: string; logo: string }>;
 }
 
 interface FeatureSpec {
@@ -454,7 +468,7 @@ function viewsFromFallback(projects: Project[]): { projects: ProjectView[]; feat
   return { featured, projects: [...featured, ...rest] };
 }
 
-export function buildPortfolioView(bundle: PortfolioBundle | null): PortfolioView {
+export function buildPortfolioView(bundle: PortfolioBundle | null, lang: 'fr' | 'en' = 'fr'): PortfolioView {
   const profile = bundle?.profile || {};
   const apiProjects = bundle?.projects ?? [];
   let projects: ProjectView[];
@@ -483,8 +497,14 @@ export function buildPortfolioView(bundle: PortfolioBundle | null): PortfolioVie
     : fallbackFacts(profile, projects.length, prizeCount, roles.length);
 
   const year = profile.footer_year?.trim() || String(new Date().getFullYear());
+  const education = bundle == null ? EDUCATION : (bundle.education ?? []);
+  const softSkills = bundle == null ? SOFT_SKILLS : (bundle.softSkills ?? []);
+  const managedPages = bundle?.managedPages?.length ? bundle.managedPages : MANAGED_PAGES;
+  const clients = (bundle == null ? CLIENTS : (bundle.clients ?? [])).filter(
+    (client) => client?.name && client?.logo && !isStockPhoto(client.logo)
+  );
 
-  return {
+  const view: PortfolioView = {
     profile,
     name: profile.full_name?.trim() || 'Chaminade Adjolou',
     roleLine: profile.hero_title?.trim() || 'Développeur Full-Stack Web & Mobile',
@@ -510,5 +530,100 @@ export function buildPortfolioView(bundle: PortfolioBundle | null): PortfolioVie
     stacks: stacksFrom(bundle?.skillBlocks, bundle?.techIcons),
     playCaption: playCaptionFrom(projects),
     year,
+    education,
+    awards,
+    softSkills,
+    managedPages,
+    clients,
+  };
+  return lang === 'en' ? localizePortfolio(view, bundle) : view;
+}
+
+function localizeProject(project: ProjectView, source?: Project): ProjectView {
+  return {
+    ...project,
+    title: enText(project.title, source?.titleEn),
+    description: enText(project.description, source?.descriptionEn),
+    detail: project.detail ? enText(project.detail, source?.detailedDescriptionEn) : project.detail,
+    kicker: enText(project.kicker),
+    tags: project.tags.map((tag) => enText(tag)).filter(Boolean),
+  };
+}
+
+function localizePortfolio(view: PortfolioView, bundle: PortfolioBundle | null): PortfolioView {
+  const profile = bundle?.profile;
+  const stats = bundle?.stats ?? [];
+  return {
+    ...view,
+    roleLine: enText(view.roleLine, profile?.hero_title_en),
+    lead: enText(view.lead, profile?.bio_en),
+    availability: enText(view.availability, profile?.availability_text_en),
+    badges: view.badges.map((badge) => enText(badge, profile?.hero_subtitle_en)).filter(Boolean),
+    projects: view.projects.map((project, index) => localizeProject(project, bundle?.projects?.[index])),
+    featured: view.featured.map((project) => {
+      const index = view.projects.findIndex((item) => item.title === project.title && item.description === project.description);
+      return localizeProject(project, index >= 0 ? bundle?.projects?.[index] : undefined);
+    }),
+    roles: view.roles.map((role, index) => {
+      const source = (bundle?.experiences?.length ? bundle.experiences : EXPERIENCES)[index];
+      const lines = source?.description_en || [];
+      const summary = lines.filter(Boolean).join(' ');
+      return {
+        ...role,
+        role: enText(role.role, source?.role_en),
+        period: enText(role.period, source?.period_en),
+        summary: enText(role.summary, summary),
+        meta: enText(role.meta),
+      };
+    }),
+    communities: view.communities.map((item) => ({
+      ...item,
+      role: enText(item.role, (item as { role_en?: string }).role_en),
+      description: enText(item.description, (item as { description_en?: string }).description_en),
+    })),
+    testimonials: view.testimonials.map((item) => ({
+      ...item,
+      quote: enText(item.quote, (item as { quote_en?: string }).quote_en),
+      role: item.role ? enText(item.role, (item as { role_en?: string }).role_en) : item.role,
+    })),
+    recommendations: view.recommendations.map((item) => ({
+      ...item,
+      body: enText(item.body, (item as { body_en?: string }).body_en),
+      role: item.role ? enText(item.role, (item as { role_en?: string }).role_en) : item.role,
+    })),
+    facts: view.facts.map((fact, index) => ({
+      strong: enText(fact.strong),
+      label: enText(fact.label, stats[index]?.label_en),
+    })),
+    stacks: view.stacks.map((group, index) => {
+      const block = bundle?.skillBlocks?.[index];
+      return {
+        ...group,
+        title: enText(group.title, (block as { titleEn?: string } | undefined)?.titleEn),
+        chips: group.chips.map((chip) => ({ ...chip, label: enText(chip.label) })),
+      };
+    }),
+    playCaption: view.playCaption
+      ? { title: enText(view.playCaption.title), detail: enText(view.playCaption.detail) || view.playCaption.detail }
+      : null,
+    education: view.education.map((item) => ({
+      ...item,
+      degree: enText(item.degree, (item as { degree_en?: string }).degree_en),
+      field: enText(item.field, (item as { field_en?: string }).field_en),
+    })),
+    awards: view.awards.map((item) => ({
+      ...item,
+      title: enText(item.title, (item as { title_en?: string }).title_en),
+      description: enText(item.description, (item as { description_en?: string }).description_en),
+    })),
+    softSkills: view.softSkills.map((item) => ({
+      ...item,
+      title: enText(item.title, (item as { titleEn?: string }).titleEn),
+      impact: enText(item.impact, (item as { impactEn?: string }).impactEn),
+    })),
+    managedPages: view.managedPages.map((item) => ({
+      ...item,
+      category: enText(item.category, (item as { category_en?: string }).category_en),
+    })),
   };
 }

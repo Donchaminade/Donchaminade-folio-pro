@@ -53,15 +53,38 @@ function blogCategoriesForApi(?PDO $db = null): array
         'sante' => '🧠',
     ];
     foreach (blogBuiltinCategories() as $slug => $label) {
-        $out[] = ['slug' => $slug, 'label' => $label, 'emoji' => $emojis[$slug] ?? '📝'];
+        $english = [
+            'tech' => 'Tech',
+            'energie' => 'Energy',
+            'motivation' => 'Motivation',
+            'spiritualite' => 'Spirituality',
+            'carriere' => 'Career',
+            'lifestyle' => 'Lifestyle',
+            'sante' => 'Mental health',
+        ];
+        $out[] = [
+            'slug' => $slug,
+            'label' => $label,
+            'label_en' => $english[$slug] ?? $label,
+            'emoji' => $emojis[$slug] ?? '📝',
+        ];
     }
     if ($db !== null) {
         try {
-            $rows = $db->query('SELECT slug, label, emoji FROM blog_category_labels ORDER BY label ASC')->fetchAll(PDO::FETCH_ASSOC);
+            $labelEn = '';
+            try {
+                if (function_exists('dbHasColumn') && dbHasColumn($db, 'blog_category_labels', 'label_en')) {
+                    $labelEn = ', label_en';
+                }
+            } catch (Throwable) {
+                $labelEn = '';
+            }
+            $rows = $db->query('SELECT slug, label, emoji' . $labelEn . ' FROM blog_category_labels ORDER BY label ASC')->fetchAll(PDO::FETCH_ASSOC);
             foreach ($rows as $row) {
                 $out[] = [
                     'slug' => (string) $row['slug'],
                     'label' => (string) $row['label'],
+                    'label_en' => (string) ($row['label_en'] ?? ''),
                     'emoji' => (string) ($row['emoji'] ?: '📝'),
                 ];
             }

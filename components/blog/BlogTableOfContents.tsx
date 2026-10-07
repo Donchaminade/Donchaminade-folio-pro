@@ -6,6 +6,7 @@ import {
   type TocItem,
 } from '../../lib/blogHeadings';
 import BlogShareActions from './BlogShareActions';
+import { useI18n } from '../../lib/i18n';
 
 interface Props {
   items: TocItem[];
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const BlogTableOfContents: React.FC<Props> = ({ items, mode, share }) => {
+  const { t } = useI18n();
   const [activeId, setActiveId] = useState('');
 
   useEffect(() => {
@@ -93,7 +95,7 @@ const BlogTableOfContents: React.FC<Props> = ({ items, mode, share }) => {
     return (
       <details className="toc-mobile card">
         <summary>
-          Sommaire · {items.length} parties <span aria-hidden="true">▾</span>
+          {t.tocParts(items.length)} <span aria-hidden="true">▾</span>
         </summary>
         {list}
       </details>
@@ -101,8 +103,8 @@ const BlogTableOfContents: React.FC<Props> = ({ items, mode, share }) => {
   }
 
   return (
-    <nav className="toc card" aria-label="Sommaire">
-      <h2>Sommaire</h2>
+    <nav className="toc card" aria-label={t.toc}>
+      <h2>{t.toc}</h2>
       {list}
       {share && (
         <div className="share">

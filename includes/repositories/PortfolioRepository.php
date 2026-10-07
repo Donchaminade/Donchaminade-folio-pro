@@ -15,7 +15,8 @@ final class PortfolioRepository
 
     public function getStats(): array
     {
-        $stmt = $this->db->query('SELECT label, value, suffix FROM stats WHERE is_active = 1 ORDER BY sort_order ASC, id ASC');
+        $extra = dbOptionalColumns($this->db, 'stats', ['label_en', 'suffix_en']);
+        $stmt = $this->db->query('SELECT label, value, suffix' . $extra . ' FROM stats WHERE is_active = 1 ORDER BY sort_order ASC, id ASC');
         return $stmt->fetchAll();
     }
 
@@ -27,9 +28,14 @@ final class PortfolioRepository
         foreach ($experiences as &$exp) {
             $id = (int) $exp['id'];
 
-            $desc = $this->db->prepare('SELECT content FROM experience_descriptions WHERE experience_id = ? ORDER BY sort_order ASC');
+            $descCols = 'content' . (dbHasColumn($this->db, 'experience_descriptions', 'content_en') ? ', content_en' : '');
+            $desc = $this->db->prepare('SELECT ' . $descCols . ' FROM experience_descriptions WHERE experience_id = ? ORDER BY sort_order ASC');
             $desc->execute([$id]);
-            $exp['description'] = array_column($desc->fetchAll(), 'content');
+            $descRows = $desc->fetchAll();
+            $exp['description'] = array_column($descRows, 'content');
+            if (isset($descRows[0]['content_en']) || dbHasColumn($this->db, 'experience_descriptions', 'content_en')) {
+                $exp['description_en'] = array_map(fn ($row) => (string) ($row['content_en'] ?? ''), $descRows);
+            }
 
             $tags = $this->db->prepare('SELECT tag FROM experience_tags WHERE experience_id = ?');
             $tags->execute([$id]);
@@ -71,7 +77,10 @@ final class PortfolioRepository
             $project['tagDetails'] = (new TechnologyRepository($this->db))->resolveTags($tagNames);
 
             $project['detailedDescription'] = $project['detailed_description'] ?? null;
-            unset($project['detailed_description'], $project['is_active'], $project['created_at'], $project['updated_at']);
+            $project['detailedDescriptionEn'] = $project['detailed_description_en'] ?? null;
+            $project['titleEn'] = $project['title_en'] ?? null;
+            $project['descriptionEn'] = $project['description_en'] ?? null;
+            unset($project['detailed_description'], $project['detailed_description_en'], $project['is_active'], $project['created_at'], $project['updated_at']);
         }
 
         return $projects;
@@ -79,12 +88,14 @@ final class PortfolioRepository
 
     public function getSkillBlocks(): array
     {
-        $blocks = $this->db->query('SELECT id, title, icon FROM skill_blocks WHERE is_active = 1 ORDER BY sort_order ASC')->fetchAll();
+        $blockExtra = dbOptionalColumns($this->db, 'skill_blocks', ['title_en']);
+        $blocks = $this->db->query('SELECT id, title, icon' . $blockExtra . ' FROM skill_blocks WHERE is_active = 1 ORDER BY sort_order ASC')->fetchAll();
         $result = [];
 
         foreach ($blocks as $block) {
             $blockId = (int) $block['id'];
-            $cats = $this->db->prepare('SELECT id, name FROM skill_categories WHERE block_id = ? ORDER BY sort_order ASC');
+            $catExtra = dbOptionalColumns($this->db, 'skill_categories', ['name_en']);
+            $cats = $this->db->prepare('SELECT id, name' . $catExtra . ' FROM skill_categories WHERE block_id = ? ORDER BY sort_order ASC');
             $cats->execute([$blockId]);
             $categories = [];
 
@@ -95,19 +106,24 @@ final class PortfolioRepository
                 $icons->execute([$catId]);
                 $iconUrls = array_column($icons->fetchAll(), 'icon_url');
 
-                $items = $this->db->prepare('SELECT name FROM skill_items WHERE category_id = ? ORDER BY sort_order ASC');
+                $itemExtra = dbOptionalColumns($this->db, 'skill_items', ['name_en']);
+                $items = $this->db->prepare('SELECT name' . $itemExtra . ' FROM skill_items WHERE category_id = ? ORDER BY sort_order ASC');
                 $items->execute([$catId]);
-                $skills = array_column($items->fetchAll(), 'name');
+                $itemRows = $items->fetchAll();
+                $skills = array_column($itemRows, 'name');
 
                 $categories[] = [
                     'name' => $cat['name'],
+                    'nameEn' => $cat['name_en'] ?? null,
                     'icons' => $iconUrls ?: null,
                     'skills' => $skills,
+                    'skillsEn' => array_map(fn ($row) => (string) ($row['name_en'] ?? ''), $itemRows),
                 ];
             }
 
             $result[] = [
                 'title' => $block['title'],
+                'titleEn' => $block['title_en'] ?? null,
                 'icon' => $block['icon'],
                 'categories' => $categories,
             ];
@@ -118,16 +134,22 @@ final class PortfolioRepository
 
     public function getSoftSkills(): array
     {
-        $skills = $this->db->query('SELECT id, title, impact FROM soft_skills WHERE is_active = 1 ORDER BY sort_order ASC')->fetchAll();
+        $softExtra = dbOptionalColumns($this->db, 'soft_skills', ['title_en', 'impact_en']);
+        $skills = $this->db->query('SELECT id, title, impact' . $softExtra . ' FROM soft_skills WHERE is_active = 1 ORDER BY sort_order ASC')->fetchAll();
         $result = [];
 
         foreach ($skills as $skill) {
-            $ctx = $this->db->prepare('SELECT context FROM soft_skill_contexts WHERE soft_skill_id = ?');
+            $ctxExtra = dbHasColumn($this->db, 'soft_skill_contexts', 'context_en') ? ', context_en' : '';
+            $ctx = $this->db->prepare('SELECT context' . $ctxExtra . ' FROM soft_skill_contexts WHERE soft_skill_id = ?');
             $ctx->execute([(int) $skill['id']]);
+            $ctxRows = $ctx->fetchAll();
             $result[] = [
                 'title' => $skill['title'],
+                'titleEn' => $skill['title_en'] ?? null,
                 'impact' => $skill['impact'],
-                'context' => array_column($ctx->fetchAll(), 'context'),
+                'impactEn' => $skill['impact_en'] ?? null,
+                'context' => array_column($ctxRows, 'context'),
+                'contextEn' => array_map(fn ($row) => (string) ($row['context_en'] ?? ''), $ctxRows),
             ];
         }
 
@@ -136,13 +158,15 @@ final class PortfolioRepository
 
     public function getEducation(): array
     {
-        $stmt = $this->db->query('SELECT degree, field, school, year FROM education WHERE is_active = 1 ORDER BY sort_order ASC');
+        $eduExtra = dbOptionalColumns($this->db, 'education', ['degree_en', 'field_en']);
+        $stmt = $this->db->query('SELECT degree, field, school, year' . $eduExtra . ' FROM education WHERE is_active = 1 ORDER BY sort_order ASC');
         return $stmt->fetchAll();
     }
 
     public function getAwards(): array
     {
-        $stmt = $this->db->query('SELECT title, issuer, year, description FROM awards WHERE is_active = 1 ORDER BY sort_order ASC');
+        $awardExtra = dbOptionalColumns($this->db, 'awards', ['title_en', 'description_en']);
+        $stmt = $this->db->query('SELECT title, issuer, year, description' . $awardExtra . ' FROM awards WHERE is_active = 1 ORDER BY sort_order ASC');
         return $stmt->fetchAll();
     }
 
@@ -159,15 +183,17 @@ final class PortfolioRepository
     public function getCommunities(): array
     {
         $stmt = $this->db->query(
-            'SELECT name, logo, role, description, website_url AS websiteUrl, linkedin_url AS linkedinUrl
-             FROM communities WHERE is_active = 1 ORDER BY sort_order ASC'
+            'SELECT name, logo, role, description, website_url AS websiteUrl, linkedin_url AS linkedinUrl'
+            . dbOptionalColumns($this->db, 'communities', ['role_en', 'description_en'])
+            . ' FROM communities WHERE is_active = 1 ORDER BY sort_order ASC'
         );
         return $stmt->fetchAll();
     }
 
     public function getManagedPages(): array
     {
-        $stmt = $this->db->query('SELECT name, logo, link, followers, category, border_color AS borderColor FROM managed_pages WHERE is_active = 1 ORDER BY sort_order ASC');
+        $pageExtra = dbOptionalColumns($this->db, 'managed_pages', ['category_en']);
+        $stmt = $this->db->query('SELECT name, logo, link, followers, category, border_color AS borderColor' . $pageExtra . ' FROM managed_pages WHERE is_active = 1 ORDER BY sort_order ASC');
         return $stmt->fetchAll();
     }
 
