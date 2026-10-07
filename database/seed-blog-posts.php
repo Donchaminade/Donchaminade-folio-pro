@@ -46,6 +46,7 @@ function seedBlogDrafts(PDO $db): int
 {
     $drafts = [
         require __DIR__ . '/blog-content/article-agents-ia-2026.php',
+        require __DIR__ . '/blog-content/article-nextjs-16-3.php',
     ];
 
     try {
