@@ -20,7 +20,7 @@ import {
 } from '../../lib/portfolioView';
 
 const External = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
     <path d="M7 17 17 7M9 7h8v8" />
   </svg>
 );
@@ -196,8 +196,8 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
     <>
       <CollaborateModal open={collaborateOpen} onClose={() => setCollaborateOpen(false)} />
       <section className="hero" id="profil">
-        <div className="blob" style={{ width: 420, height: 420, background: '#3E7BC2', top: -80, right: -60 }} />
-        <div className="blob" style={{ width: 300, height: 300, background: '#2BA3A0', bottom: -60, left: -80 }} />
+        <div className="blob" style={{ width: 480, height: 480, background: '#8BCBFF', top: -140, right: -80 }} />
+        <div className="blob" style={{ width: 320, height: 320, background: '#1E3A5F', bottom: -80, left: -100 }} />
         <div className="wrap hero-grid">
           <div>
             <p className="status"><span className="pulse" aria-hidden="true" />{data.availability || t.availableNow}</p>

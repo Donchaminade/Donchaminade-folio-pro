@@ -26,7 +26,7 @@ export const AboutSection: React.FC<{ data: PortfolioView }> = ({ data }) => {
         <div className="about-grid">
           {data.education.length > 0 && (
             <article className="about-card">
-              <h3 className="about-card-title"><GraduationCap size={18} aria-hidden="true" />{t.education}</h3>
+              <h3 className="about-card-title"><GraduationCap size={18} strokeWidth={1.5} aria-hidden="true" />{t.education}</h3>
               <ol className="edu-list">
                 {data.education.map((item) => (
                   <li key={`${item.school}-${item.year}`}>
@@ -40,7 +40,7 @@ export const AboutSection: React.FC<{ data: PortfolioView }> = ({ data }) => {
           )}
           {data.softSkills.length > 0 && (
             <article className="about-card">
-              <h3 className="about-card-title"><Sparkles size={18} aria-hidden="true" />{t.softSkills}</h3>
+              <h3 className="about-card-title"><Sparkles size={18} strokeWidth={1.5} aria-hidden="true" />{t.softSkills}</h3>
               <ul className="skill-list">
                 {skills.map((item) => (
                   <li key={item.title}>
@@ -58,11 +58,11 @@ export const AboutSection: React.FC<{ data: PortfolioView }> = ({ data }) => {
           )}
           {data.awards.length > 0 && (
             <article className="about-card">
-              <h3 className="about-card-title"><Trophy size={18} aria-hidden="true" />{t.awards}</h3>
+              <h3 className="about-card-title"><Trophy size={18} strokeWidth={1.5} aria-hidden="true" />{t.awards}</h3>
               <ul className="award-list">
                 {data.awards.map((item) => (
                   <li key={`${item.title}-${item.year}`} className="award-mini">
-                    <span className="award-ico" aria-hidden="true"><Trophy size={16} /></span>
+                    <span className="award-ico" aria-hidden="true"><Trophy size={16} strokeWidth={1.5} /></span>
                     <div>
                       <div className="award-top">
                         <strong>{item.title}</strong>
