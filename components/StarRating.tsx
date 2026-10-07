@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
+import { useI18n } from '../lib/i18n';
 
 interface StarRatingDisplayProps {
   rating: number;
@@ -12,9 +13,10 @@ export const StarRatingDisplay: React.FC<StarRatingDisplayProps> = ({
   size = 16,
   className = '',
 }) => {
+  const { t } = useI18n();
   const value = Math.max(0, Math.min(5, Math.round(rating)));
   return (
-    <div className={`flex items-center gap-0.5 ${className}`} aria-label={`Note : ${value} sur 5`}>
+    <div className={`flex items-center gap-0.5 ${className}`} aria-label={t.stars(value)}>
       {[1, 2, 3, 4, 5].map((n) => (
         <Star
           key={n}
@@ -33,11 +35,12 @@ interface StarRatingInputProps {
 }
 
 export const StarRatingInput: React.FC<StarRatingInputProps> = ({ value, onChange, size = 28 }) => {
+  const { t } = useI18n();
   const [hover, setHover] = React.useState(0);
   const active = hover || value;
 
   return (
-    <div className="flex items-center gap-1" role="group" aria-label="Votre note">
+    <div className="flex items-center gap-1" role="group" aria-label={t.rating}>
       {[1, 2, 3, 4, 5].map((n) => (
         <button
           key={n}
@@ -46,7 +49,7 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({ value, onChang
           onMouseLeave={() => setHover(0)}
           onClick={() => onChange(n)}
           className="p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
-          aria-label={`${n} étoile${n > 1 ? 's' : ''}`}
+          aria-label={t.stars(n)}
         >
           <Star
             size={size}

@@ -16,12 +16,19 @@ export interface SiteProfile {
   cv_path?: string;
   photo_path?: string;
   footer_year?: string;
+  hero_title_en?: string;
+  hero_subtitle_en?: string;
+  bio_en?: string;
+  availability_text_en?: string;
+  experience_badge_label_en?: string;
 }
 
 export interface Stat {
   label: string;
   value: string;
   suffix?: string;
+  label_en?: string;
+  suffix_en?: string;
 }
 
 export interface Skill {
@@ -55,6 +62,9 @@ export interface Experience {
   description: string[];
   tags?: string[];
   tagDetails?: TechTag[];
+  role_en?: string;
+  period_en?: string;
+  description_en?: string[];
 }
 
 export interface Education {
@@ -73,6 +83,9 @@ export interface Project {
   title: string;
   description: string;
   detailedDescription?: string;
+  titleEn?: string | null;
+  descriptionEn?: string | null;
+  detailedDescriptionEn?: string | null;
   tags: string[];
   tagDetails?: TechTag[];
   image: string;

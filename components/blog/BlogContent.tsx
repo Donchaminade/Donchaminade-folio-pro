@@ -24,7 +24,7 @@ const BlogContent = forwardRef<HTMLElement, Props>(({ body }, ref) => {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'copy';
-      button.textContent = 'Copier';
+      button.textContent = document.documentElement.lang === 'en' ? 'Copy' : 'Copier';
       pre.prepend(button);
     });
 
@@ -35,12 +35,13 @@ const BlogContent = forwardRef<HTMLElement, Props>(({ body }, ref) => {
       const code = pre?.querySelector('code')?.textContent || '';
       try {
         await navigator.clipboard.writeText(code.trim());
-        button.textContent = 'Copié';
+        const english = document.documentElement.lang === 'en';
+        button.textContent = english ? 'Copied' : 'Copié';
         window.setTimeout(() => {
-          button.textContent = 'Copier';
+          button.textContent = english ? 'Copy' : 'Copier';
         }, 1600);
       } catch {
-        button.textContent = 'Impossible';
+        button.textContent = document.documentElement.lang === 'en' ? 'Unavailable' : 'Impossible';
       }
     };
     root.addEventListener('click', onClick);

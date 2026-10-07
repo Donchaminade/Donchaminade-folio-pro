@@ -11,6 +11,7 @@ require_once $root . '/includes/GeoIp.php';
 require_once $root . '/includes/helpers.php';
 require_once $root . '/includes/FileUploader.php';
 require_once $root . '/includes/Database.php';
+require_once $root . '/includes/db_columns.php';
 require_once $root . '/includes/Response.php';
 require_once $root . '/includes/Auth.php';
 require_once $root . '/includes/Csrf.php';

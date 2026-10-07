@@ -87,7 +87,7 @@ ob_start();
     foreach ($contentCards as [$label, $val, $link, $icon, $hint]):
         $pending = ($label === 'Témoignages') ? (int) ($counts['testimonials_pending'] ?? 0) : 0;
     ?>
-    <a href="<?= e($link) ?>" class="group relative block p-4 sm:p-5 rounded-2xl border border-[var(--a-border)] bg-[var(--a-surface)] hover:border-[rgba(61,110,168,0.4)] transition-all min-w-0">
+    <a href="<?= e($link) ?>" class="stat-card group">
         <?php if ($pending > 0): ?>
             <span class="absolute top-3 right-3 min-w-[1.25rem] h-5 px-1.5 flex items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-slate-900"><?= $pending > 99 ? '99+' : $pending ?></span>
         <?php endif; ?>

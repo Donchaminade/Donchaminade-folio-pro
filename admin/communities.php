@@ -72,7 +72,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $maxOrder = (int) $db->query('SELECT COALESCE(MAX(sort_order),0) FROM communities')->fetchColumn();
             $db->prepare('INSERT INTO communities (name, logo, role, description, website_url, linkedin_url, sort_order) VALUES (?,?,?,?,?,?,?)')
                 ->execute([$name, $logoPath, $role, $description, $websiteUrl ?: null, $linkedinUrl ?: null, $maxOrder + 1]);
+            $editIdPost = (int) $db->lastInsertId();
         }
+        dbUpdatePresentColumns($db, 'communities', $editIdPost, [
+            'role_en' => trim((string) ($_POST['role_en'] ?? '')),
+            'description_en' => trim((string) ($_POST['description_en'] ?? '')),
+        ]);
         adminSetFlash('Communauté enregistrée.');
         redirect('communities.php');
     }
@@ -155,10 +160,13 @@ ob_start();
 
         <?= adminLabel('Nom *') ?>
         <input name="name" <?= $ia ?> value="<?= e($editRow['name'] ?? '') ?>" required>
-        <?= adminLabel('Votre rôle *') ?>
-        <input name="role" <?= $ia ?> value="<?= e($editRow['role'] ?? '') ?>" required placeholder="Speaker, Mentor…">
-        <?= adminLabel('Description *') ?>
-        <textarea name="description" rows="5" <?= $ia ?> required><?= e($editRow['description'] ?? '') ?></textarea>
+        <?php adminLangOpen(); ?>
+        <?php adminField('role', 'Votre rôle *', (string) ($editRow['role'] ?? ''), 'text', true, 'role_en'); ?>
+        <?php adminField('description', 'Description *', (string) ($editRow['description'] ?? ''), 'textarea', true, 'description_en'); ?>
+        <?php adminLangSwitch(); ?>
+        <?php adminField('role_en', 'Role', (string) ($editRow['role_en'] ?? '')); ?>
+        <?php adminField('description_en', 'Description', (string) ($editRow['description_en'] ?? ''), 'textarea'); ?>
+        <?php adminLangClose(); ?>
         <?= adminLabel('Site web (optionnel)') ?>
         <input name="website_url" <?= $ia ?> value="<?= e($editRow['website_url'] ?? '') ?>" placeholder="https://…">
         <?= adminLabel('LinkedIn (optionnel)') ?>

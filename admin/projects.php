@@ -86,6 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             adminSetFlash('Projet créé.');
         }
 
+        dbUpdatePresentColumns($db, 'projects', $projectId, [
+            'title_en' => trim((string) ($_POST['title_en'] ?? '')),
+            'description_en' => trim((string) ($_POST['description_en'] ?? '')),
+            'detailed_description_en' => trim((string) ($_POST['detailed_description_en'] ?? '')),
+            'tags_en' => trim((string) ($_POST['tags_en'] ?? '')),
+        ]);
+
         $db->prepare('DELETE FROM project_tags WHERE project_id = ?')->execute([$projectId]);
         $tagStmt = $db->prepare('INSERT INTO project_tags (project_id, tag) VALUES (?, ?)');
         foreach ($tags as $tag) {
@@ -128,12 +135,16 @@ if ($action === 'create' || $action === 'edit') {
             <?= Csrf::field() ?>
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="id" value="<?= (int) ($project['id'] ?? 0) ?>">
-            <label class="block text-sm font-semibold text-slate-400">Titre *</label>
-            <input name="title" <?= $ia ?> value="<?= e($project['title']) ?>" required>
-            <label class="block text-sm font-semibold text-slate-400">Description courte *</label>
-            <textarea name="description" <?= $ia ?> required><?= e($project['description']) ?></textarea>
-            <label class="block text-sm font-semibold text-slate-400">Description détaillée</label>
-            <textarea name="detailed_description" rows="4" <?= $ia ?>><?= e($project['detailed_description'] ?? '') ?></textarea>
+            <?php adminLangOpen(); ?>
+            <?php adminField('title', 'Titre *', (string) $project['title'], 'text', true, 'title_en'); ?>
+            <?php adminField('description', 'Description courte *', (string) $project['description'], 'textarea', true, 'description_en'); ?>
+            <?php adminField('detailed_description', 'Description détaillée', (string) ($project['detailed_description'] ?? ''), 'textarea', false, 'detailed_description_en'); ?>
+            <?php adminLangSwitch(); ?>
+            <?php adminField('title_en', 'Title', (string) ($project['title_en'] ?? '')); ?>
+            <?php adminField('description_en', 'Short description', (string) ($project['description_en'] ?? ''), 'textarea'); ?>
+            <?php adminField('detailed_description_en', 'Detailed description', (string) ($project['detailed_description_en'] ?? ''), 'textarea'); ?>
+            <?php adminField('tags_en', 'Tags', (string) ($project['tags_en'] ?? '')); ?>
+            <?php adminLangClose(); ?>
             <?php adminFileField('image_file', 'Image principale (vignette)', 'image/*', $project['image'] ?? null); ?>
             <?php adminProjectDetailImagesField($project['detailImages'] ?? []); ?>
             <label class="block text-sm font-semibold text-slate-400 mt-6">Lien démo (URL du site)</label>

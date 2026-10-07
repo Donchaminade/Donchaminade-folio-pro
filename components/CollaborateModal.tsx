@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Handshake, Send, FileText, Video, Check, ChevronDown, Calendar, Plus, Trash2, Upload, Paperclip } from 'lucide-react';
 import { submitCollaboration, isApiConfigured } from '../lib/api';
+import { shownApiMessage, useI18n } from '../lib/i18n';
 
 interface Props {
   open: boolean;
@@ -14,14 +15,7 @@ const ACCEPT_FILES =
 const MAX_FILES = 8;
 const MAX_FILE_MB = 12;
 
-const MEETING_PLATFORMS = [
-  { value: 'google_meet', label: 'Google Meet' },
-  { value: 'zoom', label: 'Zoom' },
-  { value: 'teams', label: 'Microsoft Teams' },
-  { value: 'whatsapp', label: 'WhatsApp' },
-  { value: 'phone', label: 'Appel téléphonique' },
-  { value: 'other', label: 'Autre' },
-];
+const PLATFORM_VALUES = ['google_meet', 'zoom', 'teams', 'whatsapp', 'phone', 'other'] as const;
 
 const INPUT_CLS =
   'w-full mt-1 px-4 py-3 rounded-xl bg-slate-100/80 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-[var(--accent-soft)] focus:ring-2 focus:ring-[var(--accent-soft)]/20';
@@ -29,11 +23,11 @@ const INPUT_CLS =
 const DATETIME_CLS =
   `${INPUT_CLS} dark:[color-scheme:dark] [color-scheme:light] cursor-pointer`;
 
-function formatSlotLabel(isoLocal: string): string {
+function formatSlotLabel(isoLocal: string, locale: string): string {
   if (!isoLocal) return '';
   const d = new Date(isoLocal);
   if (Number.isNaN(d.getTime())) return isoLocal;
-  return d.toLocaleString('fr-FR', {
+  return d.toLocaleString(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -68,9 +62,10 @@ interface PlatformSelectProps {
 }
 
 const PlatformSelect: React.FC<PlatformSelectProps> = ({ value, onChange }) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const selected = MEETING_PLATFORMS.find((p) => p.value === value);
+  const selected = t.platforms[value as keyof typeof t.platforms];
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
@@ -87,7 +82,7 @@ const PlatformSelect: React.FC<PlatformSelectProps> = ({ value, onChange }) => {
         onClick={() => setOpen((o) => !o)}
         className={`${INPUT_CLS} flex items-center justify-between text-left`}
       >
-        <span>{selected?.label ?? 'Choisir…'}</span>
+        <span>{selected ?? t.choose}</span>
         <ChevronDown size={18} className={`shrink-0 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       <AnimatePresence>
@@ -98,21 +93,21 @@ const PlatformSelect: React.FC<PlatformSelectProps> = ({ value, onChange }) => {
             exit={{ opacity: 0, y: -4 }}
             className="absolute z-20 mt-1 w-full max-h-56 overflow-y-auto rounded-xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 shadow-xl py-1"
           >
-            {MEETING_PLATFORMS.map((p) => (
-              <li key={p.value}>
+            {PLATFORM_VALUES.map((platform) => (
+              <li key={platform}>
                 <button
                   type="button"
                   onClick={() => {
-                    onChange(p.value);
+                    onChange(platform);
                     setOpen(false);
                   }}
                   className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                    p.value === value
+                    platform === value
                       ? 'bg-[var(--ink)]/15 text-[var(--accent-muted)] dark:text-[var(--accent-soft)] font-semibold'
                       : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10'
                   }`}
                 >
-                  {p.label}
+                  {t.platforms[platform]}
                 </button>
               </li>
             ))}
@@ -124,6 +119,7 @@ const PlatformSelect: React.FC<PlatformSelectProps> = ({ value, onChange }) => {
 };
 
 const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
+  const { lang, t } = useI18n();
   const [form, setForm] = useState(initialForm);
   const [slotDates, setSlotDates] = useState<string[]>(['']);
   const [docFiles, setDocFiles] = useState<File[]>([]);
@@ -149,11 +145,11 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
     for (let i = 0; i < incoming.length; i++) {
       const f = incoming[i];
       if (f.size > MAX_FILE_MB * 1024 * 1024) {
-        setFeedback({ type: 'error', text: `${f.name} dépasse ${MAX_FILE_MB} Mo.` });
+        setFeedback({ type: 'error', text: t.fileTooBig(f.name, MAX_FILE_MB) });
         return;
       }
       if (next.length >= MAX_FILES) {
-        setFeedback({ type: 'error', text: `Maximum ${MAX_FILES} fichiers.` });
+        setFeedback({ type: 'error', text: t.maxFiles(MAX_FILES) });
         return;
       }
       if (!next.some((x) => x.name === f.name && x.size === f.size)) {
@@ -171,20 +167,20 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isApiConfigured()) {
-      setFeedback({ type: 'error', text: 'Service temporairement indisponible.' });
+      setFeedback({ type: 'error', text: t.serviceDown });
       return;
     }
 
     if (form.has_documents && docFiles.length === 0 && !form.documents_details.trim()) {
       setFeedback({
         type: 'error',
-        text: 'Ajoutez au moins un fichier ou une note sur vos documents.',
+        text: t.docsMissing,
       });
       return;
     }
 
     const filledSlots = slotDates.filter(Boolean);
-    const meeting_slots = filledSlots.map((s) => `• ${formatSlotLabel(s)}`).join('\n');
+    const meeting_slots = filledSlots.map((s) => `• ${formatSlotLabel(s, lang === 'en' ? 'en-GB' : 'fr-FR')}`).join('\n');
 
     setLoading(true);
     setFeedback(null);
@@ -197,13 +193,13 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
         },
         docFiles
       );
-      setFeedback({ type: 'success', text: msg });
+      setFeedback({ type: 'success', text: shownApiMessage(lang, msg, t.collabSent) });
       setTimeout(() => {
         onClose();
         resetForm();
       }, 2500);
     } catch (err) {
-      setFeedback({ type: 'error', text: err instanceof Error ? err.message : 'Erreur envoi' });
+      setFeedback({ type: 'error', text: shownApiMessage(lang, err instanceof Error ? err.message : '', t.sendError) });
     } finally {
       setLoading(false);
     }
@@ -233,11 +229,11 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                 <Handshake size={22} />
               </div>
               <div>
-                <h2 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white">Collaborons</h2>
-                <p className="text-xs text-slate-500">Décrivez votre projet — je vous recontacte rapidement.</p>
+                <h2 className="text-lg font-black uppercase tracking-tight text-slate-900 dark:text-white">{t.collabTitle}</h2>
+                <p className="text-xs text-slate-500">{t.collabLead}</p>
               </div>
             </div>
-            <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500">
+            <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500" aria-label={t.closeDialog}>
               <X size={22} />
             </button>
           </div>
@@ -245,41 +241,41 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Nom *</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.name} *</label>
                 <input required value={form.name} onChange={(e) => update('name', e.target.value)} className={INPUT_CLS} />
               </div>
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Email *</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.email} *</label>
                 <input type="email" required value={form.email} onChange={(e) => update('email', e.target.value)} className={INPUT_CLS} />
               </div>
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Téléphone</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.phone}</label>
                 <input value={form.phone} onChange={(e) => update('phone', e.target.value)} className={INPUT_CLS} />
               </div>
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Entreprise / organisation</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.org}</label>
                 <input value={form.company} onChange={(e) => update('company', e.target.value)} className={INPUT_CLS} />
               </div>
             </div>
 
             <div>
-              <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Objet de la collaboration</label>
+              <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.subject}</label>
               <input
                 value={form.subject}
                 onChange={(e) => update('subject', e.target.value)}
-                placeholder="Ex. Refonte site e-commerce, app mobile…"
+                placeholder={t.subjectPh}
                 className={INPUT_CLS}
               />
             </div>
 
             <div>
-              <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Décrivez votre besoin en détail *</label>
+              <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.need} *</label>
               <textarea
                 required
                 rows={5}
                 value={form.collaboration_brief}
                 onChange={(e) => update('collaboration_brief', e.target.value)}
-                placeholder="Type de projet, objectifs, budget indicatif, délais, technologies souhaitées…"
+                placeholder={t.needPh}
                 className={`${INPUT_CLS} resize-none`}
               />
             </div>
@@ -300,7 +296,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                   className="w-4 h-4 rounded border-slate-300 text-[var(--accent)]"
                 />
                 <span className="flex items-start gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200 leading-snug">
-                  <FileText size={16} className="text-[var(--accent-soft)] shrink-0 mt-0.5" /> J'ai des documents à partager (cahier des charges, maquettes, devis…)
+                  <FileText size={16} className="text-[var(--accent-soft)] shrink-0 mt-0.5" /> {t.docs}
                 </span>
               </label>
               {form.has_documents && (
@@ -323,10 +319,10 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                   >
                     <Upload size={28} className="text-[var(--accent-soft)]" />
                     <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                      Cliquez pour ajouter des fichiers
+                      {t.addFiles}
                     </span>
                     <span className="text-[10px] text-slate-500 text-center px-4">
-                      PDF, Word, PowerPoint, Excel, images — max {MAX_FILES} fichiers, {MAX_FILE_MB} Mo chacun
+                      {t.fileHint(MAX_FILES, MAX_FILE_MB)}
                     </span>
                   </button>
 
@@ -341,14 +337,14 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                             <Paperclip size={14} className="shrink-0 text-[var(--accent-soft)]" />
                             <span className="truncate">{file.name}</span>
                             <span className="text-[10px] text-slate-500 shrink-0">
-                              ({(file.size / 1024 / 1024).toFixed(1)} Mo)
+                              ({(file.size / 1024 / 1024).toFixed(1)} {t.sizeUnit})
                             </span>
                           </span>
                           <button
                             type="button"
                             onClick={() => removeFile(i)}
                             className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/10 shrink-0"
-                            aria-label="Retirer"
+                            aria-label={t.remove}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -361,7 +357,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                     rows={2}
                     value={form.documents_details}
                     onChange={(e) => update('documents_details', e.target.value)}
-                    placeholder="Note optionnelle (lien Drive, précisions…)"
+                    placeholder={t.notePh}
                     className={`${INPUT_CLS} mt-0`}
                   />
                 </div>
@@ -370,17 +366,17 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
 
             <div className="p-4 rounded-xl border border-dashed border-slate-300 dark:border-white/15 space-y-4">
               <p className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                <Video size={16} className="text-blue-500" /> Proposer un créneau pour en discuter
+                <Video size={16} className="text-blue-500" /> {t.slot}
               </p>
 
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Plateforme</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.platform}</label>
                 <PlatformSelect value={form.meeting_platform} onChange={(v) => update('meeting_platform', v)} />
               </div>
 
               <div className="space-y-3">
                 <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1 flex items-center gap-1.5">
-                  <Calendar size={12} /> Date & heure (choix dans le calendrier)
+                  <Calendar size={12} /> {t.slotDate}
                 </label>
                 {slotDates.map((slot, index) => (
                   <div key={index} className="flex gap-2 items-center min-w-0">
@@ -394,14 +390,14 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                         setSlotDates(next);
                       }}
                       className={`${DATETIME_CLS} min-w-0`}
-                      aria-label={`Créneau ${index + 1}`}
+                      aria-label={t.slotN(index + 1)}
                     />
                     {slotDates.length > 1 && (
                       <button
                         type="button"
                         onClick={() => setSlotDates((s) => s.filter((_, i) => i !== index))}
                         className="p-2.5 rounded-xl border border-red-500/30 text-red-500 hover:bg-red-500/10 shrink-0"
-                        aria-label="Supprimer ce créneau"
+                        aria-label={t.removeSlot}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -414,18 +410,18 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
                     onClick={() => setSlotDates((s) => [...s, ''])}
                     className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--accent)] dark:text-[var(--accent-soft)] hover:text-[var(--accent-soft)]"
                   >
-                    <Plus size={14} /> Ajouter un autre créneau
+                    <Plus size={14} /> {t.addSlot}
                   </button>
                 )}
               </div>
 
               <div>
-                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">Notes (optionnel)</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 ml-1">{t.notes}</label>
                 <textarea
                   rows={2}
                   value={form.meeting_notes}
                   onChange={(e) => update('meeting_notes', e.target.value)}
-                  placeholder="Durée souhaitée, fuseau horaire, langue de l'échange…"
+                  placeholder={t.notesPh}
                   className={`${INPUT_CLS} resize-none`}
                 />
               </div>
@@ -454,7 +450,7 @@ const CollaborateModal: React.FC<Props> = ({ open, onClose }) => {
               ) : (
                 <Send size={18} />
               )}
-              Envoyer ma demande
+              {t.sendRequest}
             </button>
           </form>
         </motion.div>

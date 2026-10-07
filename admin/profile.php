@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'full_name', 'hero_title', 'hero_subtitle', 'bio', 'availability_text',
         'experience_badge', 'experience_badge_label', 'email', 'phone', 'whatsapp',
         'linkedin_url', 'twitter_url', 'github_url', 'footer_year',
+        'hero_title_en', 'hero_subtitle_en', 'bio_en', 'availability_text_en', 'experience_badge_label_en',
     ];
 
     $data = [];
@@ -37,14 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $existing = $db->query('SELECT id FROM site_profile LIMIT 1')->fetch();
 
     if ($existing) {
-        $sets = implode(', ', array_map(fn ($f) => "{$f} = ?", $allFields));
-        $stmt = $db->prepare("UPDATE site_profile SET {$sets} WHERE id = ?");
-        $stmt->execute([...array_values($data), (int) $existing['id']]);
+        dbUpdatePresentColumns($db, 'site_profile', (int) $existing['id'], $data);
     } else {
-        $cols = implode(', ', $allFields);
-        $placeholders = implode(', ', array_fill(0, count($allFields), '?'));
-        $stmt = $db->prepare("INSERT INTO site_profile ({$cols}) VALUES ({$placeholders})");
-        $stmt->execute(array_values($data));
+        $insert = [];
+        foreach ($data as $column => $value) {
+            if (dbHasColumn($db, 'site_profile', $column)) {
+                $insert[$column] = $value;
+            }
+        }
+        if ($insert !== []) {
+            $cols = implode(', ', array_map(fn ($c) => '`' . $c . '`', array_keys($insert)));
+            $placeholders = implode(', ', array_fill(0, count($insert), '?'));
+            $db->prepare("INSERT INTO site_profile ({$cols}) VALUES ({$placeholders})")->execute(array_values($insert));
+        }
     }
 
     adminSetFlash('Profil enregistré.');
@@ -57,17 +63,26 @@ $base = rtrim(env('APP_URL', ''), '/');
 
 ob_start();
 ?>
-<div class="rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm p-6 max-w-3xl shadow-xl">
+<div class="admin-panel max-w-3xl">
     <form method="post" enctype="multipart/form-data" class="space-y-1">
         <?= Csrf::field() ?>
+        <?php adminField('full_name', 'Nom complet', (string) ($profile['full_name'] ?? '')); ?>
+        <?php adminLangOpen(); ?>
+            <?php adminField('hero_title', 'Titre principal', (string) ($profile['hero_title'] ?? ''), 'text', false, 'hero_title_en'); ?>
+            <?php adminField('hero_subtitle', 'Sous-titre', (string) ($profile['hero_subtitle'] ?? ''), 'text', false, 'hero_subtitle_en'); ?>
+            <?php adminField('availability_text', 'Badge disponibilité', (string) ($profile['availability_text'] ?? ''), 'text', false, 'availability_text_en'); ?>
+            <?php adminField('experience_badge_label', 'Label expérience', (string) ($profile['experience_badge_label'] ?? ''), 'text', false, 'experience_badge_label_en'); ?>
+            <?php adminField('bio', 'Biographie', (string) ($profile['bio'] ?? ''), 'textarea', false, 'bio_en'); ?>
+        <?php adminLangSwitch(); ?>
+            <?php adminField('hero_title_en', 'Main title', (string) ($profile['hero_title_en'] ?? '')); ?>
+            <?php adminField('hero_subtitle_en', 'Subtitle', (string) ($profile['hero_subtitle_en'] ?? '')); ?>
+            <?php adminField('availability_text_en', 'Availability', (string) ($profile['availability_text_en'] ?? '')); ?>
+            <?php adminField('experience_badge_label_en', 'Experience label', (string) ($profile['experience_badge_label_en'] ?? '')); ?>
+            <?php adminField('bio_en', 'Biography', (string) ($profile['bio_en'] ?? ''), 'textarea'); ?>
+        <?php adminLangClose(); ?>
+        <?php adminField('experience_badge', 'Chiffre expérience (ex: 4+)', (string) ($profile['experience_badge'] ?? '')); ?>
         <?php
-        $textFields = [
-            'full_name' => 'Nom complet',
-            'hero_title' => 'Titre principal',
-            'hero_subtitle' => 'Sous-titre',
-            'availability_text' => 'Badge disponibilité',
-            'experience_badge' => 'Chiffre expérience (ex: 3+)',
-            'experience_badge_label' => 'Label expérience',
+        foreach ([
             'email' => 'Email',
             'phone' => 'Téléphone',
             'whatsapp' => 'WhatsApp',
@@ -75,20 +90,16 @@ ob_start();
             'twitter_url' => 'URL X / Twitter',
             'github_url' => 'URL GitHub',
             'footer_year' => 'Année (footer)',
-        ];
-        foreach ($textFields as $name => $label): ?>
-            <label class="block text-sm font-semibold text-slate-400 mt-3"><?= e($label) ?></label>
-            <input name="<?= e($name) ?>" <?= $ia ?> value="<?= e($profile[$name] ?? '') ?>">
-        <?php endforeach; ?>
-
-        <label class="block text-sm font-semibold text-slate-400 mt-3">Biographie</label>
-        <textarea name="bio" rows="4" <?= $ia ?>><?= e($profile['bio'] ?? '') ?></textarea>
+        ] as $name => $label) {
+            adminField($name, $label, (string) ($profile[$name] ?? ''));
+        }
+        ?>
 
         <?php adminFileField('photo_file', 'Photo de profil', 'image/*', $profile['photo_path'] ?? null); ?>
         <?php adminFileField('cv_file', 'CV (PDF)', 'application/pdf', $profile['cv_path'] ?? null); ?>
 
         <p class="pt-6">
-            <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-sm shadow-lg transition-all hover:scale-[1.02]">Enregistrer</button>
+            <?= adminSubmitBtn('Enregistrer') ?>
         </p>
     </form>
 </div>

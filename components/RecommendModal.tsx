@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ThumbsUp, Send } from 'lucide-react';
 import { submitRecommendation, isApiConfigured } from '../lib/api';
+import { shownApiMessage, useI18n } from '../lib/i18n';
 import { StarRatingInput } from './StarRating';
 
 interface Props {
@@ -16,6 +17,7 @@ const INPUT_CLS =
 const LABEL_CLS = 'text-[9px] font-black uppercase tracking-widest text-slate-500';
 
 const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
+  const { lang, t } = useI18n();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
@@ -53,11 +55,11 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
     e.preventDefault();
     setError('');
     if (!isApiConfigured()) {
-      setError('API non disponible en local — vérifiez XAMPP et le proxy Vite.');
+      setError(t.apiDown);
       return;
     }
     if (rating < 1) {
-      setError('Choisissez une note entre 1 et 5 étoiles.');
+      setError(t.chooseRating);
       return;
     }
     setLoading(true);
@@ -70,11 +72,11 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
         body,
         rating,
       });
-      setSuccess(msg);
+      setSuccess(shownApiMessage(lang, msg, t.sentRecommendation));
       onSuccess?.();
       setTimeout(() => handleClose(), 2000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'envoi.');
+      setError(shownApiMessage(lang, err instanceof Error ? err.message : '', t.sendError));
     } finally {
       setLoading(false);
     }
@@ -103,10 +105,10 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
                   <ThumbsUp size={18} />
                 </div>
                 <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight truncate">
-                  Me recommander
+                  {t.modalRecommendation}
                 </h2>
               </div>
-              <button type="button" onClick={handleClose} className="p-1.5 rounded-full text-slate-500 hover:text-slate-900 dark:hover:text-white shrink-0" aria-label="Fermer">
+              <button type="button" onClick={handleClose} className="p-1.5 rounded-full text-slate-500 hover:text-slate-900 dark:hover:text-white shrink-0" aria-label={t.closeDialog}>
                 <X size={18} />
               </button>
             </div>
@@ -115,7 +117,7 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
               <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 
               <div>
-                <span className={LABEL_CLS}>Votre note *</span>
+                <span className={LABEL_CLS}>{t.rating} *</span>
                 <div className="mt-1">
                   <StarRatingInput value={rating} onChange={setRating} size={22} />
                 </div>
@@ -123,25 +125,25 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="col-span-2">
-                  <label className={LABEL_CLS}>Nom *</label>
+                  <label className={LABEL_CLS}>{t.name} *</label>
                   <input className={INPUT_CLS} value={name} onChange={(e) => setName(e.target.value)} required maxLength={120} />
                 </div>
                 <div className="col-span-2">
-                  <label className={LABEL_CLS}>Email</label>
+                  <label className={LABEL_CLS}>{t.email}</label>
                   <input type="email" className={INPUT_CLS} value={email} onChange={(e) => setEmail(e.target.value)} maxLength={255} />
                 </div>
                 <div>
-                  <label className={LABEL_CLS}>Fonction</label>
+                  <label className={LABEL_CLS}>{t.role}</label>
                   <input className={INPUT_CLS} value={role} onChange={(e) => setRole(e.target.value)} />
                 </div>
                 <div>
-                  <label className={LABEL_CLS}>Entreprise</label>
+                  <label className={LABEL_CLS}>{t.company}</label>
                   <input className={INPUT_CLS} value={company} onChange={(e) => setCompany(e.target.value)} />
                 </div>
               </div>
 
               <div>
-                <label className={LABEL_CLS}>Message *</label>
+                <label className={LABEL_CLS}>{t.message} *</label>
                 <textarea
                   className={`${INPUT_CLS} resize-none h-16`}
                   value={body}
@@ -149,7 +151,7 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
                   required
                   minLength={30}
                   maxLength={2000}
-                  placeholder="Min. 30 caractères…"
+                  placeholder={t.minChars}
                 />
               </div>
 
@@ -162,7 +164,7 @@ const RecommendModal: React.FC<Props> = ({ open, onClose, onSuccess }) => {
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-[10px] font-black uppercase tracking-widest"
               >
                 <Send size={14} />
-                {loading ? 'Envoi…' : 'Publier'}
+                {loading ? t.sending : t.publishShort}
               </button>
             </form>
           </motion.div>

@@ -80,7 +80,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare(
                 'INSERT INTO testimonials (quote, name, role, company, image, sort_order, is_active, is_approved) VALUES (?,?,?,?,?,?,1,1)'
             )->execute([$quote, $name, $role, $company, $imagePath ?: null, $maxOrder + 1]);
+            $editIdPost = (int) $db->lastInsertId();
         }
+        dbUpdatePresentColumns($db, 'testimonials', $editIdPost, [
+            'quote_en' => trim((string) ($_POST['quote_en'] ?? '')),
+            'role_en' => trim((string) ($_POST['role_en'] ?? '')),
+        ]);
         adminSetFlash('Témoignage enregistré.');
         redirect('testimonials.php');
     }
@@ -162,9 +167,14 @@ ob_start();
             </div>
         </div>
 
-        <?= adminLabel('Citation *') ?><textarea name="quote" rows="3" <?= $ia ?> required><?= e($editRow['quote'] ?? '') ?></textarea>
+        <?php adminLangOpen(); ?>
+        <?php adminField('quote', 'Citation *', (string) ($editRow['quote'] ?? ''), 'textarea', true, 'quote_en'); ?>
+        <?php adminField('role', 'Rôle', (string) ($editRow['role'] ?? ''), 'text', false, 'role_en'); ?>
+        <?php adminLangSwitch(); ?>
+        <?php adminField('quote_en', 'Quote', (string) ($editRow['quote_en'] ?? ''), 'textarea'); ?>
+        <?php adminField('role_en', 'Role', (string) ($editRow['role_en'] ?? '')); ?>
+        <?php adminLangClose(); ?>
         <?= adminLabel('Nom *') ?><input name="name" <?= $ia ?> value="<?= e($editRow['name'] ?? '') ?>" required>
-        <?= adminLabel('Rôle') ?><input name="role" <?= $ia ?> value="<?= e($editRow['role'] ?? '') ?>">
         <?= adminLabel('Entreprise') ?><input name="company" <?= $ia ?> value="<?= e($editRow['company'] ?? '') ?>">
         <p class="pt-4"><?= adminSubmitBtn() ?></p>
     </form>

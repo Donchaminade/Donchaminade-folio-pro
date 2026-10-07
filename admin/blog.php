@@ -60,6 +60,8 @@ function adminBlogSavePost(PDO $db, BlogRepository $blogRepo, array $fields, int
                 $fields['content'], $fields['cover'], $fields['reading_time'], $editId,
             ]);
         }
+        adminBlogSaveEnglish($db, $editId);
+
         return $editId;
     }
 
@@ -81,7 +83,22 @@ function adminBlogSavePost(PDO $db, BlogRepository $blogRepo, array $fields, int
         ]);
     }
 
-    return (int) $db->lastInsertId();
+    $id = (int) $db->lastInsertId();
+    adminBlogSaveEnglish($db, $id);
+
+    return $id;
+}
+
+function adminBlogSaveEnglish(PDO $db, int $id): void
+{
+    if ($id <= 0) {
+        return;
+    }
+    dbUpdatePresentColumns($db, 'blog_posts', $id, [
+        'title_en' => trim((string) ($_POST['title_en'] ?? '')),
+        'excerpt_en' => trim((string) ($_POST['excerpt_en'] ?? '')),
+        'content_en' => trim((string) ($_POST['content_en'] ?? '')),
+    ]);
 }
 
 function adminCollectBlogFields(PDO $db, BlogRepository $blogRepo, int $editId): array
@@ -263,12 +280,8 @@ if ($action === 'share' && $id > 0) {
         <form method="post" enctype="multipart/form-data" class="space-y-4">
             <?= Csrf::field() ?>
             <input type="hidden" name="id" value="<?= (int) ($post['id'] ?? 0) ?>">
-            <label class="block text-sm font-semibold text-slate-400">Titre *</label>
-            <input name="title" <?= $ia ?> value="<?= e($post['title']) ?>" required>
             <label class="block text-sm font-semibold text-slate-400">Slug (URL — optionnel)</label>
             <input name="slug" <?= $ia ?> value="<?= e($post['slug'] ?? '') ?>" placeholder="Généré automatiquement depuis le titre">
-            <label class="block text-sm font-semibold text-slate-400">Résumé court</label>
-            <textarea name="excerpt" rows="2" <?= $ia ?> placeholder="Quelques lignes pour la carte de l'article"><?= e($post['excerpt'] ?? '') ?></textarea>
 
             <label class="block text-sm font-semibold text-slate-400">Thème / catégorie</label>
             <select name="category" id="blogCategorySelect" <?= $ia ?>>
@@ -303,8 +316,21 @@ if ($action === 'share' && $id > 0) {
             })();
             </script>
 
+            <?php adminLangOpen(); ?>
+            <label class="block text-sm font-semibold text-slate-400">Titre *</label>
+            <input name="title" <?= $ia ?> value="<?= e($post['title'] ?? '') ?>" required data-i18n-src="title_en">
+            <label class="block text-sm font-semibold text-slate-400">Extrait</label>
+            <textarea name="excerpt" <?= $ia ?> data-i18n-src="excerpt_en"><?= e($post['excerpt'] ?? '') ?></textarea>
             <label class="block text-sm font-semibold text-slate-400">Contenu de l'article *</label>
-            <?php adminEditor('content', $post['content'] ?? ''); ?>
+            <?php adminEditor('content', $post['content'] ?? '', true, 'main', 'content_en'); ?>
+            <?php adminLangSwitch(); ?>
+            <label class="block text-sm font-semibold text-slate-400">Title</label>
+            <input name="title_en" <?= $ia ?> value="<?= e($post['title_en'] ?? '') ?>">
+            <label class="block text-sm font-semibold text-slate-400">Excerpt</label>
+            <textarea name="excerpt_en" <?= $ia ?>><?= e($post['excerpt_en'] ?? '') ?></textarea>
+            <label class="block text-sm font-semibold text-slate-400">English article</label>
+            <?php adminEditor('content_en', $post['content_en'] ?? '', false, 'en'); ?>
+            <?php adminLangClose(); ?>
 
             <?php adminFileField('cover_file', 'Image de couverture (téléverser)', 'image/*', $post['cover_image'] ?? null); ?>
 

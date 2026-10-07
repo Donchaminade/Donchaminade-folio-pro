@@ -37,10 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($editIdPost > 0) {
             $db->prepare('UPDATE stats SET label=?, value=?, suffix=?, sort_order=? WHERE id=?')
                 ->execute([$label, $value, $suffix ?: null, $sortOrder, $editIdPost]);
+            $statId = $editIdPost;
         } else {
             $db->prepare('INSERT INTO stats (label, value, suffix, sort_order) VALUES (?,?,?,?)')
                 ->execute([$label, $value, $suffix ?: null, $sortOrder]);
+            $statId = (int) $db->lastInsertId();
         }
+        dbUpdatePresentColumns($db, 'stats', $statId, [
+            'label_en' => trim((string) ($_POST['label_en'] ?? '')),
+            'suffix_en' => trim((string) ($_POST['suffix_en'] ?? '')),
+        ]);
         adminSetFlash('Stat enregistrée.');
         redirect('stats.php');
     }
@@ -75,12 +81,15 @@ ob_start();
         <?= Csrf::field() ?>
         <input type="hidden" name="action" value="save">
         <input type="hidden" name="id" value="<?= (int) ($editRow['id'] ?? 0) ?>">
-        <?= adminLabel('Label *') ?>
-        <input name="label" <?= $ia ?> value="<?= e($editRow['label'] ?? '') ?>" required placeholder="Ex. Expérience Web">
+        <?php adminLangOpen(); ?>
+        <?php adminField('label', 'Label *', (string) ($editRow['label'] ?? ''), 'text', true, 'label_en'); ?>
+        <?php adminField('suffix', 'Suffixe (ans, +, etc.)', (string) ($editRow['suffix'] ?? ''), 'text', false, 'suffix_en'); ?>
+        <?php adminLangSwitch(); ?>
+        <?php adminField('label_en', 'Label', (string) ($editRow['label_en'] ?? '')); ?>
+        <?php adminField('suffix_en', 'Suffix', (string) ($editRow['suffix_en'] ?? '')); ?>
+        <?php adminLangClose(); ?>
         <?= adminLabel('Valeur *') ?>
-        <input name="value" <?= $ia ?> value="<?= e($editRow['value'] ?? '') ?>" required placeholder="Ex. 3">
-        <?= adminLabel('Suffixe (ans, +, etc.)') ?>
-        <input name="suffix" <?= $ia ?> value="<?= e($editRow['suffix'] ?? '') ?>" placeholder="ans">
+        <input name="value" <?= $ia ?> value="<?= e($editRow['value'] ?? '') ?>" required placeholder="Ex. 4">
         <?= adminLabel('Ordre d\'affichage') ?>
         <input type="number" name="sort_order" <?= $ia ?> value="<?= (int) ($editRow['sort_order'] ?? 0) ?>" class="max-w-[120px]">
         <p class="pt-4"><?= adminSubmitBtn() ?></p>

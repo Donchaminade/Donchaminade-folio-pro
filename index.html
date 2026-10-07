@@ -35,6 +35,7 @@
   <script>
     (function () {
       try {
+        if (localStorage.getItem('donchaminade-lang') === 'en') document.documentElement.lang = 'en';
         if (localStorage.getItem('theme') !== 'light') document.documentElement.classList.add('dark');
       } catch (e) {
         document.documentElement.classList.add('dark');

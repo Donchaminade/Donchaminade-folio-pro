@@ -14,6 +14,7 @@ import {
   SharePlatform,
   shareBlogPost,
 } from '../../lib/blogShare';
+import { useI18n } from '../../lib/i18n';
 
 const MENU_WIDTH = 220;
 const MENU_EST_HEIGHT = 300;
@@ -54,6 +55,7 @@ const BlogShareActions: React.FC<Props> = ({
   menuAlign = 'right',
   showCount = false,
 }) => {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [localShares, setLocalShares] = useState(sharesCount);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0, openUp: false });
@@ -128,11 +130,11 @@ const BlogShareActions: React.FC<Props> = ({
         }
         onFeedback?.(res.message);
       } catch {
-        onFeedback?.('Partage impossible');
+        onFeedback?.(t.shareFail);
       }
       setOpen(false);
     },
-    [slug, title, shareUrl, onSharesUpdate, onFeedback]
+    [slug, title, shareUrl, onSharesUpdate, onFeedback, t.shareFail]
   );
 
   const menu = open ? (
@@ -148,7 +150,7 @@ const BlogShareActions: React.FC<Props> = ({
       }}
     >
       <p className="text-[9px] uppercase tracking-widest text-slate-500 px-3 py-2 font-bold sticky top-0 bg-white dark:bg-slate-900">
-        Partager via
+        {t.shareVia}
       </p>
       {SHARE_PLATFORMS.map(({ id, label }) => {
         const Icon = PLATFORM_ICONS[id];
@@ -161,7 +163,7 @@ const BlogShareActions: React.FC<Props> = ({
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-700 dark:text-slate-200 hover:bg-blue-500/10 hover:text-blue-600 transition-colors text-left"
           >
             {Icon ? <Icon size={18} /> : null}
-            {label}
+            {id === 'copy' ? t.copyLink : label}
           </button>
         );
       })}
@@ -177,8 +179,8 @@ const BlogShareActions: React.FC<Props> = ({
       <button
         ref={buttonRef}
         type="button"
-        title="Partager"
-        aria-label="Partager cet article"
+        title={t.share}
+        aria-label={t.shareArticle}
         aria-expanded={open}
         aria-haspopup="true"
         onClick={(e) => {

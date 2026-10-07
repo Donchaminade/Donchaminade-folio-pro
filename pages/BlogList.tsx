@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { BlogCategoryApi, BlogPostSummary, fetchBlogList } from '../lib/api';
 import { getBlogCategory, setBlogCategoriesRegistry } from '../lib/blogCategories';
 import { mediaUrl } from '../lib/media';
+import { blogCopy } from '../lib/blogLocale';
+import { useI18n } from '../lib/i18n';
 import { navigate } from '../lib/navigation';
 import { MobileNav, PageDecor, SiteFooter, SiteHeader } from '../components/layout/SiteChrome';
 
@@ -19,9 +21,9 @@ function patternClass(id: string): string {
   return 'pattern p-dot';
 }
 
-function formatDate(value: string): string {
+function formatDate(value: string, lang: 'fr' | 'en'): string {
   if (!value) return '';
-  return new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(value).toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function openPost(event: React.MouseEvent<HTMLAnchorElement>, slug: string) {
@@ -39,6 +41,7 @@ const Cover: React.FC<{ post: BlogPostSummary; className?: string }> = ({ post, 
 };
 
 const BlogList: React.FC = () => {
+  const { lang, t } = useI18n();
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
   const [categories, setCategories] = useState<BlogCategoryApi[]>([]);
   const [category, setCategory] = useState('all');
@@ -59,7 +62,7 @@ const BlogList: React.FC = () => {
         setPage(1);
         if (res.categories?.length) {
           setCategories(res.categories);
-          setBlogCategoriesRegistry(res.categories.map((item) => ({ id: item.slug, label: item.label, emoji: item.emoji || '📝' })));
+          setBlogCategoriesRegistry(res.categories.map((item) => ({ id: item.slug, label: item.label, labelEn: item.label_en, emoji: item.emoji || '📝' })));
         }
       })
       .catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : 'Erreur de chargement'); })
@@ -95,7 +98,7 @@ const BlogList: React.FC = () => {
 
   return (
     <div className="page-pad">
-      <a className="skip" href="#main">Aller au contenu</a>
+      <a className="skip" href="#main">{t.skip}</a>
       <PageDecor />
       <SiteHeader current="blog" />
       <main id="main">
@@ -103,16 +106,16 @@ const BlogList: React.FC = () => {
           <div className="dots" aria-hidden="true" />
           <div className="wrap">
             <div>
-              <p className="kicker">Le blog</p>
-              <h1>Idées, tech et <em>équilibre</em>, écrits depuis Lomé</h1>
-              <p className="lead">Analyses longues en français sur le développement, les agents IA et le cloud, et des textes plus personnels sur l’énergie, la foi et l’engagement.</p>
+              <p className="kicker">{t.blogKicker}</p>
+              <h1>{t.blogTitleBefore}<em>{t.blogTitleEm}</em>{t.blogTitleAfter}</h1>
+              <p className="lead">{t.blogLead}</p>
               <label className="search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
-                <span className="sr-only">Rechercher un article</span>
-                <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un article…" />
+                <span className="sr-only">{t.searchLabel}</span>
+                <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t.searchPlaceholder} />
               </label>
             </div>
-            <svg className="illu" viewBox="0 0 440 360" role="img" aria-label="Illustration : carnet d’articles, code et idées">
+            <svg className="illu" viewBox="0 0 440 360" role="img" aria-label={t.blogIllu}>
               <circle cx="220" cy="180" r="150" fill="none" stroke="#7E9DC7" strokeOpacity=".45" strokeDasharray="4 8" />
               <g className="float">
                 <rect x="120" y="70" width="190" height="230" rx="16" fill="#F4F7FB" transform="rotate(-6 215 185)" />
@@ -130,68 +133,70 @@ const BlogList: React.FC = () => {
         <div className="band" aria-hidden="true" />
         <section className="section" style={{ paddingTop: 36 }}>
           <div className="wrap">
-            <nav className="cats" aria-label="Catégories">
+            <nav className="cats" aria-label={t.categories}>
               <button type="button" className={category === 'all' ? 'on' : ''} onClick={() => setCategory('all')}>
-                Tous <span className="n">{posts.length}</span>
+                {t.all} <span className="n">{posts.length}</span>
               </button>
               {categories.map((item) => (
                 <button key={item.slug} type="button" className={category === item.slug ? 'on' : ''} onClick={() => setCategory(item.slug)}>
-                  {item.emoji} {item.label} <span className="n">{counts.get(item.slug) || 0}</span>
+                  {item.emoji} {lang === 'en' ? (getBlogCategory(item.slug).labelEn || '') : item.label} <span className="n">{counts.get(item.slug) || 0}</span>
                 </button>
               ))}
             </nav>
 
-            {loading && <p className="muted">Chargement des articles…</p>}
+            {loading && <p className="muted">{t.loadingPosts}</p>}
             {error && <p role="alert">{error}</p>}
 
             {featured && (
               <a className="featured card" href={`/blog/${featured.slug}`} onClick={(event) => openPost(event, featured.slug)}>
                 <div className="fmedia"><Cover post={featured} /></div>
                 <div className="fbody">
-                  <span className={pillClass(featured.category)}>{getBlogCategory(featured.category).emoji} {getBlogCategory(featured.category).label}</span>
-                  <p className="kicker">À la une</p>
-                  <h2>{featured.title}</h2>
-                  <p>{featured.excerpt}</p>
-                  <div className="meta"><span>{formatDate(featured.published_at)}</span><span>{featured.reading_time} min de lecture</span></div>
-                  <span className="readmore">Lire l’article →</span>
+                  <span className={pillClass(featured.category)}>{getBlogCategory(featured.category).emoji} {lang === 'en' ? (getBlogCategory(featured.category).labelEn || '') : getBlogCategory(featured.category).label}</span>
+                  <p className="kicker">{t.featured}</p>
+                  <h2>{blogCopy(lang, featured).title}</h2>
+                  <p>{blogCopy(lang, featured).frenchOnly ? t.frenchOnly : blogCopy(lang, featured).excerpt}</p>
+                  <div className="meta"><span>{formatDate(featured.published_at, lang)}</span><span>{t.minRead(featured.reading_time)}</span></div>
+                  <span className="readmore">{t.read} →</span>
                 </div>
               </a>
             )}
 
             <div className="section-head" style={{ marginTop: 44 }}>
-              <div><p className="kicker">Derniers articles</p><h2 style={{ fontSize: 'var(--fs-xl)' }}>À lire ensuite</h2></div>
+              <div><p className="kicker">{t.latest}</p><h2 style={{ fontSize: 'var(--fs-xl)' }}>{t.readNext}</h2></div>
             </div>
             <div className="bgrid">
               {grid.map((post) => {
                 const cat = getBlogCategory(post.category);
+                const copy = blogCopy(lang, post);
+                const catLabel = lang === 'en' ? (cat.labelEn || '') : cat.label;
                 return (
                   <a key={post.id} className="bcard card" href={`/blog/${post.slug}`} onClick={(event) => openPost(event, post.slug)}>
                     <div className="bmedia">
                       <Cover post={post} />
-                      <span className={pillClass(post.category)}>{cat.emoji} {cat.label}</span>
+                      <span className={pillClass(post.category)}>{cat.emoji} {catLabel}</span>
                     </div>
                     <div className="bbody">
-                      <h3>{post.title}</h3>
-                      <p>{post.excerpt}</p>
-                      <div className="meta"><span>{formatDate(post.published_at)}</span><span>{post.reading_time} min</span></div>
+                      <h3>{copy.title}</h3>
+                      <p>{copy.frenchOnly ? t.frenchOnly : copy.excerpt}</p>
+                      <div className="meta"><span>{formatDate(post.published_at, lang)}</span><span>{t.minutes(post.reading_time)}</span></div>
                     </div>
                   </a>
                 );
               })}
             </div>
-            {!loading && filtered.length === 0 && <p className="muted">Aucun article ne correspond.</p>}
+            {!loading && filtered.length === 0 && <p className="muted">{t.noMatch}</p>}
             {hasMore && category === 'all' && !query && (
-              <div className="more"><button type="button" className="btn btn-secondary btn-lg" onClick={loadMore}>Charger plus d’articles</button></div>
+              <div className="more"><button type="button" className="btn btn-secondary btn-lg" onClick={loadMore}>{t.loadMore}</button></div>
             )}
 
             <div className="section-head" style={{ marginTop: 64 }}>
-              <div><p className="kicker">Séries</p><h2 style={{ fontSize: 'var(--fs-xl)' }}>Explorer par thème</h2></div>
+              <div><p className="kicker">{t.series}</p><h2 style={{ fontSize: 'var(--fs-xl)' }}>{t.explore}</h2></div>
             </div>
             <div className="series">
-              <button type="button" className="s1" onClick={() => { setCategory('all'); setQuery('agent'); }}><strong>Agents & IA</strong><span>Outils, harness, MCP</span></button>
-              <button type="button" className="s2" onClick={() => { setCategory('all'); setQuery('cloud'); }}><strong>Cloud & DevOps</strong><span>Cloudflare, Docker, CI</span></button>
-              <button type="button" className="s3" onClick={() => setCategory(categories.find((item) => /sante|spir/i.test(item.slug))?.slug || 'sante')}><strong>Équilibre & foi</strong><span>Lâcher prise, santé mentale</span></button>
-              <button type="button" className="s4" onClick={() => { setCategory('all'); setQuery('bénévol'); }}><strong>Engagement</strong><span>Bénévolat, communautés</span></button>
+              <button type="button" className="s1" onClick={() => { setCategory('all'); setQuery('agent'); }}><strong>{t.seriesAgents}</strong><span>{t.seriesAgentsSub}</span></button>
+              <button type="button" className="s2" onClick={() => { setCategory('all'); setQuery('cloud'); }}><strong>{t.seriesCloud}</strong><span>{t.seriesCloudSub}</span></button>
+              <button type="button" className="s3" onClick={() => setCategory(categories.find((item) => /sante|spir/i.test(item.slug))?.slug || 'sante')}><strong>{t.seriesBalance}</strong><span>{t.seriesBalanceSub}</span></button>
+              <button type="button" className="s4" onClick={() => { setCategory('all'); setQuery(lang === 'en' ? 'community' : 'bénévol'); }}><strong>{t.seriesCivic}</strong><span>{t.seriesCivicSub}</span></button>
             </div>
           </div>
         </section>

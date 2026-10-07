@@ -3,16 +3,19 @@ import { fetchPortfolio } from '../../lib/api';
 import { navigate } from '../../lib/navigation';
 import { fixPublicXUrl } from '../../lib/portfolioView';
 import { useTheme } from '../../lib/theme';
+import { LanguageSwitch, useI18n } from '../../lib/i18n';
 
 type Current = 'home' | 'blog';
 
-const LINKS = [
-  { href: '/#profil', id: 'profil', label: 'Profil' },
-  { href: '/#stack', id: 'stack', label: 'Stack' },
-  { href: '/#projets', id: 'projets', label: 'Projets' },
-  { href: '/#parcours', id: 'parcours', label: 'Parcours' },
-  { href: '/blog', id: 'blog', label: 'Blog' },
-];
+const LINK_DEFS = [
+  { href: '/#profil', id: 'profil', key: 'profile' },
+  { href: '/#apropos', id: 'apropos', key: 'about' },
+  { href: '/#stack', id: 'stack', key: 'stack' },
+  { href: '/#projets', id: 'projets', key: 'projects' },
+  { href: '/#parcours', id: 'parcours', key: 'path' },
+  { href: '/#communaute', id: 'communaute', key: 'community' },
+  { href: '/blog', id: 'blog', key: 'blog' },
+] as const;
 
 function go(href: string, event: React.MouseEvent) {
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
@@ -45,7 +48,9 @@ const MoonIcon = () => (
 
 export const SiteHeader: React.FC<{ current?: Current }> = ({ current = 'home' }) => {
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
+  const links = LINK_DEFS.map((link) => ({ ...link, label: t.links[link.key] }));
 
   return (
     <header className="nav">
@@ -54,9 +59,9 @@ export const SiteHeader: React.FC<{ current?: Current }> = ({ current = 'home' }
           <img src="/favicon.png" alt="" width="36" height="36" />
           <span>Chaminade<span className="muted">.dev</span></span>
         </a>
-        <nav aria-label="Principale">
+        <nav aria-label={t.navMain}>
           <ul>
-            {LINKS.map((link) => (
+            {links.map((link) => (
               <li key={link.id}>
                 <a
                   href={link.href}
@@ -73,18 +78,19 @@ export const SiteHeader: React.FC<{ current?: Current }> = ({ current = 'home' }
           <button
             className="icon-btn"
             type="button"
-            aria-label={isDark ? 'Passer en thème clair' : 'Passer en thème sombre'}
+            aria-label={isDark ? t.themeLight : t.themeDark}
             onClick={toggleTheme}
           >
             {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
+          <LanguageSwitch />
           <a className="btn btn-primary" href="/#contact" onClick={(event) => go('/#contact', event)}>
-            Me contacter
+            {t.contactCta}
           </a>
           <button
             className="icon-btn menu"
             type="button"
-            aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-label={open ? t.closeMenu : t.openMenu}
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
           >
@@ -95,7 +101,8 @@ export const SiteHeader: React.FC<{ current?: Current }> = ({ current = 'home' }
         </div>
       </div>
       <div className={`menu-panel${open ? ' open' : ''}`}>
-        {LINKS.map((link) => (
+        <LanguageSwitch id="lang-mobile" />
+        {links.map((link) => (
           <a key={link.id} href={link.href} onClick={(event) => { setOpen(false); go(link.href, event); }}>
             {link.label}
           </a>
@@ -106,6 +113,7 @@ export const SiteHeader: React.FC<{ current?: Current }> = ({ current = 'home' }
 };
 
 export const SiteFooter: React.FC<{ year?: string; twitter?: string; name?: string }> = ({ year, twitter, name }) => {
+  const { t } = useI18n();
   const [live, setLive] = useState<{ name?: string; year?: string; twitter?: string }>({});
   useEffect(() => {
     let cancelled = false;
@@ -129,11 +137,11 @@ export const SiteFooter: React.FC<{ year?: string; twitter?: string; name?: stri
   return (
     <footer className="site">
       <div className="wrap">
-        <span>© {shownYear} {shownName} · Lomé, Togo</span>
-        <nav aria-label="Pied de page">
-          <a className="btn btn-link" href="/" onClick={(event) => go('/', event)}>Portfolio</a>
-          <a className="btn btn-link" href="/blog" onClick={(event) => go('/blog', event)}>Blog</a>
-          <a className="btn btn-link" href="/#cv" onClick={(event) => go('/#cv', event)}>CV</a>
+        <span>© {shownYear} {shownName} · Lomé, Togo · {t.rights}</span>
+        <nav aria-label={t.navFooter}>
+          <a className="btn btn-link" href="/" onClick={(event) => go('/', event)}>{t.links.profile}</a>
+          <a className="btn btn-link" href="/blog" onClick={(event) => go('/blog', event)}>{t.links.blog}</a>
+          <a className="btn btn-link" href="/#cv" onClick={(event) => go('/#cv', event)}>{t.links.cv}</a>
           <a className="btn btn-link" href={shownTwitter} target="_blank" rel="noopener noreferrer">X</a>
         </nav>
       </div>
@@ -142,14 +150,15 @@ export const SiteFooter: React.FC<{ year?: string; twitter?: string; name?: stri
 };
 
 export const MobileNav: React.FC<{ current?: Current }> = ({ current = 'home' }) => {
+  const { t } = useI18n();
   const items = [
-    { href: '/#profil', label: 'Profil', on: current === 'home' },
-    { href: '/#projets', label: 'Projets', on: false },
-    { href: '/blog', label: 'Blog', on: current === 'blog' },
-    { href: '/#contact', label: 'Contact', on: false },
+    { href: '/#profil', label: t.links.profile, on: current === 'home' },
+    { href: '/#projets', label: t.links.projects, on: false },
+    { href: '/blog', label: t.links.blog, on: current === 'blog' },
+    { href: '/#contact', label: t.links.contact, on: false },
   ];
   return (
-    <nav className="mobile-nav" aria-label="Navigation mobile">
+    <nav className="mobile-nav" aria-label={t.navMobile}>
       <ul>
         {items.map((item) => (
           <li key={item.label}>

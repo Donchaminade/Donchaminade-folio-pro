@@ -1,7 +1,10 @@
 import React, { FormEvent, useMemo, useState } from 'react';
 import Reveal from '../Reveal';
 import CollaborateModal from '../CollaborateModal';
+import { AboutSection, BookFab, ClientsSection, CommunitySection, PagesMarquee, ProofSection } from './RestoredHome';
 import { submitContact } from '../../lib/api';
+import { shownApiMessage, useI18n } from '../../lib/i18n';
+import { enText } from '../../lib/enText';
 import {
   BOOKING_URL,
   CV_EN,
@@ -17,7 +20,7 @@ import {
 } from '../../lib/portfolioView';
 
 const External = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
     <path d="M7 17 17 7M9 7h8v8" />
   </svg>
 );
@@ -96,10 +99,10 @@ function RoleLine({ text }: { text: string }) {
   return <>{match[1]}<em>{match[2]}</em>{match[3]}</>;
 }
 
-const ProjectDetail: React.FC<{ project: ProjectView }> = ({ project }) => (
+const ProjectDetail: React.FC<{ project: ProjectView; label: string }> = ({ project, label }) => (
   project.detail ? (
     <details className="pdetail">
-      <summary>Description détaillée</summary>
+      <summary>{label}</summary>
       <p>{project.detail}</p>
     </details>
   ) : null
@@ -115,7 +118,7 @@ function matchesFilter(project: ProjectView, filter: string): boolean {
   return true;
 }
 
-const ProjectTile: React.FC<{ project: ProjectView }> = ({ project }) => (
+const ProjectTile: React.FC<{ project: ProjectView; detailLabel: string }> = ({ project, detailLabel }) => (
   <article className="pcard card">
     <div className="pmedia">
       {project.image ? (
@@ -129,7 +132,7 @@ const ProjectTile: React.FC<{ project: ProjectView }> = ({ project }) => (
       <p className="kicker">{project.kicker}</p>
       <h3>{project.title}</h3>
       <p className="pdesc">{project.description}</p>
-      <ProjectDetail project={project} />
+      <ProjectDetail project={project} label={detailLabel} />
       <ul className="ptags">{project.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
       <div className="plinks">
         {project.links.map((link) => (
@@ -143,36 +146,47 @@ const ProjectTile: React.FC<{ project: ProjectView }> = ({ project }) => (
 );
 
 const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ data, onShowAll }) => {
-  const [filter, setFilter] = useState('Tous');
-  const [cvLang, setCvLang] = useState<'fr' | 'en'>('fr');
+  const { lang, t } = useI18n();
+  const [filter, setFilter] = useState('all');
   const [collaborateOpen, setCollaborateOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
 
-  const stacks: StackGroup[] = data.stacks.length > 0 ? data.stacks : STACK;
+  const rawStacks: StackGroup[] = data.stacks.length > 0 ? data.stacks : STACK;
+  const stacks = lang === 'en'
+    ? rawStacks.map((group) => ({
+        ...group,
+        title: enText(group.title),
+        chips: group.chips.map((chip) => ({ ...chip, label: enText(chip.label) })),
+      }))
+    : rawStacks;
+  const filterKey = filter === 'all' ? 'Tous' : filter;
   const visible = useMemo(
-    () => (filter === 'Tous' ? data.featured : data.projects.filter((project) => matchesFilter(project, filter))),
-    [data.featured, data.projects, filter]
+    () => (filter === 'all' ? data.featured : data.projects.filter((project) => matchesFilter(project, filterKey))),
+    [data.featured, data.projects, filter, filterKey]
   );
-  const cvHref = cvLang === 'fr' ? CV_FR : CV_EN;
-  const proof = data.testimonials.length + data.recommendations.length;
+  const cvHref = lang === 'en' ? CV_EN : CV_FR;
+  const cvFile = lang === 'en' ? CV_EN_FILE : CV_FR_FILE;
+  const otherCv = lang === 'en'
+    ? { href: CV_FR, file: CV_FR_FILE, hreflang: 'fr' as const }
+    : { href: CV_EN, file: CV_EN_FILE, hreflang: 'en' as const };
 
   const send = async (event: FormEvent) => {
     event.preventDefault();
     setFeedback('');
     setError('');
     if (!form.name.trim() || !form.email.trim() || form.message.trim().length < 10) {
-      setError('Indiquez un nom, un e-mail et un message d’au moins 10 caractères.');
+      setError(t.formInvalid);
       return;
     }
     setSending(true);
     try {
-      setFeedback(await submitContact(form.name.trim(), form.email.trim(), form.message.trim()));
+      setFeedback(shownApiMessage(lang, await submitContact(form.name.trim(), form.email.trim(), form.message.trim()), t.sent));
       setForm({ name: '', email: '', message: '' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Envoi impossible pour le moment.');
+      setError(shownApiMessage(lang, err instanceof Error ? err.message : '', t.sendFail));
     } finally {
       setSending(false);
     }
@@ -182,27 +196,23 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
     <>
       <CollaborateModal open={collaborateOpen} onClose={() => setCollaborateOpen(false)} />
       <section className="hero" id="profil">
-        <div className="blob" style={{ width: 420, height: 420, background: '#3E7BC2', top: -80, right: -60 }} />
-        <div className="blob" style={{ width: 300, height: 300, background: '#2BA3A0', bottom: -60, left: -80 }} />
+        <div className="blob" style={{ width: 480, height: 480, background: '#8BCBFF', top: -140, right: -80 }} />
+        <div className="blob" style={{ width: 320, height: 320, background: '#1E3A5F', bottom: -80, left: -100 }} />
         <div className="wrap hero-grid">
           <div>
-            <p className="status"><span className="pulse" aria-hidden="true" />{data.availability}</p>
+            <p className="status"><span className="pulse" aria-hidden="true" />{data.availability || t.availableNow}</p>
             <h1>{data.name}</h1>
             <p className="role"><RoleLine text={data.roleLine} /></p>
             <p className="lead">{data.lead}</p>
             <ul className="badges">{data.badges.map((badge) => <li key={badge}>{badge}</li>)}</ul>
             <div className="ctas">
-              <a className="btn btn-primary btn-lg" href="#projets">Voir mes projets</a>
-              <a className="btn btn-secondary btn-lg" href={cvHref} download={cvLang === 'fr' ? CV_FR_FILE : CV_EN_FILE}>
-                Télécharger le CV
+              <a className="btn btn-primary btn-lg" href="#projets">{t.seeProjects}</a>
+              <a className="btn btn-secondary btn-lg" href={cvHref} download={cvFile} hreflang={lang}>
+                {t.downloadCv}
               </a>
-              <span className="cv-switch" role="group" aria-label="Langue du CV">
-                <button type="button" className={cvLang === 'fr' ? 'on' : ''} onClick={() => setCvLang('fr')}>FR</button>
-                <button type="button" className={cvLang === 'en' ? 'on' : ''} onClick={() => setCvLang('en')}>EN</button>
-              </span>
-              <a className="btn btn-link" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Réserver un appel de 30 min</a>
+              <a className="btn btn-link" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">{t.book30}</a>
             </div>
-            <ul className="socials" aria-label="Réseaux">
+            <ul className="socials" aria-label={t.socials}>
               <li>
                 <a className="icon-btn" href={data.socials.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.26c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.94.86.09-.67.35-1.12.63-1.38-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05a9.3 9.3 0 0 1 2.5-.34c.85 0 1.7.11 2.5.34 1.9-1.32 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.38-.01 2.49-.01 2.83 0 .27.18.6.69.49A10.03 10.03 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z" /></svg>
@@ -222,7 +232,7 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
           </div>
           <figure className="hero-photo">
             <div className="frame">
-              <img src={data.photo} alt={`${data.name} au travail sur son ordinateur`} width="699" height="559" />
+              <img src={data.photo} alt={t.photoAlt(data.name)} width="699" height="559" />
             </div>
             {data.playCaption && (
               <figcaption className="card">
@@ -234,7 +244,8 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
         </div>
       </section>
 
-      <section className="facts" aria-label="Repères">
+      <AboutSection data={data} />
+      <section className="facts" id="stats" aria-label={t.factsLabel}>
         <div className="wrap">
           <ul>
             {data.facts.map((fact) => (
@@ -248,9 +259,9 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
         <div className="wrap">
           <div className="section-head">
             <div>
-              <p className="kicker">Stack</p>
-              <h2>Ce que j’utilise en production</h2>
-              <p>Regroupé par domaine. Chaque techno renvoie à au moins un projet livré.</p>
+              <p className="kicker">{t.stackKicker}</p>
+              <h2>{t.stackTitle}</h2>
+              <p>{t.stackLead}</p>
             </div>
           </div>
           <div className="stack-grid">
@@ -281,22 +292,28 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
         <div className="wrap">
           <div className="section-head">
             <div>
-              <p className="kicker">Projets</p>
-              <h2>Réalisations récentes</h2>
-              <p>Fiches du catalogue en ligne : titre, description, technologies et liens.</p>
+              <p className="kicker">{t.projectsKicker}</p>
+              <h2>{t.projectsTitle}</h2>
+              <p>{t.projectsLead}</p>
             </div>
-            <button type="button" className="btn btn-secondary" onClick={onShowAll}>Voir les {data.projectCount} projets</button>
+            <button type="button" className="btn btn-secondary" onClick={onShowAll}>{t.seeAll(data.projectCount)}</button>
           </div>
-          <div className="filters" role="tablist" aria-label="Filtrer les projets">
-            {['Tous', 'Web', 'Mobile', 'Backend', 'Open source'].map((item) => (
-              <button key={item} type="button" className={filter === item ? 'chip on' : 'chip'} role="tab" aria-selected={filter === item} onClick={() => setFilter(item)}>
-                {item}
+          <div className="filters" role="tablist" aria-label={t.filterProjects}>
+            {([
+              ['all', t.filters.all],
+              ['Web', t.filters.web],
+              ['Mobile', t.filters.mobile],
+              ['Backend', t.filters.backend],
+              ['Open source', t.filters.oss],
+            ] as const).map(([key, label]) => (
+              <button key={key} type="button" className={filter === key ? 'chip on' : 'chip'} role="tab" aria-selected={filter === key} onClick={() => setFilter(key)}>
+                {label}
               </button>
             ))}
           </div>
           <div className="pgrid">
             {visible.map((project) => (
-              <Reveal key={project.title}><ProjectTile project={project} /></Reveal>
+              <Reveal key={project.title}><ProjectTile project={project} detailLabel={t.detail} /></Reveal>
             ))}
           </div>
         </div>
@@ -305,7 +322,7 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
       <section className="section" id="parcours">
         <div className="wrap two-col">
           <div>
-            <div className="section-head"><div><p className="kicker">Parcours</p><h2>Expérience</h2></div></div>
+            <div className="section-head"><div><p className="kicker">{t.pathKicker}</p><h2>{t.pathTitle}</h2></div></div>
             <ol className="timeline">
               {data.roles.map((role) => (
                 <li key={`${role.company}-${role.period}-${role.role}`}>
@@ -320,104 +337,59 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
             </ol>
           </div>
           <aside id="cv" className="cv card" aria-labelledby="cv-title">
-            <p className="kicker">CV</p>
-            <h2 id="cv-title">Mon CV, en français ou en anglais</h2>
-            <p className="muted">{data.roleLine} · 2 pages · PDF texte · mis à jour en {CV_UPDATED}.</p>
+            <p className="kicker">{t.cvKicker}</p>
+            <h2 id="cv-title">{t.cvTitle}</h2>
+            <p className="muted">{t.cvMeta(data.roleLine, lang === 'en' ? t.updated : CV_UPDATED)}</p>
             <div className="cv-rows">
               <div className="cv-row">
                 <span className="lang">FR</span>
-                <div><strong>CV Full-Stack</strong><span className="muted">PDF · {CV_FR_SIZE}</span></div>
-                <a className="btn btn-primary" href={CV_FR} download={CV_FR_FILE} hreflang="fr">Télécharger</a>
+                <div><strong>{t.cvFrName}</strong><span className="muted">PDF · {CV_FR_SIZE}</span></div>
+                <a className="btn btn-primary" href={CV_FR} download={CV_FR_FILE} hreflang="fr">{t.download}</a>
               </div>
               <div className="cv-row">
                 <span className="lang">EN</span>
-                <div><strong>Full-Stack résumé</strong><span className="muted">PDF · {CV_EN_SIZE}</span></div>
-                <a className="btn btn-secondary" href={CV_EN} download={CV_EN_FILE} hreflang="en">Download</a>
+                <div><strong>{t.cvEnName}</strong><span className="muted">PDF · {CV_EN_SIZE}</span></div>
+                <a className="btn btn-secondary" href={CV_EN} download={CV_EN_FILE} hreflang="en">{t.download}</a>
               </div>
             </div>
-            <a className="btn btn-link" href={CV_FR} target="_blank" rel="noopener noreferrer">Ouvrir l’aperçu dans un nouvel onglet</a>
+            <a className="btn btn-link" href={cvHref} target="_blank" rel="noopener noreferrer">{t.openPreview}</a>
+            <a className="btn btn-link" href={otherCv.href} download={otherCv.file} hreflang={otherCv.hreflang}>{t.cvAlternate}</a>
           </aside>
         </div>
       </section>
 
-      {data.communities.length > 0 && (
-        <section className="section" id="communaute">
-          <div className="wrap">
-            <div className="section-head">
-              <div>
-                <p className="kicker">Communautés</p>
-                <h2>Là où je m’implique</h2>
-              </div>
-            </div>
-            <div className="comm-grid">
-              {data.communities.map((community) => {
-                const href = community.websiteUrl || community.linkedinUrl || undefined;
-                const inner = (
-                  <>
-                    <strong>{community.name}</strong>
-                    <span>{community.role}</span>
-                  </>
-                );
-                return href ? (
-                  <a key={community.name} className="comm-card card" href={href} target="_blank" rel="noopener noreferrer">{inner}</a>
-                ) : (
-                  <article key={community.name} className="comm-card card">{inner}</article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {proof > 0 && (
-        <section className="section" id="temoignages">
-          <div className="wrap">
-            <div className="section-head"><div><p className="kicker">Retours</p><h2>Ce que disent les collaborations</h2></div></div>
-            <div className="quote-list">
-              {data.testimonials.map((item) => (
-                <blockquote key={item.name} className="card">
-                  <p>{item.quote}</p>
-                  <p className="muted">{item.name}{item.role ? ` · ${item.role}` : ''}{item.company ? ` · ${item.company}` : ''}</p>
-                </blockquote>
-              ))}
-              {data.recommendations.map((item) => (
-                <blockquote key={`${item.name}-${item.createdAt || item.body.slice(0, 12)}`} className="card">
-                  <p>{item.body}</p>
-                  <p className="muted">{item.name}{item.role ? ` · ${item.role}` : ''}{item.company ? ` · ${item.company}` : ''}</p>
-                </blockquote>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <CommunitySection data={data} />
+      <PagesMarquee data={data} />
+      <ProofSection data={data} />
+      <ClientsSection data={data} />
 
       <section className="section contact" id="contact">
         <div className="wrap">
           <div className="contact-card card">
             <div>
-              <p className="kicker">Contact</p>
-              <h2>Un projet, un poste, une mission ?</h2>
-              <p className="muted">Écrivez-moi ou réservez directement un créneau de 30 minutes.</p>
+              <p className="kicker">{t.contactKicker}</p>
+              <h2>{t.contactTitle}</h2>
+              <p className="muted">{t.contactLead}</p>
             </div>
             <div className="ctas">
-              <a className="btn btn-primary btn-lg" href={`mailto:${data.email}`}>Écrire un e-mail</a>
-              <a className="btn btn-secondary btn-lg" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">Réserver un appel</a>
-              <button type="button" className="btn btn-link" onClick={() => setCollaborateOpen(true)}>Proposer une collaboration</button>
+              <a className="btn btn-primary btn-lg" href={`mailto:${data.email}`}>{t.writeEmail}</a>
+              <a className="btn btn-secondary btn-lg" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">{t.book}</a>
+              <button type="button" className="btn btn-link" onClick={() => setCollaborateOpen(true)}>{t.propose}</button>
             </div>
             <form onSubmit={send} style={{ width: '100%' }}>
               <div className="form-grid">
-                <label className="field">Nom
+                <label className="field">{t.name}
                   <input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} autoComplete="name" required />
                 </label>
-                <label className="field">E-mail
+                <label className="field">{t.email}
                   <input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} autoComplete="email" required />
                 </label>
-                <label className="field" style={{ gridColumn: '1 / -1' }}>Message
+                <label className="field" style={{ gridColumn: '1 / -1' }}>{t.message}
                   <textarea value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} required minLength={10} />
                 </label>
               </div>
               <div className="ctas" style={{ marginTop: 12 }}>
-                <button className="btn btn-primary" type="submit" disabled={sending}>{sending ? 'Envoi…' : 'Envoyer le message'}</button>
+                <button className="btn btn-primary" type="submit" disabled={sending}>{sending ? t.sending : t.send}</button>
               </div>
               {feedback && <p className="form-note ok" role="status">{feedback}</p>}
               {error && <p className="form-note err" role="alert">{error}</p>}
@@ -425,6 +397,7 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
           </div>
         </div>
       </section>
+      <BookFab />
     </>
   );
 };

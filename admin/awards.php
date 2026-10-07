@@ -40,7 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $maxOrder = (int) $db->query('SELECT COALESCE(MAX(sort_order),0) FROM awards')->fetchColumn();
             $db->prepare('INSERT INTO awards (title, issuer, year, description, sort_order) VALUES (?,?,?,?,?)')
                 ->execute([$title, $issuer, $year, $description, $maxOrder + 1]);
+            $editIdPost = (int) $db->lastInsertId();
         }
+        dbUpdatePresentColumns($db, 'awards', $editIdPost, [
+            'title_en' => trim((string) ($_POST['title_en'] ?? '')),
+            'description_en' => trim((string) ($_POST['description_en'] ?? '')),
+        ]);
         adminSetFlash('Distinction enregistrée.');
         redirect('awards.php');
     }
@@ -75,14 +80,17 @@ ob_start();
         <?= Csrf::field() ?>
         <input type="hidden" name="action" value="save">
         <input type="hidden" name="id" value="<?= (int) ($editRow['id'] ?? 0) ?>">
-        <?= adminLabel('Titre *') ?>
-        <input name="title" <?= $ia ?> value="<?= e($editRow['title'] ?? '') ?>" required placeholder="Ex. 1er Prix Hackathon Ecole IA">
+        <?php adminLangOpen(); ?>
+        <?php adminField('title', 'Titre *', (string) ($editRow['title'] ?? ''), 'text', true, 'title_en'); ?>
+        <?php adminField('description', 'Description', (string) ($editRow['description'] ?? ''), 'textarea', false, 'description_en'); ?>
+        <?php adminLangSwitch(); ?>
+        <?php adminField('title_en', 'Title', (string) ($editRow['title_en'] ?? '')); ?>
+        <?php adminField('description_en', 'Description', (string) ($editRow['description_en'] ?? ''), 'textarea'); ?>
+        <?php adminLangClose(); ?>
         <?= adminLabel('Organisme / événement') ?>
         <input name="issuer" <?= $ia ?> value="<?= e($editRow['issuer'] ?? '') ?>" placeholder="Ex. ACAN, MLH Togo…">
         <?= adminLabel('Année *') ?>
         <input name="year" <?= $ia ?> value="<?= e($editRow['year'] ?? date('Y')) ?>" required maxlength="20" class="max-w-[120px]">
-        <?= adminLabel('Description') ?>
-        <textarea name="description" rows="4" <?= $ia ?> placeholder="Courte description affichée sur le site…"><?= e($editRow['description'] ?? '') ?></textarea>
         <p class="pt-4"><?= adminSubmitBtn() ?></p>
     </form>
 <?php adminPanelEnd(); ?>

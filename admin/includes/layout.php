@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/icons.php';
 require_once __DIR__ . '/admin-ui.php';
+require_once __DIR__ . '/i18n-form.php';
 
 function adminLayout(string $title, string $content, string $active = '', ?string $subtitle = null): void
 {
@@ -40,6 +41,7 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
         'communities.php' => ['label' => 'Communautés', 'notif' => null],
         'awards.php' => ['label' => 'Distinctions', 'notif' => null],
         'messages.php' => ['label' => 'Messages', 'notif' => 'messages'],
+        'skills.php' => ['label' => 'Compétences', 'notif' => null],
     ];
     $icons = adminNavIcons();
     $flash = adminFlash();
@@ -56,8 +58,9 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <title><?= e($title) ?> — Admin Donchaminade</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>
+      try { if (localStorage.getItem('admin-theme') === 'light') document.documentElement.classList.add('admin-light'); } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -69,13 +72,13 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
     <aside id="adminSidebar" class="admin-sidebar fixed left-0 top-0 flex h-full flex-col">
         <div class="p-4 border-b border-[var(--a-border)] shrink-0 flex items-center gap-2">
             <a href="index.php" class="admin-brand-wrap flex flex-1 items-center gap-2 min-w-0 group">
-                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[rgba(61,110,168,0.2)] text-[var(--a-accent)] font-bold text-xs">DC</span>
+                <span class="admin-mark">DC</span>
                 <span class="admin-brand-sub min-w-0">
                     <span class="admin-brand-title block truncate">Donchaminade</span>
                     <span class="flex items-center gap-1 text-[9px] uppercase tracking-[0.16em] text-[var(--a-muted)]">Admin</span>
                 </span>
             </a>
-            <button type="button" id="adminSidebarToggle" class="hidden lg:flex p-2 rounded-lg hover:bg-[var(--a-elevated)] text-[var(--a-muted)] shrink-0" aria-label="Réduire le menu" title="Réduire le menu">
+            <button type="button" id="adminSidebarToggle" class="icon-btn hidden lg:flex p-2 shrink-0" aria-label="Réduire le menu" title="Réduire le menu">
                 <?= adminIcon('panel-left-close', 'w-4 h-4') ?>
             </button>
         </div>
@@ -111,8 +114,8 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
     </aside>
 
     <main id="adminMain" class="admin-main min-h-full">
-        <header class="sticky top-0 z-30 flex items-center gap-3 px-4 py-3 lg:px-8 border-b border-[var(--a-border)] bg-[rgba(18,20,23,0.92)] backdrop-blur-md">
-            <button type="button" id="adminMobileMenuBtn" class="lg:hidden p-2 rounded-xl bg-[var(--a-elevated)] text-[var(--a-muted)]" aria-label="Menu">
+        <header class="sticky top-0 z-30 flex items-center gap-3 px-4 py-3 lg:px-8 border-b border-[var(--a-border)] backdrop-blur-md">
+            <button type="button" id="adminMobileMenuBtn" class="icon-btn lg:hidden p-2" aria-label="Menu">
                 <?= adminIcon('menu', 'w-5 h-5') ?>
             </button>
             <div class="flex-1 min-w-0">
@@ -122,7 +125,11 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
                 <?php endif; ?>
             </div>
             <div class="relative shrink-0">
-                <button type="button" id="adminNotifBell" class="relative p-2.5 rounded-xl bg-[var(--a-elevated)] hover:bg-[var(--a-surface)] text-[var(--a-muted)] hover:text-[var(--a-ink)] transition-colors" aria-label="Notifications">
+                <button type="button" id="adminThemeToggle" class="icon-btn p-2.5" aria-label="Basculer le thème clair ou sombre">
+                    <?= adminIcon('sun', 'w-5 h-5 theme-icon-sun') ?>
+                    <?= adminIcon('moon', 'w-5 h-5 theme-icon-moon') ?>
+                </button>
+                <button type="button" id="adminNotifBell" class="icon-btn relative p-2.5" aria-label="Notifications">
                     <?= adminIcon('bell', 'w-5 h-5') ?>
                     <?php if ($notif['total'] > 0): ?>
                         <span id="adminNotifTotal" class="admin-nav-badge absolute -top-0.5 -right-0.5"><?= $notif['total'] > 99 ? '99+' : (int) $notif['total'] ?></span>
@@ -177,45 +184,61 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
                 </a>
             <?php endif; ?>
 
-            <?php if ($flash): ?>
-                <div class="mb-6 px-4 py-3 rounded-xl bg-[rgba(77,154,114,0.12)] border border-[rgba(77,154,114,0.35)] text-[#9dd4b4] text-sm font-medium flex items-center gap-2">
-                    <?= adminIcon('check-circle', 'w-4 h-4 shrink-0') ?> <?= e($flash) ?>
-                </div>
-            <?php endif; ?>
-
             <?= $content ?>
         </div>
     </main>
 
+    <div class="admin-toasts" id="adminToasts" aria-live="polite"></div>
+    <?php if ($flash): ?>
+        <div id="adminFlashData" hidden data-type="<?= e($flash['type']) ?>" data-message="<?= e($flash['message']) ?>"></div>
+    <?php endif; ?>
+
     <script src="assets/admin-shell.js"></script>
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });</script>
 </body>
 </html>
     <?php
 }
 
-function adminFlash(): ?string
+function adminFlash(): ?array
 {
     Auth::startSession();
-    if (!empty($_SESSION['flash'])) {
-        $msg = $_SESSION['flash'];
-        unset($_SESSION['flash']);
-        return $msg;
+    if (empty($_SESSION['flash'])) {
+        return null;
     }
-    return null;
+    $msg = $_SESSION['flash'];
+    unset($_SESSION['flash']);
+    if (is_string($msg)) {
+        return ['message' => $msg, 'type' => 'ok'];
+    }
+    if (!is_array($msg) || empty($msg['message'])) {
+        return null;
+    }
+
+    return [
+        'message' => (string) $msg['message'],
+        'type' => ($msg['type'] ?? '') === 'error' ? 'error' : 'ok',
+    ];
 }
 
-function adminSetFlash(string $message): void
+function adminSetFlash(string $message, string $type = ''): void
 {
     Auth::startSession();
-    $_SESSION['flash'] = $message;
+    if ($type !== 'error' && $type !== 'ok') {
+        $type = preg_match('/erreur|obligatoire|incorrect|impossible|introuvable|inaccessible/i', $message) ? 'error' : 'ok';
+    }
+    $_SESSION['flash'] = ['message' => $message, 'type' => $type];
+}
+
+function adminEmptyState(string $title, string $text): string
+{
+    return '<div class="admin-empty">' . adminIcon('inbox', 'ico') . '<h3>' . e($title) . '</h3><p>' . e($text) . '</p></div>';
 }
 
 function adminNavClasses(bool $active): string
 {
     $base = 'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ';
     return $active
-        ? $base . 'bg-[rgba(61,110,168,0.18)] text-[var(--a-accent)] border border-[rgba(61,110,168,0.3)]'
+        ? $base . 'is-active bg-[rgba(61,110,168,0.18)] text-[var(--a-accent)] border border-[rgba(61,110,168,0.3)]'
         : $base . 'text-[var(--a-muted)] hover:bg-[var(--a-elevated)] hover:text-[var(--a-ink)] border border-transparent';
 }
 

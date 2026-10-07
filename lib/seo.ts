@@ -23,17 +23,20 @@ export function applyPortfolioSeo(profile: {
   full_name?: string;
   bio?: string;
   hero_title?: string;
-} | null): void {
+} | null, lang: 'fr' | 'en' = 'fr'): void {
   const siteUrl = getCanonicalShareUrl(
     (import.meta.env.VITE_SITE_URL as string | undefined) || window.location.origin
   );
   const pageUrl = getCanonicalShareUrl(window.location.href);
-  const title = profile?.full_name
-    ? `${profile.full_name} — Développeur Web & Mobile`
-    : 'Donchaminade | Développeur Web & Mobile Full-Stack';
-  const description =
-    profile?.bio?.trim() ||
-    'Portfolio de ADJOLOU Dondah Chaminade — développeur web & mobile. Solutions digitales sur mesure.';
+  const title = lang === 'en'
+    ? (profile?.full_name ? `${profile.full_name} — Full-Stack Web & Mobile Developer` : 'Donchaminade | Full-Stack Web & Mobile Developer')
+    : (profile?.full_name
+      ? `${profile.full_name} — Développeur Web & Mobile`
+      : 'Donchaminade | Développeur Web & Mobile Full-Stack');
+  const description = lang === 'en'
+    ? (profile?.bio?.trim() || 'Portfolio of Chaminade Adjolou, full-stack web and mobile developer in Lomé.')
+    : (profile?.bio?.trim() ||
+      'Portfolio de ADJOLOU Dondah Chaminade — développeur web & mobile. Solutions digitales sur mesure.');
   const image = getSharePreviewImageUrl(siteUrl);
 
   document.title = title;

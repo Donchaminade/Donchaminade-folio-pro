@@ -11,6 +11,7 @@ function publicBlogPost(array $post): array
 {
     $allowed = [
         'id', 'slug', 'title', 'excerpt', 'category', 'content', 'cover_image',
+        'title_en', 'excerpt_en', 'content_en', 'has_english',
         'reading_time', 'published_at', 'views_count', 'likes_count', 'shares_count',
         'comments_count', 'liked', 'share_url', 'og_image_url', 'comments',
     ];

@@ -8,6 +8,7 @@
     "bundle:chat": "node scripts/bundle-api-chat.mjs",
     "build": "node scripts/bundle-api-chat.mjs && vite build",
     "preview": "vite preview",
+    "build:admin": "tailwindcss -i ./admin/assets/tailwind.entry.css -o ./admin/assets/admin.css --minify",
     "pack:hostinger": "php scripts/build-hostinger-package.php",
     "test:chat": "tsx --test tests/chat.test.ts tests/chat-api-bundle.test.ts"
   },
@@ -24,6 +25,7 @@
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@types/dompurify": "^3.0.5",
     "@types/node": "^22.14.0",
