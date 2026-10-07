@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchPortfolio } from './lib/api';
 import { applyPortfolioSeo } from './lib/seo';
-import { HERO_LEAD, buildPortfolioView, type PortfolioBundle, type PortfolioView } from './lib/portfolioView';
+import { buildPortfolioView, type PortfolioBundle, type PortfolioView } from './lib/portfolioView';
 import HomeView from './components/home/HomeView';
 import AllProjects from './components/AllProjects';
 import { MobileNav, PageDecor, SiteFooter, SiteHeader } from './components/layout/SiteChrome';
@@ -18,7 +18,7 @@ const App: React.FC = () => {
         applyPortfolioSeo({
           full_name: next.name,
           hero_title: next.roleLine,
-          bio: HERO_LEAD,
+          bio: next.lead,
         });
       })
       .catch(() => {});

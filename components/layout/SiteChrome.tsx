@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useTheme } from '../../lib/theme';
+import React, { useEffect, useState } from 'react';
+import { fetchPortfolio } from '../../lib/api';
 import { navigate } from '../../lib/navigation';
+import { fixPublicXUrl } from '../../lib/portfolioView';
+import { useTheme } from '../../lib/theme';
 
 type Current = 'home' | 'blog';
 
@@ -103,19 +105,41 @@ export const SiteHeader: React.FC<{ current?: Current }> = ({ current = 'home' }
   );
 };
 
-export const SiteFooter: React.FC<{ year: string; twitter?: string }> = ({ year, twitter = 'https://x.com/Donchaminade' }) => (
-  <footer className="site">
-    <div className="wrap">
-      <span>© {year} Chaminade Adjolou · Lomé, Togo</span>
-      <nav aria-label="Pied de page">
-        <a className="btn btn-link" href="/" onClick={(event) => go('/', event)}>Portfolio</a>
-        <a className="btn btn-link" href="/blog" onClick={(event) => go('/blog', event)}>Blog</a>
-        <a className="btn btn-link" href="/#cv" onClick={(event) => go('/#cv', event)}>CV</a>
-        <a className="btn btn-link" href={twitter} target="_blank" rel="noopener noreferrer">X</a>
-      </nav>
-    </div>
-  </footer>
-);
+export const SiteFooter: React.FC<{ year?: string; twitter?: string; name?: string }> = ({ year, twitter, name }) => {
+  const [live, setLive] = useState<{ name?: string; year?: string; twitter?: string }>({});
+  useEffect(() => {
+    let cancelled = false;
+    fetchPortfolio<{ profile?: { full_name?: string; footer_year?: string; twitter_url?: string } | null }>()
+      .then((data) => {
+        if (cancelled || !data?.profile) return;
+        setLive({
+          name: data.profile.full_name?.trim() || undefined,
+          year: data.profile.footer_year?.trim() || undefined,
+          twitter: data.profile.twitter_url?.trim() || undefined,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const shownName = live.name || name || 'Chaminade Adjolou';
+  const shownYear = live.year || year || String(new Date().getFullYear());
+  const shownTwitter = fixPublicXUrl(live.twitter || twitter);
+  return (
+    <footer className="site">
+      <div className="wrap">
+        <span>© {shownYear} {shownName} · Lomé, Togo</span>
+        <nav aria-label="Pied de page">
+          <a className="btn btn-link" href="/" onClick={(event) => go('/', event)}>Portfolio</a>
+          <a className="btn btn-link" href="/blog" onClick={(event) => go('/blog', event)}>Blog</a>
+          <a className="btn btn-link" href="/#cv" onClick={(event) => go('/#cv', event)}>CV</a>
+          <a className="btn btn-link" href={shownTwitter} target="_blank" rel="noopener noreferrer">X</a>
+        </nav>
+      </div>
+    </footer>
+  );
+};
 
 export const MobileNav: React.FC<{ current?: Current }> = ({ current = 'home' }) => {
   const items = [

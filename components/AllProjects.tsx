@@ -51,6 +51,12 @@ const AllProjects: React.FC<{ projects: ProjectView[]; onBack: () => void }> = (
                 <p className="kicker">{project.kicker}</p>
                 <h3>{project.title}</h3>
                 <p className="pdesc">{project.description}</p>
+                {project.detail ? (
+                  <details className="pdetail">
+                    <summary>Description détaillée</summary>
+                    <p>{project.detail}</p>
+                  </details>
+                ) : null}
                 <ul className="ptags">{project.tags.slice(0, 4).map((tag) => <li key={tag}>{tag}</li>)}</ul>
                 <div className="plinks">
                   {project.links.map((link) => (

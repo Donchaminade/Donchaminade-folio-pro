@@ -238,7 +238,13 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
   }
 
   const linkedin = p.linkedin_url || 'https://www.linkedin.com/in/chaminadeadjolou';
+  const grosbit = facts.experiences.find((item) => /grosbit/i.test(item.company));
+  const roleLine = grosbit ? `${grosbit.company} : ${grosbit.role} (${grosbit.period}).` : '';
+  const schools = facts.education.filter(Boolean).slice(0, 3).join(' · ');
+  const schoolLine = schools
+    ? (lang === 'en' ? `Education: ${schools}.` : `Formations : ${schools}.`)
+    : '';
   return lang === 'en'
-    ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ''} ${p.bio} GROSBIT SARLU: Nov 2025 – June 2026 (fixed-term / freelance, remote). Education: Lomé Business School (2024) and DEFITECH (2023). LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.`
-    : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Basé à ${p.location}.` : ''} ${p.bio} GROSBIT SARLU : nov. 2025 – juin 2026 (CDD / freelance, remote). Formations : Lomé Business School (2024) et DEFITECH (2023). LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
+    ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ''} ${p.bio} ${roleLine} ${schoolLine} LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.`
+    : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Basé à ${p.location}.` : ''} ${p.bio} ${roleLine} ${schoolLine} LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
 }

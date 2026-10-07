@@ -11,9 +11,9 @@ import {
   CV_FR_FILE,
   CV_FR_SIZE,
   CV_UPDATED,
-  HERO_LEAD,
   type PortfolioView,
   type ProjectView,
+  type StackGroup,
 } from '../../lib/portfolioView';
 
 const External = () => (
@@ -26,7 +26,7 @@ const STACK = [
   {
     title: 'Backend',
     chips: [
-      { label: 'Java 17 · Spring Boot', icon: 'spring/spring-original.svg', fresh: true },
+      { label: 'Java 17 · Spring Boot', icon: 'spring/spring-original.svg' },
       { label: 'Node.js · Express', icon: 'nodejs/nodejs-original.svg' },
       { label: 'PHP 8 · Laravel', icon: 'php/php-original.svg' },
       { label: 'API REST · JWT' },
@@ -48,7 +48,7 @@ const STACK = [
     title: 'Mobile',
     chips: [
       { label: 'Flutter · Dart', icon: 'flutter/flutter-original.svg' },
-      { label: 'React Native · Expo', icon: 'react/react-original.svg', fresh: true },
+      { label: 'React Native · Expo', icon: 'react/react-original.svg' },
       { label: 'sqflite · Hive' },
       { label: 'FCM', icon: 'firebase/firebase-original.svg' },
     ],
@@ -86,8 +86,24 @@ const STACK = [
 ];
 
 function iconUrl(path: string): string {
+  if (/^https?:\/\//i.test(path) || path.startsWith('/')) return path;
   return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${path}`;
 }
+
+function RoleLine({ text }: { text: string }) {
+  const match = text.match(/^(.*?)(Web\s*&\s*Mobile)(.*)$/i);
+  if (!match) return <>{text}</>;
+  return <>{match[1]}<em>{match[2]}</em>{match[3]}</>;
+}
+
+const ProjectDetail: React.FC<{ project: ProjectView }> = ({ project }) => (
+  project.detail ? (
+    <details className="pdetail">
+      <summary>Description détaillée</summary>
+      <p>{project.detail}</p>
+    </details>
+  ) : null
+);
 
 function matchesFilter(project: ProjectView, filter: string): boolean {
   if (filter === 'Tous') return true;
@@ -113,6 +129,7 @@ const ProjectTile: React.FC<{ project: ProjectView }> = ({ project }) => (
       <p className="kicker">{project.kicker}</p>
       <h3>{project.title}</h3>
       <p className="pdesc">{project.description}</p>
+      <ProjectDetail project={project} />
       <ul className="ptags">{project.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
       <div className="plinks">
         {project.links.map((link) => (
@@ -134,8 +151,9 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
 
+  const stacks: StackGroup[] = data.stacks.length > 0 ? data.stacks : STACK;
   const visible = useMemo(
-    () => (filter === 'Tous' ? data.featured : data.projects.filter((project) => matchesFilter(project, filter)).slice(0, 8)),
+    () => (filter === 'Tous' ? data.featured : data.projects.filter((project) => matchesFilter(project, filter))),
     [data.featured, data.projects, filter]
   );
   const cvHref = cvLang === 'fr' ? CV_FR : CV_EN;
@@ -170,8 +188,8 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
           <div>
             <p className="status"><span className="pulse" aria-hidden="true" />{data.availability}</p>
             <h1>{data.name}</h1>
-            <p className="role">Développeur Full-Stack <em>Web & Mobile</em></p>
-            <p className="lead">{HERO_LEAD}</p>
+            <p className="role"><RoleLine text={data.roleLine} /></p>
+            <p className="lead">{data.lead}</p>
             <ul className="badges">{data.badges.map((badge) => <li key={badge}>{badge}</li>)}</ul>
             <div className="ctas">
               <a className="btn btn-primary btn-lg" href="#projets">Voir mes projets</a>
@@ -204,12 +222,14 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
           </div>
           <figure className="hero-photo">
             <div className="frame">
-              <img src={data.photo} alt="Chaminade Adjolou au travail sur son ordinateur" width="699" height="559" />
+              <img src={data.photo} alt={`${data.name} au travail sur son ordinateur`} width="699" height="559" />
             </div>
-            <figcaption className="card">
-              <strong>1 app sur Google Play</strong>
-              <span className="muted">Picon · com.photopicon.app</span>
-            </figcaption>
+            {data.playCaption && (
+              <figcaption className="card">
+                <strong>{data.playCaption.title}</strong>
+                <span className="muted">{data.playCaption.detail}</span>
+              </figcaption>
+            )}
           </figure>
         </div>
       </section>
@@ -217,10 +237,9 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
       <section className="facts" aria-label="Repères">
         <div className="wrap">
           <ul>
-            <li><strong>{data.profile.experience_badge?.includes('4') ? '4+' : '4+'} ans</strong><span>d’expérience web et mobile</span></li>
-            <li><strong>{data.projectCount}</strong><span>projets au catalogue</span></li>
-            <li><strong>{data.prizeCount} prix</strong><span>hackathons et concours 2025</span></li>
-            <li><strong>{data.roles.length}</strong><span>postes et stages depuis 2024</span></li>
+            {data.facts.map((fact) => (
+              <li key={`${fact.label}-${fact.strong}`}><strong>{fact.strong}</strong><span>{fact.label}</span></li>
+            ))}
           </ul>
         </div>
       </section>
@@ -235,20 +254,19 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
             </div>
           </div>
           <div className="stack-grid">
-            {STACK.map((group) => (
+            {stacks.map((group) => (
               <Reveal key={group.title}>
                 <article className="stack-group card">
                   <h3>{group.title}</h3>
                   <ul className="chips">
-                    {group.chips.map((chip) => (
-                      <li key={chip.label} className={chip.fresh ? 'chip new' : 'chip'} title={chip.fresh ? 'Ajout récent au portfolio' : undefined}>
+                    {group.chips.map((chip, index) => (
+                      <li key={`${chip.label}-${index}`} className="chip">
                         {chip.icon ? (
                           <span className="ico"><img src={iconUrl(chip.icon)} alt="" width="14" height="14" loading="lazy" /></span>
                         ) : (
                           <span className="dot" aria-hidden="true" />
                         )}
                         {chip.label}
-                        {chip.fresh && <span className="sr-only">, nouveau</span>}
                       </li>
                     ))}
                   </ul>
@@ -265,7 +283,7 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
             <div>
               <p className="kicker">Projets</p>
               <h2>Réalisations récentes</h2>
-              <p>Les chiffres viennent du code des dépôts (audit GitHub du 7 octobre 2026).</p>
+              <p>Fiches du catalogue en ligne : titre, description, technologies et liens.</p>
             </div>
             <button type="button" className="btn btn-secondary" onClick={onShowAll}>Voir les {data.projectCount} projets</button>
           </div>
@@ -290,12 +308,12 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
             <div className="section-head"><div><p className="kicker">Parcours</p><h2>Expérience</h2></div></div>
             <ol className="timeline">
               {data.roles.map((role) => (
-                <li key={role.company}>
+                <li key={`${role.company}-${role.period}-${role.role}`}>
                   <div className="when">{role.period}</div>
                   <div className="what">
                     <h3>{role.role}</h3>
-                    <p className="org">{role.company} <span>· {role.meta}</span></p>
-                    <p className="muted">{role.summary}</p>
+                    <p className="org">{role.company}{role.meta ? <span> · {role.meta}</span> : null}</p>
+                    {role.summary ? <p className="muted">{role.summary}</p> : null}
                   </div>
                 </li>
               ))}
@@ -304,7 +322,7 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
           <aside id="cv" className="cv card" aria-labelledby="cv-title">
             <p className="kicker">CV</p>
             <h2 id="cv-title">Mon CV, en français ou en anglais</h2>
-            <p className="muted">Développeur Full-Stack Web & Mobile · 2 pages · PDF texte · mis à jour en {CV_UPDATED}.</p>
+            <p className="muted">{data.roleLine} · 2 pages · PDF texte · mis à jour en {CV_UPDATED}.</p>
             <div className="cv-rows">
               <div className="cv-row">
                 <span className="lang">FR</span>

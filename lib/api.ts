@@ -1,17 +1,17 @@
 export function getApiBase(): string {
-  const explicit = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
+  const explicit = (import.meta.env?.VITE_API_URL as string | undefined)?.trim();
   if (explicit) {
     return explicit.replace(/\/$/, '');
   }
   // En dev : proxy Vite → XAMPP (voir vite.config.ts)
-  if (import.meta.env.DEV) {
+  if (import.meta.env?.DEV) {
     return '';
   }
   return '';
 }
 
 export function isApiConfigured(): boolean {
-  return getApiBase() !== '' || import.meta.env.DEV;
+  return getApiBase() !== '' || Boolean(import.meta.env?.DEV);
 }
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {

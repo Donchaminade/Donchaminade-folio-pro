@@ -303,9 +303,7 @@ async function loadLiveFacts(): Promise<PortfolioFacts> {
       })),
       blogs: (() => {
         const live = mapBlogs(blogRes?.data);
-        if (live.length === 0) return fallback.blogs;
-        const seen = new Set(live.map((b) => b.slug));
-        return [...live, ...fallback.blogs.filter((b) => !seen.has(b.slug))];
+        return live.length > 0 ? live : fallback.blogs;
       })(),
       testimonials: (liveTestimonials.length ? liveTestimonials : fallback.testimonials).filter(
         (item) => item.name && item.quote && !isFakeChatTestimonial(item.name)

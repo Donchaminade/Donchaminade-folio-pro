@@ -369,7 +369,7 @@ var KNOWLEDGE_FAQ = [
   }
 ];
 var KNOWLEDGE_NOTES = [
-  "CONFLITS: GROSBIT SARLU est dat\xE9 nov. 2025 \u2013 juin 2026 (CDD / freelance, remote). Ne pas le pr\xE9senter comme un poste \xAB pr\xE9sent \xBB ni \xAB depuis f\xE9vrier 2026 \xBB. Efficorpe et Axone sont des stages.",
+  "CONFLITS: les dates, intitul\xE9s, stacks et le badge d\u2019exp\xE9rience du CONTEXTE priment. Ne pas les r\xE9\xE9crire avec une valeur m\xE9moris\xE9e.",
   "Aucun t\xE9moignage invent\xE9 : si la liste publique est vide, dire qu\u2019il n\u2019y a pas de t\xE9moignage publi\xE9. Ne jamais citer Koffi Mensah, Abla Doe ou Jean-Pierre Kouakou.",
   "Ne pas inventer le salaire actuel / r\xE9el, l\u2019adresse personnelle, la famille, ni les contacts priv\xE9s de tiers (r\xE9f\xE9rences CV). Les fourchettes indicatives du contexte (XOF / EUR / USD) sont autoris\xE9es pour les pr\xE9tentions \u2014 toujours les labeller comme indicatives.",
   "T\xE9moins / r\xE9f\xE9rences CV (noms publics seulement, sans t\xE9l\xE9phone) : Bienvenu Agbavon (Co-Lead GDG Lom\xE9), Agnilonda Pakou (Lead Hyver), Seti Afanou (Lead GDG Lom\xE9), Wachiou Bouraima (co-fondateur Python Togo), Irene Amedji (IT & Community manager)."
@@ -378,85 +378,25 @@ function keyOf(value) {
   return value.trim().toLowerCase();
 }
 __name(keyOf, "keyOf");
-function mergeBy(primary, extra, key) {
-  const seen = new Set(primary.map(key).filter(Boolean));
-  const more = extra.filter((item) => {
-    const k = key(item);
-    return k && !seen.has(k);
-  });
-  return more.length === 0 ? primary : [...primary, ...more];
-}
-__name(mergeBy, "mergeBy");
-function mergeUniqueStrings(primary, extra) {
-  const seen = new Set(primary.map(keyOf));
-  const out = [...primary];
-  for (const item of extra) {
-    const k = keyOf(item);
-    if (!k || seen.has(k)) continue;
-    seen.add(k);
+function dedupeBy(items, key) {
+  const out = [];
+  const seen = /* @__PURE__ */ new Set();
+  for (const item of items) {
+    const id = key(item);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
     out.push(item);
   }
   return out;
 }
-__name(mergeUniqueStrings, "mergeUniqueStrings");
-function correctProject(project) {
-  const title = project.title.toLowerCase();
-  if (/picon/.test(title) && !/studio/.test(title)) {
-    return {
-      ...project,
-      title: "Picon",
-      description: "App de tirage photo publi\xE9e sur Google Play (com.photopicon.app). 26 \xE9crans Flutter, Firebase Auth, hors ligne, paiement mobile money.",
-      detailedDescription: "Application publi\xE9e sur Google Play (com.photopicon.app). Environ 89 % du code Dart, Firebase Auth, mode hors ligne et paiement mobile money. Contribution au backend Spring Boot. Site : https://photopicon.com",
-      tags: ["Flutter", "Firebase", "Spring Boot"],
-      link: "https://play.google.com/store/apps/details?id=com.photopicon.app"
-    };
-  }
-  if (/payflex/.test(title)) {
-    return {
-      ...project,
-      description: "Cotisation journali\xE8re et financement d\u2019\xE9quipements pour artisans. API Spring Boot et application Flutter.",
-      detailedDescription: "API Spring Boot (179 handlers, 34 tables Flyway) et application Flutter. Vitrine Next.js.",
-      tags: ["Spring Boot", "Flutter", "Next.js"],
-      link: project.link && project.link !== "#" ? project.link : "https://pay-flex.vercel.app",
-      github: "https://github.com/Donchaminade/PayFlex"
-    };
-  }
-  if (/ezoato|ezoa/.test(title)) {
-    return {
-      ...project,
-      title: "EZOA-TO",
-      description: "Plateforme des \xE9preuves d\u2019examens au Togo : 28 routes web, 81 actions d\u2019API PHP, 31 tables, app Flutter hors ligne de 26 \xE9crans (apr\xE8s un prototype React Native / Expo).",
-      tags: ["React 19", "PHP", "Flutter", "Expo"],
-      github: "https://github.com/Donchaminade/ezoato"
-    };
-  }
-  if (/coachflow/.test(title)) {
-    const detailed = (project.detailedDescription || "").replace(/et converse avec Llama 3\.1\.?\s*/i, "").replace(/Llama 3\.1/gi, "");
-    return { ...project, detailedDescription: detailed };
-  }
-  return project;
-}
-__name(correctProject, "correctProject");
-function correctExperience(item) {
-  if (/grosbit/i.test(item.company)) {
-    return {
-      ...item,
-      period: "Nov. 2025 \u2013 juin 2026",
-      tags: Array.from(/* @__PURE__ */ new Set([...item.tags || [], "CDD", "Freelance", "Remote"]))
-    };
-  }
-  if (/efficorpe/i.test(item.company) && !/stage/i.test(item.role)) {
-    return { ...item, role: `${item.role} \xB7 Stage` };
-  }
-  if (/axone/i.test(item.company) && !/stage/i.test(item.role)) {
-    return { ...item, role: `${item.role} \xB7 Stage` };
-  }
-  return item;
-}
-__name(correctExperience, "correctExperience");
+__name(dedupeBy, "dedupeBy");
 function withKnowledge(facts) {
   const p = facts.profile;
-  const merged = {
+  const projects = facts.projects?.length ? dedupeBy(facts.projects, (item) => keyOf(item.title)) : KNOWLEDGE_PROJECTS;
+  const experiences = facts.experiences?.length ? facts.experiences : KNOWLEDGE_EXPERIENCES;
+  const communities = facts.communities?.length ? facts.communities : KNOWLEDGE_COMMUNITIES;
+  const skills = facts.skills?.length ? facts.skills : [...KNOWLEDGE_SKILLS, ...KNOWLEDGE_SOFT_SKILLS];
+  return {
     ...facts,
     profile: {
       ...p,
@@ -473,32 +413,16 @@ function withKnowledge(facts) {
       twitter_url: fixChatXUrl(p.twitter_url || KNOWLEDGE_PROFILE.twitter_url),
       github_url: p.github_url || KNOWLEDGE_PROFILE.github_url,
       availability_text: p.availability_text || KNOWLEDGE_PROFILE.availability_text,
-      experience_badge: "4+ ans",
-      bio: cleanChatBio(p.bio && p.bio.length > 80 ? p.bio : KNOWLEDGE_PROFILE.bio)
+      experience_badge: p.experience_badge?.trim() || KNOWLEDGE_PROFILE.experience_badge,
+      bio: (p.bio || "").trim() || KNOWLEDGE_PROFILE.bio
     },
-    projects: mergeBy(facts.projects, KNOWLEDGE_PROJECTS, (item) => keyOf(item.title)),
-    experiences: mergeBy(facts.experiences, KNOWLEDGE_EXPERIENCES, (item) => keyOf(item.company)),
-    communities: mergeBy(facts.communities, KNOWLEDGE_COMMUNITIES, (item) => keyOf(item.name)),
-    skills: mergeUniqueStrings(
-      facts.skills,
-      [...KNOWLEDGE_SKILLS, ...KNOWLEDGE_SOFT_SKILLS]
-    ),
-    faq: facts.faq?.length ? facts.faq : KNOWLEDGE_FAQ,
-    notes: facts.notes?.length ? facts.notes : KNOWLEDGE_NOTES
-  };
-  const projects = [];
-  const seenProjects = /* @__PURE__ */ new Set();
-  for (const project of merged.projects.map(correctProject)) {
-    const key = keyOf(project.title);
-    if (seenProjects.has(key)) continue;
-    seenProjects.add(key);
-    projects.push(project);
-  }
-  return {
-    ...merged,
     projects,
-    experiences: merged.experiences.map(correctExperience),
-    testimonials: merged.testimonials.filter((item) => item.quote && !isFakeChatTestimonial(item.name))
+    experiences,
+    communities,
+    skills,
+    faq: facts.faq?.length ? facts.faq : KNOWLEDGE_FAQ,
+    notes: facts.notes?.length ? facts.notes : KNOWLEDGE_NOTES,
+    testimonials: (facts.testimonials || []).filter((item) => item.quote && !isFakeChatTestimonial(item.name))
   };
 }
 __name(withKnowledge, "withKnowledge");
@@ -509,10 +433,6 @@ function fixChatXUrl(url) {
   return value.replace(/https?:\/\/(www\.)?(x|twitter)\.com\/Donchaminde\b/i, fallback);
 }
 __name(fixChatXUrl, "fixChatXUrl");
-function cleanChatBio(bio) {
-  return bio.replace(/solutions numérique(?!s)/gi, "solutions num\xE9riques").replace(/environ 3 ans/gi, "4+ ans").replace(/\b3\+\s*ans\b/gi, "4+ ans").replace(/f[ée]vrier 2026\s*[–-]\s*pr[ée]sent/gi, "nov. 2025 \u2013 juin 2026").replace(/\s{2,}/g, " ").trim();
-}
-__name(cleanChatBio, "cleanChatBio");
 var FAKE_TESTIMONIAL_NAMES = /* @__PURE__ */ new Set(["koffi mensah", "abla doe", "jean-pierre kouakou"]);
 function isFakeChatTestimonial(name) {
   return FAKE_TESTIMONIAL_NAMES.has((name || "").trim().toLowerCase());
@@ -781,7 +701,11 @@ ${list}` : `Distinctions publiques :
 ${list}`;
   }
   const linkedin = p.linkedin_url || "https://www.linkedin.com/in/chaminadeadjolou";
-  return lang === "en" ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ""} ${p.bio} GROSBIT SARLU: Nov 2025 \u2013 June 2026 (fixed-term / freelance, remote). Education: Lom\xE9 Business School (2024) and DEFITECH (2023). LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.` : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Bas\xE9 \xE0 ${p.location}.` : ""} ${p.bio} GROSBIT SARLU : nov. 2025 \u2013 juin 2026 (CDD / freelance, remote). Formations : Lom\xE9 Business School (2024) et DEFITECH (2023). LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
+  const grosbit = facts.experiences.find((item) => /grosbit/i.test(item.company));
+  const roleLine = grosbit ? `${grosbit.company} : ${grosbit.role} (${grosbit.period}).` : "";
+  const schools = facts.education.filter(Boolean).slice(0, 3).join(" \xB7 ");
+  const schoolLine = schools ? lang === "en" ? `Education: ${schools}.` : `Formations : ${schools}.` : "";
+  return lang === "en" ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ""} ${p.bio} ${roleLine} ${schoolLine} LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.` : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Bas\xE9 \xE0 ${p.location}.` : ""} ${p.bio} ${roleLine} ${schoolLine} LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
 }
 __name(fallbackAnswer, "fallbackAnswer");
 
@@ -789,7 +713,7 @@ __name(fallbackAnswer, "fallbackAnswer");
 function buildInstructions(contextText, lang) {
   const language = lang === "en" ? "Answer in English." : "R\xE9ponds en fran\xE7ais (sauf si la question est clairement en anglais).";
   return `Tu es l\u2019assistant du portfolio public de Donchaminade (ADJOLOU Dondah Chaminade, aussi appel\xE9 Dondah Chaminade Adjolou / Donchaminade).
-Tu parles \xE0 la premi\xE8re personne (\xAB je \xBB) comme sur le site, tout en restant clairement l\u2019assistant qui pr\xE9sente Donchaminade. Tu aides les visiteurs \u2014 y compris recruteurs \u2014 sur ce qui est PUBLIC : bio, projets, exp\xE9riences, blogs, comp\xE9tences, communaut\xE9s, contact, et le coaching carri\xE8re public (pr\xE9tentions, valeur ajout\xE9e, r\xE9seau). S\u2019il n\u2019y a aucun t\xE9moignage dans le CONTEXTE, dis qu\u2019il n\u2019y en a pas de publi\xE9. N\u2019invente jamais de t\xE9moignage ni de chiffre. L\u2019exp\xE9rience affich\xE9e est 4+ ans.
+Tu parles \xE0 la premi\xE8re personne (\xAB je \xBB) comme sur le site, tout en restant clairement l\u2019assistant qui pr\xE9sente Donchaminade. Tu aides les visiteurs \u2014 y compris recruteurs \u2014 sur ce qui est PUBLIC : bio, projets, exp\xE9riences, blogs, comp\xE9tences, communaut\xE9s, contact, et le coaching carri\xE8re public (pr\xE9tentions, valeur ajout\xE9e, r\xE9seau). S\u2019il n\u2019y a aucun t\xE9moignage dans le CONTEXTE, dis qu\u2019il n\u2019y en a pas de publi\xE9. N\u2019invente jamais de t\xE9moignage ni de chiffre. Le badge d\u2019exp\xE9rience, les compteurs et les dates sont ceux du CONTEXTE : ne les remplace pas par une valeur fixe.
 
 Style (obligatoire) :
 - ${language}
@@ -799,8 +723,8 @@ Style (obligatoire) :
 - Ancr\xE9 : n\u2019invente pas d\u2019employeurs, projets, dates, clients, liens ou anecdotes. Si ce n\u2019est pas dans le CONTEXTE, dis-le et oriente vers / , /blog, #projets, #experience, #contact.
 
 Faits de cadrage :
-- GROSBIT SARLU : nov. 2025 \u2013 juin 2026, CDD / freelance, remote. Efficorpe et Axone sont des stages. Ne pas dire \xAB depuis f\xE9vrier 2026 \xBB ni \xAB pr\xE9sent \xBB pour GROSBIT.
-- Projets affich\xE9s sur le site (API) priment. CV/LinkedIn ajoutent les projets perso : TogoSaaS, Ezoato, Akontaa, Meneur TV, Togo Communities Hub, Billing Shop (cit\xE9 LinkedIn sans stack d\xE9taill\xE9e).
+- Reprends les employeurs, p\xE9riodes, intitul\xE9s et projets exactement comme dans le CONTEXTE. N\u2019ajoute pas un projet, un poste ou une date absents du CONTEXTE.
+- Projets, exp\xE9riences, comp\xE9tences et bio du CONTEXTE (donn\xE9es admin / API) priment sur toute m\xE9moire ant\xE9rieure.
 - LinkedIn public : https://www.linkedin.com/in/chaminadeadjolou \u2014 donne-le d\xE8s qu\u2019on demande le profil ou le contact.
 
 Pr\xE9tentions salariales (autoris\xE9es \u2014 ce n\u2019est pas le salaire actuel) :
@@ -854,38 +778,19 @@ function consumeRateLimit(ip) {
 __name(consumeRateLimit, "consumeRateLimit");
 
 // lib/mergeCatalog.ts
-function keyOf2(value) {
-  return value.trim().toLowerCase();
-}
-__name(keyOf2, "keyOf");
 function mergeProjects(apiProjects, catalog) {
   const fromApi = apiProjects ?? [];
-  if (fromApi.length === 0) {
-    return catalog;
-  }
-  const apiTitles = new Set(fromApi.map((p) => keyOf2(p.title)));
-  const extras = catalog.filter((p) => !apiTitles.has(keyOf2(p.title)));
-  return [...fromApi, ...extras];
+  return fromApi.length === 0 ? catalog : fromApi;
 }
 __name(mergeProjects, "mergeProjects");
 function mergeExperiences(apiItems, catalog) {
   const fromApi = apiItems ?? [];
-  if (fromApi.length === 0) {
-    return catalog;
-  }
-  const seen = new Set(fromApi.map((item) => keyOf2(item.company)));
-  const extras = catalog.filter((item) => !seen.has(keyOf2(item.company)));
-  return extras.length === 0 ? fromApi : [...fromApi, ...extras];
+  return fromApi.length === 0 ? catalog : fromApi;
 }
 __name(mergeExperiences, "mergeExperiences");
 function mergeCommunities(apiItems, catalog) {
   const fromApi = apiItems ?? [];
-  if (fromApi.length === 0) {
-    return catalog;
-  }
-  const seen = new Set(fromApi.map((item) => keyOf2(item.name)));
-  const extras = catalog.filter((item) => !seen.has(keyOf2(item.name)));
-  return extras.length === 0 ? fromApi : [...fromApi, ...extras];
+  return fromApi.length === 0 ? catalog : fromApi;
 }
 __name(mergeCommunities, "mergeCommunities");
 
@@ -1745,9 +1650,7 @@ async function loadLiveFacts() {
       })),
       blogs: (() => {
         const live = mapBlogs(blogRes?.data);
-        if (live.length === 0) return fallback.blogs;
-        const seen = new Set(live.map((b) => b.slug));
-        return [...live, ...fallback.blogs.filter((b) => !seen.has(b.slug))];
+        return live.length > 0 ? live : fallback.blogs;
       })(),
       testimonials: (liveTestimonials.length ? liveTestimonials : fallback.testimonials).filter(
         (item) => item.name && item.quote && !isFakeChatTestimonial(item.name)

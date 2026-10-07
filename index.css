@@ -174,8 +174,7 @@ html.dark .nav ul a:hover, html.dark .nav ul a[aria-current="page"] { background
   font-size: var(--fs-sm); font-weight: 600; color: var(--text); white-space: nowrap;
 }
 .chip img { width: 16px; height: 16px; }
-.chip.new { border-color: var(--warm); }
-.chip.new::after { content: "nouveau"; font-size: var(--fs-xs); font-weight: 800; color: var(--warm); margin-left: 2px; }
+.chips .chip { white-space: normal; }
 .chip .ico { width: 20px; height: 20px; border-radius: 50%; background: #fff; display: inline-grid; place-items: center; flex: none; }
 .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin: 0 3px; }
 
@@ -285,6 +284,9 @@ html.dark .facts { background: rgba(15, 36, 64, 0.25); }
 .pbody { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .pbody h3 { font-size: var(--fs-lg); }
 .pdesc { margin: 0; font-size: var(--fs-sm); color: var(--muted); line-height: 1.55; }
+.pdetail { margin-top: 8px; font-size: var(--fs-sm); color: var(--muted); }
+.pdetail summary { cursor: pointer; font-weight: 700; color: var(--text); }
+.pdetail p { margin: 8px 0 0; line-height: 1.55; }
 .ptags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 2px 0 0; padding: 0; }
 .ptags li { font-size: var(--fs-xs); font-weight: 700; padding: 3px 8px; border-radius: 6px; background: rgba(30, 58, 95, 0.08); color: var(--accent); }
 html.dark .ptags li { background: rgba(139, 203, 255, 0.1); }

@@ -8,9 +8,8 @@ import type {
 } from './types';
 
 /**
- * Faits publics fusionnés (CV + LinkedIn + catalogue).
- * L’API portfolio reste la source de vérité pour les projets actuellement affichés.
- * Ces extraits comblent les trous (timeline, formations, communautés, projets perso).
+ * Secours du chatbot lorsque l’API ne renvoie pas un champ.
+ * Une liste ou une bio déjà fournie par l’admin n’est pas réécrite.
  */
 export const KNOWLEDGE_PROFILE: ChatProfileFact = {
   full_name: 'ADJOLOU Dondah Chaminade',
@@ -426,7 +425,7 @@ export const KNOWLEDGE_FAQ: ChatFaqFact[] = [
 ];
 
 export const KNOWLEDGE_NOTES: string[] = [
-  'CONFLITS: GROSBIT SARLU est daté nov. 2025 – juin 2026 (CDD / freelance, remote). Ne pas le présenter comme un poste « présent » ni « depuis février 2026 ». Efficorpe et Axone sont des stages.',
+  'CONFLITS: les dates, intitulés, stacks et le badge d’expérience du CONTEXTE priment. Ne pas les réécrire avec une valeur mémorisée.',
   'Aucun témoignage inventé : si la liste publique est vide, dire qu’il n’y a pas de témoignage publié. Ne jamais citer Koffi Mensah, Abla Doe ou Jean-Pierre Kouakou.',
   'Ne pas inventer le salaire actuel / réel, l’adresse personnelle, la famille, ni les contacts privés de tiers (références CV). Les fourchettes indicatives du contexte (XOF / EUR / USD) sont autorisées pour les prétentions — toujours les labeller comme indicatives.',
   'Témoins / références CV (noms publics seulement, sans téléphone) : Bienvenu Agbavon (Co-Lead GDG Lomé), Agnilonda Pakou (Lead Hyver), Seti Afanou (Lead GDG Lomé), Wachiou Bouraima (co-fondateur Python Togo), Irene Amedji (IT & Community manager).',
@@ -436,88 +435,33 @@ function keyOf(value: string): string {
   return value.trim().toLowerCase();
 }
 
-function mergeBy<T>(primary: T[], extra: T[], key: (item: T) => string): T[] {
-  const seen = new Set(primary.map(key).filter(Boolean));
-  const more = extra.filter((item) => {
-    const k = key(item);
-    return k && !seen.has(k);
-  });
-  return more.length === 0 ? primary : [...primary, ...more];
-}
-
-export function mergeUniqueStrings(primary: string[], extra: string[]): string[] {
-  const seen = new Set(primary.map(keyOf));
-  const out = [...primary];
-  for (const item of extra) {
-    const k = keyOf(item);
-    if (!k || seen.has(k)) continue;
-    seen.add(k);
+function dedupeBy<T>(items: T[], key: (item: T) => string): T[] {
+  const out: T[] = [];
+  const seen = new Set<string>();
+  for (const item of items) {
+    const id = key(item);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
     out.push(item);
   }
   return out;
 }
 
-function correctProject(project: ChatProjectFact): ChatProjectFact {
-  const title = project.title.toLowerCase();
-  if (/picon/.test(title) && !/studio/.test(title)) {
-    return {
-      ...project,
-      title: 'Picon',
-      description:
-        'App de tirage photo publiée sur Google Play (com.photopicon.app). 26 écrans Flutter, Firebase Auth, hors ligne, paiement mobile money.',
-      detailedDescription:
-        'Application publiée sur Google Play (com.photopicon.app). Environ 89 % du code Dart, Firebase Auth, mode hors ligne et paiement mobile money. Contribution au backend Spring Boot. Site : https://photopicon.com',
-      tags: ['Flutter', 'Firebase', 'Spring Boot'],
-      link: 'https://play.google.com/store/apps/details?id=com.photopicon.app',
-    };
-  }
-  if (/payflex/.test(title)) {
-    return {
-      ...project,
-      description: 'Cotisation journalière et financement d’équipements pour artisans. API Spring Boot et application Flutter.',
-      detailedDescription: 'API Spring Boot (179 handlers, 34 tables Flyway) et application Flutter. Vitrine Next.js.',
-      tags: ['Spring Boot', 'Flutter', 'Next.js'],
-      link: project.link && project.link !== '#' ? project.link : 'https://pay-flex.vercel.app',
-      github: 'https://github.com/Donchaminade/PayFlex',
-    };
-  }
-  if (/ezoato|ezoa/.test(title)) {
-    return {
-      ...project,
-      title: 'EZOA-TO',
-      description:
-        'Plateforme des épreuves d’examens au Togo : 28 routes web, 81 actions d’API PHP, 31 tables, app Flutter hors ligne de 26 écrans (après un prototype React Native / Expo).',
-      tags: ['React 19', 'PHP', 'Flutter', 'Expo'],
-      github: 'https://github.com/Donchaminade/ezoato',
-    };
-  }
-  if (/coachflow/.test(title)) {
-    const detailed = (project.detailedDescription || '').replace(/et converse avec Llama 3\.1\.?\s*/i, '').replace(/Llama 3\.1/gi, '');
-    return { ...project, detailedDescription: detailed };
-  }
-  return project;
-}
-
-function correctExperience(item: ChatExperienceFact): ChatExperienceFact {
-  if (/grosbit/i.test(item.company)) {
-    return {
-      ...item,
-      period: 'Nov. 2025 – juin 2026',
-      tags: Array.from(new Set([...(item.tags || []), 'CDD', 'Freelance', 'Remote'])),
-    };
-  }
-  if (/efficorpe/i.test(item.company) && !/stage/i.test(item.role)) {
-    return { ...item, role: `${item.role} · Stage` };
-  }
-  if (/axone/i.test(item.company) && !/stage/i.test(item.role)) {
-    return { ...item, role: `${item.role} · Stage` };
-  }
-  return item;
-}
-
 export function withKnowledge(facts: PortfolioFacts): PortfolioFacts {
   const p = facts.profile;
-  const merged: PortfolioFacts = {
+  const projects = facts.projects?.length
+    ? dedupeBy(facts.projects, (item) => keyOf(item.title))
+    : KNOWLEDGE_PROJECTS;
+  const experiences = facts.experiences?.length
+    ? facts.experiences
+    : KNOWLEDGE_EXPERIENCES;
+  const communities = facts.communities?.length
+    ? facts.communities
+    : KNOWLEDGE_COMMUNITIES;
+  const skills = facts.skills?.length
+    ? facts.skills
+    : [...KNOWLEDGE_SKILLS, ...KNOWLEDGE_SOFT_SKILLS];
+  return {
     ...facts,
     profile: {
       ...p,
@@ -534,32 +478,16 @@ export function withKnowledge(facts: PortfolioFacts): PortfolioFacts {
       twitter_url: fixChatXUrl(p.twitter_url || KNOWLEDGE_PROFILE.twitter_url),
       github_url: p.github_url || KNOWLEDGE_PROFILE.github_url,
       availability_text: p.availability_text || KNOWLEDGE_PROFILE.availability_text,
-      experience_badge: '4+ ans',
-      bio: cleanChatBio(p.bio && p.bio.length > 80 ? p.bio : KNOWLEDGE_PROFILE.bio),
+      experience_badge: p.experience_badge?.trim() || KNOWLEDGE_PROFILE.experience_badge,
+      bio: (p.bio || '').trim() || KNOWLEDGE_PROFILE.bio,
     },
-    projects: mergeBy(facts.projects, KNOWLEDGE_PROJECTS, (item) => keyOf(item.title)),
-    experiences: mergeBy(facts.experiences, KNOWLEDGE_EXPERIENCES, (item) => keyOf(item.company)),
-    communities: mergeBy(facts.communities, KNOWLEDGE_COMMUNITIES, (item) => keyOf(item.name)),
-    skills: mergeUniqueStrings(
-      facts.skills,
-      [...KNOWLEDGE_SKILLS, ...KNOWLEDGE_SOFT_SKILLS]
-    ),
+    projects,
+    experiences,
+    communities,
+    skills,
     faq: facts.faq?.length ? facts.faq : KNOWLEDGE_FAQ,
     notes: facts.notes?.length ? facts.notes : KNOWLEDGE_NOTES,
-  };
-  const projects: ChatProjectFact[] = [];
-  const seenProjects = new Set<string>();
-  for (const project of merged.projects.map(correctProject)) {
-    const key = keyOf(project.title);
-    if (seenProjects.has(key)) continue;
-    seenProjects.add(key);
-    projects.push(project);
-  }
-  return {
-    ...merged,
-    projects,
-    experiences: merged.experiences.map(correctExperience),
-    testimonials: merged.testimonials.filter((item) => item.quote && !isFakeChatTestimonial(item.name)),
+    testimonials: (facts.testimonials || []).filter((item) => item.quote && !isFakeChatTestimonial(item.name)),
   };
 }
 
@@ -571,13 +499,7 @@ export function fixChatXUrl(url?: string): string {
 }
 
 export function cleanChatBio(bio: string): string {
-  return bio
-    .replace(/solutions numérique(?!s)/gi, 'solutions numériques')
-    .replace(/environ 3 ans/gi, '4+ ans')
-    .replace(/\b3\+\s*ans\b/gi, '4+ ans')
-    .replace(/f[ée]vrier 2026\s*[–-]\s*pr[ée]sent/gi, 'nov. 2025 – juin 2026')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
+  return bio.replace(/\s{2,}/g, ' ').trim();
 }
 
 const FAKE_TESTIMONIAL_NAMES = new Set(['koffi mensah', 'abla doe', 'jean-pierre kouakou']);

@@ -4,9 +4,9 @@ import {
   EXPERIENCES,
   PROJECTS,
 } from '../constants';
-import { mergeCommunities, mergeExperiences, mergeProjects } from './mergeCatalog';
+import { mergeCommunities } from './mergeCatalog';
 import { mediaUrl } from './media';
-import type { Award, Community, Experience, Project, Recommendation, SiteProfile, Testimonial } from '../types';
+import type { Award, Community, Experience, Project, Recommendation, SiteProfile, SkillBlock, Stat, Testimonial } from '../types';
 
 export const EXPERIENCE_BADGE = '4+';
 export const BOOKING_URL = 'https://doodle.com/bp/chaminadedondahadjolou/donchaminade';
@@ -56,6 +56,9 @@ export interface PortfolioBundle {
   testimonials?: Testimonial[];
   recommendations?: Recommendation[];
   awards?: Award[];
+  stats?: Stat[];
+  skillBlocks?: SkillBlock[];
+  techIcons?: Record<string, string>;
 }
 
 export interface ProjectLink {
@@ -67,6 +70,7 @@ export interface ProjectView {
   title: string;
   kicker: string;
   description: string;
+  detail?: string;
   tags: string[];
   image: string;
   badge?: string;
@@ -75,6 +79,26 @@ export interface ProjectView {
   links: ProjectLink[];
   type: Project['type'];
   github?: string;
+}
+
+export interface FactView {
+  strong: string;
+  label: string;
+}
+
+export interface StackChip {
+  label: string;
+  icon?: string;
+}
+
+export interface StackGroup {
+  title: string;
+  chips: StackChip[];
+}
+
+export interface PlayCaption {
+  title: string;
+  detail: string;
 }
 
 export interface RoleView {
@@ -89,6 +113,7 @@ export interface PortfolioView {
   profile: SiteProfile;
   name: string;
   roleLine: string;
+  lead: string;
   availability: string;
   badges: string[];
   socials: { github: string; linkedin: string; twitter: string };
@@ -102,6 +127,9 @@ export interface PortfolioView {
   testimonials: Testimonial[];
   recommendations: Recommendation[];
   prizeCount: number;
+  facts: FactView[];
+  stacks: StackGroup[];
+  playCaption: PlayCaption | null;
   year: string;
 }
 
@@ -249,51 +277,6 @@ const EXTRA_PROJECTS: Project[] = FEATURED_SPECS.filter((spec) =>
   type: spec.type,
 }));
 
-const CANON_ROLES: Array<RoleView & { match: RegExp }> = [
-  {
-    match: /grosbit/i,
-    period: 'Nov. 2025 – juin 2026',
-    role: 'IT Support, Développeur Web & Mobile',
-    company: 'GROSBIT SARLU',
-    meta: 'CDD / Freelance · Remote',
-    summary:
-      'Applications web et mobiles (Next.js, Flutter) pour un intégrateur partenaire Cisco, refonte du site public, assistance aux déploiements réseau.',
-  },
-  {
-    match: /picon studio/i,
-    period: 'Déc. 2025 – févr. 2026',
-    role: 'Développeur Frontend Mobile',
-    company: 'Picon Studio',
-    meta: 'CDD / Freelance',
-    summary:
-      'Livraison de l’app Picon sur Google Play : 26 écrans Flutter, Firebase Auth, hors ligne ; contribution au backend Spring Boot (JWT, WebSocket).',
-  },
-  {
-    match: /tayba/i,
-    period: '2025',
-    role: 'Consultant IT & Lead Tech',
-    company: 'Tayba Market',
-    meta: 'CDD / Freelance',
-    summary: 'Audit IT puis application de gestion en React / Node.js : ventes, stocks, clients, clôtures de caisse.',
-  },
-  {
-    match: /efficorpe/i,
-    period: 'Août – oct. 2025',
-    role: 'Développeur Frontend Mobile',
-    company: 'Efficorpe',
-    meta: 'Stage',
-    summary: 'Interfaces Flutter sur backend Supabase, en équipe Agile.',
-  },
-  {
-    match: /axone/i,
-    period: 'Déc. 2024 – juil. 2025',
-    role: 'Développeur Web & Mobile',
-    company: 'Axone Digital Company',
-    meta: 'Stage',
-    summary: 'Fonctionnalités web et mobiles en Next.js, TypeScript, PHP et MySQL / PostgreSQL.',
-  },
-];
-
 function normKey(value: string): string {
   return value
     .toLowerCase()
@@ -326,17 +309,33 @@ function toView(spec: FeatureSpec, source?: Project): ProjectView {
   };
 }
 
+function linkLabel(href: string): string {
+  if (/play\.google\.com/i.test(href)) return 'Google Play';
+  if (/github\.com/i.test(href)) return 'GitHub';
+  return 'Site';
+}
+
 function looseView(project: Project, index: number): ProjectView {
   const gradients = ['g1', 'g2', 'g3', 'g4', 'g5', 'g6'];
   const links: ProjectLink[] = [];
-  if (project.link && project.link !== '#') links.push({ label: 'Site', href: project.link });
-  if (project.github && project.github !== '#') links.push({ label: 'GitHub', href: project.github });
+  const seen = new Set<string>();
+  const push = (href: string | undefined, label: string) => {
+    const url = (href || '').trim();
+    if (!url || url === '#') return;
+    if (seen.has(url)) return;
+    seen.add(url);
+    links.push({ label, href: url });
+  };
+  push(project.link, linkLabel(project.link || ''));
+  push(project.github, 'GitHub');
   const words = project.title.split(/\s+/).filter(Boolean);
   const initials = (words[0]?.slice(0, 2) || 'PR').toUpperCase();
+  const detail = project.detailedDescription?.trim();
   return {
     title: project.title,
     kicker: project.type || 'Projet',
     description: project.description,
+    detail: detail && detail !== project.description ? detail : undefined,
     tags: project.tags || [],
     image: usableImage(project.image),
     initials,
@@ -345,6 +344,11 @@ function looseView(project: Project, index: number): ProjectView {
     type: project.type,
     github: project.github,
   };
+}
+
+function isFeatured(project: Project): boolean {
+  const flag = project.is_featured;
+  return flag === true || flag === 1 || flag === '1';
 }
 
 function findProject(projects: Project[], keys: string[]): Project | undefined {
@@ -359,63 +363,132 @@ function heroBadges(subtitle?: string): string[] {
     .split(/[|•·]/)
     .map((part) => part.trim())
     .filter(Boolean);
-  const badges = parts.length > 0 ? parts : ['Ambassadeur SpaceXAI', 'Co-organisateur GDG Lomé'];
-  const experience = '4+ ans d’expérience';
-  const withoutYears = badges.filter((badge) => !/expérience|\d\s*\+?\s*ans/i.test(badge));
-  return [...withoutYears, experience];
+  return parts.length > 0 ? parts : ['Ambassadeur SpaceXAI', 'Co-organisateur GDG Lomé'];
 }
 
-function displayName(fullName: string): string {
-  if (/chaminade/i.test(fullName)) return 'Chaminade Adjolou';
-  return fullName.trim() || 'Chaminade Adjolou';
+function formatStat(stat: Stat): string {
+  const value = String(stat.value ?? '').trim();
+  const suffix = String(stat.suffix ?? '').trim();
+  if (!suffix) return value;
+  if (/^[+%°]/.test(suffix)) return `${value}${suffix}`;
+  return `${value} ${suffix}`;
 }
 
-export function buildPortfolioView(bundle: PortfolioBundle | null): PortfolioView {
-  const profile = bundle?.profile || {};
-  const mergedAll = mergeProjects(
-    [...(bundle?.projects || [])],
-    [...PROJECTS, ...EXTRA_PROJECTS.filter((extra) => !PROJECTS.some((item) => normKey(item.title) === normKey(extra.title)))]
-  );
-  const merged = [
-    ...mergedAll.filter((project) => !/grok meetup/i.test(project.title)),
-    ...mergedAll.filter((project) => /grok meetup/i.test(project.title)),
+function asIcon(value: unknown, techIcons: Record<string, string>): string | undefined {
+  if (typeof value !== 'string' || !value.trim()) return undefined;
+  const raw = value.trim();
+  if (/^https?:\/\//i.test(raw) || raw.startsWith('/')) return raw;
+  return techIcons[raw];
+}
+
+function stacksFrom(blocks: SkillBlock[] | undefined, techIcons: Record<string, string> | undefined): StackGroup[] {
+  if (!blocks?.length) return [];
+  const icons = techIcons || {};
+  return blocks
+    .map((block) => {
+      const chips: StackChip[] = [];
+      for (const category of block.categories || []) {
+        const icon = (category.icons || []).map((item) => asIcon(item, icons)).find(Boolean);
+        const skills = category.skills?.length ? category.skills : category.name ? [category.name] : [];
+        for (const skill of skills) {
+          const label = skill.trim();
+          if (!label) continue;
+          chips.push({ label, icon });
+        }
+      }
+      return { title: block.title, chips };
+    })
+    .filter((group) => group.title && group.chips.length > 0);
+}
+
+function rolesFromExperiences(items: Experience[]): RoleView[] {
+  return items
+    .map((item) => ({
+      period: item.period?.trim() || '',
+      role: item.role?.trim() || '',
+      company: item.company?.trim() || '',
+      meta: (item.tags || []).filter(Boolean).join(' · '),
+      summary: (item.description || []).filter(Boolean).join(' '),
+    }))
+    .filter((role) => role.company || role.role);
+}
+
+function playCaptionFrom(projects: ProjectView[]): PlayCaption | null {
+  for (const project of projects) {
+    const href = project.links.find((link) => /play\.google\.com/i.test(link.href))?.href;
+    if (!href) continue;
+    const id = href.match(/[?&]id=([^&]+)/)?.[1];
+    return {
+      title: 'App sur Google Play',
+      detail: id ? `${project.title} · ${id}` : project.title,
+    };
+  }
+  return null;
+}
+
+function fallbackFacts(profile: SiteProfile, projectCount: number, prizeCount: number, roleCount: number): FactView[] {
+  return [
+    { strong: profile.experience_badge?.trim() || `${EXPERIENCE_BADGE} ans`, label: 'd’expérience web et mobile' },
+    { strong: String(projectCount), label: 'projets au catalogue' },
+    { strong: `${prizeCount} prix`, label: 'hackathons et concours' },
+    { strong: String(roleCount), label: 'postes et stages' },
   ];
+}
 
-  const featured = FEATURED_SPECS.map((spec) => toView(spec, findProject(merged, spec.keys)));
+function fallbackProjectList(): Project[] {
+  return [
+    ...PROJECTS,
+    ...EXTRA_PROJECTS.filter((extra) => !PROJECTS.some((item) => normKey(item.title) === normKey(extra.title))),
+  ];
+}
+
+function viewsFromFallback(projects: Project[]): { projects: ProjectView[]; featured: ProjectView[] } {
+  const featured = FEATURED_SPECS.map((spec) => toView(spec, findProject(projects, spec.keys)));
   const featuredKeys = FEATURED_SPECS.flatMap((spec) => spec.keys);
-  const rest = merged
+  const rest = projects
     .filter((project) => {
       const key = normKey(project.title);
       return !featuredKeys.some((candidate) => key === candidate || key.includes(candidate));
     })
     .map((project, index) => looseView(project, index));
+  return { featured, projects: [...featured, ...rest] };
+}
 
-  const projects = [...featured, ...rest];
-  const experiences = mergeExperiences(bundle?.experiences, EXPERIENCES);
-  const roles = CANON_ROLES.map((role) => {
-    const fromApi = experiences.find((item) => role.match.test(item.company));
-    return {
-      period: role.period,
-      role: role.role,
-      company: role.company,
-      meta: role.meta,
-      summary: role.summary || (fromApi?.description || []).join(' '),
-    };
-  });
+export function buildPortfolioView(bundle: PortfolioBundle | null): PortfolioView {
+  const profile = bundle?.profile || {};
+  const apiProjects = bundle?.projects ?? [];
+  let projects: ProjectView[];
+  let featured: ProjectView[];
+  if (apiProjects.length > 0) {
+    projects = apiProjects.map((project, index) => looseView(project, index));
+    const highlighted = projects.filter((_, index) => isFeatured(apiProjects[index]));
+    featured = highlighted.length > 0 ? highlighted : projects;
+  } else {
+    const fallback = viewsFromFallback(fallbackProjectList());
+    projects = fallback.projects;
+    featured = fallback.featured;
+  }
 
-  const awards = bundle?.awards?.length ? bundle.awards : AWARDS;
+  const apiExperiences = bundle?.experiences ?? [];
+  const roles = rolesFromExperiences(apiExperiences.length > 0 ? apiExperiences : EXPERIENCES);
+
+  const awards = bundle == null ? AWARDS : (bundle.awards ?? []);
   const prizeCount = awards.filter((award) => /prix/i.test(award.title)).length;
   const testimonials = (bundle?.testimonials || []).filter(
     (item) => item?.name && item?.quote && !isFakeTestimonial(item.name) && !isStockPhoto(item.image)
   );
   const recommendations = (bundle?.recommendations || []).filter((item) => item?.name && item?.body);
+  const facts = bundle && (bundle.stats?.length || 0) > 0
+    ? bundle.stats!.map((stat) => ({ strong: formatStat(stat), label: stat.label }))
+    : fallbackFacts(profile, projects.length, prizeCount, roles.length);
 
   const year = profile.footer_year?.trim() || String(new Date().getFullYear());
 
   return {
     profile,
-    name: displayName(profile.full_name?.trim() || 'Chaminade Adjolou'),
-    roleLine: 'Développeur Full-Stack Web & Mobile',
+    name: profile.full_name?.trim() || 'Chaminade Adjolou',
+    roleLine: profile.hero_title?.trim() || 'Développeur Full-Stack Web & Mobile',
+    lead: profile.bio?.trim() || HERO_LEAD,
     availability: profile.availability_text?.trim() || 'Disponible · remote, temps plein ou freelance',
     badges: heroBadges(profile.hero_subtitle),
     socials: {
@@ -433,6 +506,9 @@ export function buildPortfolioView(bundle: PortfolioBundle | null): PortfolioVie
     testimonials,
     recommendations,
     prizeCount,
+    facts,
+    stacks: stacksFrom(bundle?.skillBlocks, bundle?.techIcons),
+    playCaption: playCaptionFrom(projects),
     year,
   };
 }
