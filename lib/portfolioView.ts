@@ -26,6 +26,8 @@ export const CV_UPDATED = 'octobre 2026';
 
 export const HERO_LEAD =
   'Je livre des produits de bout en bout : API en Spring Boot, Node.js et PHP, interfaces React / Next.js et apps Flutter, dont une publiée sur Google Play. Basé à Lomé, je travaille en remote.';
+export const HERO_TITLE_EN = 'Web & Mobile Developer | Full stack';
+export const HERO_LEAD_EN = 'I turn your ideas into reliable web and mobile products';
 
 const FAKE_NAMES = new Set(['koffi mensah', 'abla doe', 'jean-pierre kouakou']);
 
@@ -555,8 +557,8 @@ function localizePortfolio(view: PortfolioView, bundle: PortfolioBundle | null):
   const stats = bundle?.stats ?? [];
   return {
     ...view,
-    roleLine: enText(view.roleLine, profile?.hero_title_en),
-    lead: enText(view.lead, profile?.bio_en),
+    roleLine: enText(view.roleLine, profile?.hero_title_en) || HERO_TITLE_EN,
+    lead: enText(view.lead, profile?.bio_en) || HERO_LEAD_EN,
     availability: enText(view.availability, profile?.availability_text_en) || 'Available for new challenges',
     badges: view.badges.map((badge) => enText(badge, profile?.hero_subtitle_en)).filter(Boolean),
     projects: view.projects.map((project, index) => localizeProject(project, bundle?.projects?.[index])),

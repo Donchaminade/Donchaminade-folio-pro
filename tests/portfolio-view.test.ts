@@ -115,6 +115,36 @@ test('en anglais, une disponibilité française sans champ EN devient une phrase
   assert.equal(view.availability, 'Available for new challenges');
 });
 
+test('en anglais, le titre et l’accroche du hero restent visibles sans colonnes EN', () => {
+  const view = buildPortfolioView({
+    profile: {
+      full_name: 'ADJOLOU Dondah Chaminade',
+      hero_title: 'Développeur Web & Mobile | Full stack',
+      bio: 'Je transforme vos idées en solutions numérique en 72H',
+      hero_subtitle: 'SpaceXAI Ambassador | GDG Co-Organisateur',
+      availability_text: 'Disponible pour de nouveaux défis',
+    },
+  }, 'en');
+  assert.equal(view.name, 'ADJOLOU Dondah Chaminade');
+  assert.equal(view.roleLine, 'Web & Mobile Developer | Full stack');
+  assert.equal(view.lead, 'I turn your ideas into reliable web and mobile products');
+  assert.equal(view.availability, 'Available for new challenges');
+  assert.ok(view.badges.length >= 1);
+});
+
+test('en anglais, un titre et une accroche déjà traduits en base priment sur le secours', () => {
+  const view = buildPortfolioView({
+    profile: {
+      hero_title: 'Développeur Web & Mobile | Full stack',
+      hero_title_en: 'Custom English title',
+      bio: 'Je transforme vos idées en solutions numérique en 72H',
+      bio_en: 'Custom English lead',
+    },
+  }, 'en');
+  assert.equal(view.roleLine, 'Custom English title');
+  assert.equal(view.lead, 'Custom English lead');
+});
+
 test('le chatbot ne réécrit pas les fiches déjà fournies par l’API', () => {
   const facts: PortfolioFacts = {
     profile: {
