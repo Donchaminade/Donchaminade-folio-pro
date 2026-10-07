@@ -150,17 +150,20 @@ html.dark .btn-secondary:hover { background: rgba(139, 203, 255, 0.08); }
   background: var(--nav-bg); backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
 }
-.nav .wrap { display: flex; align-items: center; gap: 20px; height: 68px; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; }
+.nav .wrap { display: flex; align-items: center; gap: 16px; height: 68px; max-width: 1240px; }
+.brand { display: flex; align-items: center; gap: 10px; flex: none; text-decoration: none; font-weight: 800; white-space: nowrap; }
 .brand img { width: 36px; height: 36px; border-radius: 12px; }
-.nav ul { display: flex; gap: 4px; list-style: none; margin: 0 auto; padding: 0; }
+.nav .wrap > nav { flex: 1; min-width: 0; display: flex; align-items: center; }
+.nav ul { display: flex; align-items: center; justify-content: center; gap: 2px; flex-wrap: nowrap; width: 100%; list-style: none; margin: 0; padding: 0; }
+.nav ul li { flex: none; display: flex; align-items: center; }
 .nav ul a {
-  display: block; padding: 8px 14px; border-radius: 999px;
+  display: inline-flex; align-items: center; white-space: nowrap;
+  min-height: 36px; padding: 8px 10px; border-radius: 999px; line-height: 1.2;
   font-weight: 600; font-size: var(--fs-sm); color: var(--muted); text-decoration: none;
 }
 .nav ul a:hover, .nav ul a[aria-current="page"] { color: var(--text); background: rgba(30, 58, 95, 0.06); }
 html.dark .nav ul a:hover, html.dark .nav ul a[aria-current="page"] { background: rgba(255, 255, 255, 0.06); }
-.nav .actions { display: flex; gap: 8px; align-items: center; }
+.nav .actions { display: flex; gap: 8px; align-items: center; flex: none; }
 .icon-btn {
   width: 44px; height: 44px; display: inline-grid; place-items: center;
   border-radius: 999px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer;
@@ -482,10 +485,12 @@ html.dark .form-note.err { color: #ffb4a8; }
   .pgrid { grid-template-columns: repeat(2, 1fr); }
   .stack-grid, .comm-grid { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 900px) {
+@media (max-width: 1179px) {
   .nav ul { display: none; }
   .nav .wrap { justify-content: space-between; }
   .icon-btn.menu { display: inline-grid; }
+}
+@media (max-width: 900px) {
   .hero-grid, .two-col { grid-template-columns: 1fr; }
   .hero { padding-top: 36px; }
   .hero-photo { max-width: 420px; }
