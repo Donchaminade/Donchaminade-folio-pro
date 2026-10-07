@@ -106,11 +106,18 @@ async function indexTemplate(request: Request): Promise<string | null> {
     });
     const cookie = request.headers.get('cookie');
     if (cookie) headers.set('cookie', cookie);
-    const bypass = request.headers.get('x-vercel-protection-bypass');
+    const bypass =
+      request.headers.get('x-vercel-protection-bypass') ||
+      process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
     if (bypass) headers.set('x-vercel-protection-bypass', bypass);
 
-    const response = await fetch(new URL('/index.html', request.url), {
+    const indexUrl = new URL('/index.html', request.url);
+    const share = new URL(request.url).searchParams.get('_vercel_share');
+    if (share) indexUrl.searchParams.set('_vercel_share', share);
+
+    const response = await fetch(indexUrl, {
       headers,
+      redirect: 'manual',
       signal: AbortSignal.timeout(4000),
     });
     if (!response.ok) return template?.html ?? null;
@@ -122,6 +129,32 @@ async function indexTemplate(request: Request): Promise<string | null> {
     return template?.html ?? null;
   }
 }
+
+const MINIMAL_SHELL = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Donchaminade | Développeur Web &amp; Mobile Full-Stack</title>
+  <meta name="description" content="Portfolio Donchaminade">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Donchaminade">
+  <meta property="og:url" content="https://donchaminade-alpha.vercel.app">
+  <meta property="og:title" content="Donchaminade | Développeur Web &amp; Mobile Full-Stack">
+  <meta property="og:description" content="Portfolio Donchaminade">
+  <meta property="og:image" content="https://donchaminade-alpha.vercel.app/og-share.jpg">
+  <meta property="og:image:secure_url" content="https://donchaminade-alpha.vercel.app/og-share.jpg">
+  <meta property="og:image:alt" content="Donchaminade">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1445">
+  <meta property="og:image:height" content="890">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Donchaminade | Développeur Web &amp; Mobile Full-Stack">
+  <meta name="twitter:description" content="Portfolio Donchaminade">
+  <meta name="twitter:image" content="https://donchaminade-alpha.vercel.app/og-share.jpg">
+</head>
+<body></body>
+</html>`;
 
 function htmlResponse(html: string, variant: string, ttl: number): Response {
   return new Response(html, {
@@ -145,8 +178,7 @@ export default async function middleware(request: Request): Promise<Response> {
   const route = matchBlogRoute(url.pathname);
   if (route.kind === 'skip') return next();
 
-  const shell = await indexTemplate(request);
-  if (!shell) return next();
+  const shell = (await indexTemplate(request)) ?? MINIMAL_SHELL;
 
   const origin = url.origin;
   const api = apiBase();

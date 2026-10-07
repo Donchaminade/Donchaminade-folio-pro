@@ -7,7 +7,7 @@ export const SITE_NAME = 'Donchaminade';
 export const DEFAULT_OG_PATH = '/og-share.jpg';
 
 const CRAWLER_UA =
-  /facebookexternalhit|Facebot|Twitterbot|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Discordbot|Pinterest|redditbot|Applebot|Googlebot|bingbot|Embedly|Iframely|vkShare|Quora Link Preview/i;
+  /facebookexternalhit|Facebot|Twitterbot|LinkedInBot|Slackbot|WhatsApp|TelegramBot|Discordbot|Pinterest|redditbot|Embedly|Iframely|vkShare|Quora Link Preview/i;
 
 export function isSocialCrawler(userAgent: string | null | undefined): boolean {
   return CRAWLER_UA.test(userAgent || '');
