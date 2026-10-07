@@ -122,11 +122,47 @@ export const CommunitySection: React.FC<{ data: PortfolioView }> = ({ data }) =>
   );
 };
 
+function pageLogo(logo: string | undefined): { kind: 'img' | 'mark'; value: string } | null {
+  const value = (logo || '').trim();
+  if (!value || isStockPhoto(value)) return null;
+  if (/^(https?:|\/)/i.test(value) || /\.(svg|png|jpe?g|webp|gif)(\?|$)/i.test(value)) {
+    return { kind: 'img', value };
+  }
+  return { kind: 'mark', value: value.slice(0, 2) };
+}
+
 export const PagesMarquee: React.FC<{ data: PortfolioView }> = ({ data }) => {
   const { t } = useI18n();
-  const pages = data.managedPages.filter((page) => page.name && !isStockPhoto(page.logo));
+  const pages = data.managedPages.filter((page) => page.name);
   if (!pages.length) return null;
-  const loop = [...pages, ...pages];
+  const sequence: typeof pages = [];
+  while (sequence.length < 8) sequence.push(...pages);
+  const renderGroup = (hidden: boolean) => (
+    <div className="marquee-group" aria-hidden={hidden || undefined}>
+      {sequence.map((page, index) => {
+        const logo = pageLogo(page.logo);
+        const href = page.link && page.link !== '#' ? page.link : undefined;
+        return (
+          <a
+            key={`${page.name}-${index}`}
+            className={logo ? 'page-tile card' : 'page-tile page-tile-plain card'}
+            href={href}
+            target={href ? '_blank' : undefined}
+            rel={href ? 'noopener noreferrer' : undefined}
+            tabIndex={hidden ? -1 : undefined}
+          >
+            {logo?.kind === 'img' ? (
+              <img src={logo.value} alt="" width="40" height="40" loading="lazy" onError={(event) => { event.currentTarget.style.display = 'none'; }} />
+            ) : null}
+            {logo?.kind === 'mark' ? <span className="page-logo-mark" aria-hidden="true">{logo.value}</span> : null}
+            <strong>{page.name}</strong>
+            {page.category ? <span className="muted">{page.category}</span> : null}
+            {page.followers ? <span className="muted">{page.followers} {t.followers}</span> : null}
+          </a>
+        );
+      })}
+    </div>
+  );
   return (
     <section className="section" id="pages" aria-label={t.pagesTitle}>
       <div className="wrap">
@@ -140,13 +176,8 @@ export const PagesMarquee: React.FC<{ data: PortfolioView }> = ({ data }) => {
       </div>
       <div className="marquee">
         <div className="marquee-track">
-          {loop.map((page, index) => (
-            <a key={`${page.name}-${index}`} className="page-tile card" href={page.link && page.link !== '#' ? page.link : undefined} target="_blank" rel="noopener noreferrer">
-              <strong>{page.name}</strong>
-              <span className="muted">{page.category}</span>
-              {page.followers ? <span className="muted">{page.followers} {t.followers}</span> : null}
-            </a>
-          ))}
+          {renderGroup(false)}
+          {renderGroup(true)}
         </div>
       </div>
     </section>
