@@ -113,7 +113,7 @@ export function prepareBlogBody(content: string): PreparedBlogBody {
 }
 
 export function blogStickyOffset(): number {
-  const header = document.querySelector<HTMLElement>('.blog-page > header');
+  const header = document.querySelector<HTMLElement>('.blog-page > header, header.nav');
   return (header?.offsetHeight || 72) + 16;
 }
 

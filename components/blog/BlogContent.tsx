@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import type { PreparedBlogBody } from '../../lib/blogHeadings';
 
 interface Props {
@@ -6,9 +6,50 @@ interface Props {
 }
 
 const BlogContent = forwardRef<HTMLElement, Props>(({ body }, ref) => {
+  useEffect(() => {
+    const root = typeof ref === 'object' && ref ? ref.current : null;
+    if (!root) return;
+
+    root.querySelectorAll('pre').forEach((pre) => {
+      if (pre.querySelector('.copy')) return;
+      const classMatch = pre.className.match(/language-([a-z0-9]+)/i);
+      const lang = (pre.getAttribute('data-lang') || classMatch?.[1] || 'code').toLowerCase();
+      pre.setAttribute('data-lang', lang);
+      if (!pre.querySelector('.lang-label')) {
+        const label = document.createElement('span');
+        label.className = 'lang-label';
+        label.textContent = lang;
+        pre.prepend(label);
+      }
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy';
+      button.textContent = 'Copier';
+      pre.prepend(button);
+    });
+
+    const onClick = async (event: Event) => {
+      const button = (event.target as HTMLElement | null)?.closest('.copy');
+      if (!(button instanceof HTMLButtonElement)) return;
+      const pre = button.closest('pre');
+      const code = pre?.querySelector('code')?.textContent || '';
+      try {
+        await navigator.clipboard.writeText(code.trim());
+        button.textContent = 'Copié';
+        window.setTimeout(() => {
+          button.textContent = 'Copier';
+        }, 1600);
+      } catch {
+        button.textContent = 'Impossible';
+      }
+    };
+    root.addEventListener('click', onClick);
+    return () => root.removeEventListener('click', onClick);
+  }, [ref, body]);
+
   if (body.format === 'plain') {
     return (
-      <article ref={ref} className="notion-prose font-light">
+      <article ref={ref} className="prose notion-prose">
         {body.blocks.map((block) => {
           if (block.kind === 'h2') {
             return (
@@ -36,7 +77,7 @@ const BlogContent = forwardRef<HTMLElement, Props>(({ body }, ref) => {
   return (
     <article
       ref={ref}
-      className="notion-prose blog-content font-light"
+      className="prose notion-prose blog-content"
       dangerouslySetInnerHTML={body.markup}
     />
   );

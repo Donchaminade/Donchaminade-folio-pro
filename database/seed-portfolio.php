@@ -298,6 +298,11 @@ function seedTestimonials(PDO $db): int
         $count++;
     }
 
+    $db->exec(
+        "UPDATE testimonials SET is_active = 0, is_approved = 0
+         WHERE name IN ('Koffi Mensah', 'Abla Doe', 'Jean-Pierre Kouakou')"
+    );
+
     return $count;
 }
 
@@ -383,6 +388,8 @@ function seedClients(PDO $db): int
         }
         $count++;
     }
+
+    $db->exec("UPDATE clients SET is_active = 0 WHERE logo LIKE '%unsplash.com%'");
 
     return $count;
 }

@@ -144,7 +144,7 @@ test('connaissances ancrées Grosbit, formations, Flutter, LinkedIn, communauté
   assert.match(grounded.profile.linkedin_url || '', /linkedin\.com\/in\/chaminadeadjolou/);
   assert.ok(grounded.experiences.some((e) => /grosbit/i.test(e.company)));
   assert.ok(grounded.experiences.some((e) => /picon studio/i.test(e.company)));
-  assert.ok(grounded.projects.some((p) => /ezoato/i.test(p.title)));
+  assert.ok(grounded.projects.some((p) => /ezoa/i.test(p.title)));
   assert.ok(grounded.education.some((e) => /Lomé Business School/i.test(e)));
   assert.ok(grounded.education.some((e) => /DEFITECH/i.test(e)));
   assert.ok(grounded.communities.some((c) => /cursor togo|pycon|gdg/i.test(c.name)));
@@ -175,7 +175,7 @@ test('connaissances ancrées Grosbit, formations, Flutter, LinkedIn, communauté
 
   const perso = fallbackAnswer('Tu as des projets comme TogoSaaS ou Ezoato ?', grounded, 'fr');
   assert.match(perso, /TogoSaaS/i);
-  assert.match(perso, /Ezoato/i);
+  assert.match(perso, /EZOA-TO|Ezoato/i);
 
   const ctx = selectContext('formations Defitech Lomé Business School', grounded);
   assert.match(ctx.contextText, /DEFITECH|Lomé Business School/i);
@@ -224,7 +224,7 @@ test('fallback salaire, valeur ajoutée et réseau — ton coaching, faits ancr�
   assert.match(network, /WTM|Women Techmakers/i);
   assert.match(network, /PyCon/i);
   assert.match(network, /YAS|Next Gen/i);
-  assert.match(network, /Cursor/i);
+  assert.match(network, /SpaceXAI/i);
   assert.match(network, /200|500/);
   assert.match(network, /Hyver|ETHAfrique|ABC/i);
   assert.match(network, /\?/);

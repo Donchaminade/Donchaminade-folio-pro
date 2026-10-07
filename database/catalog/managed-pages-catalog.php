@@ -32,7 +32,7 @@ return [
     ],
     [
         'name' => 'Hyver',
-        'logo' => 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=100',
+        'logo' => '',
         'link' => '#',
         'followers' => '500+',
         'category' => 'Startup Agency',

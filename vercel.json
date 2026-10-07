@@ -5,6 +5,11 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/CV_ADJOLOU_DONDAH_CHAMINADE.pdf",
+      "destination": "/cv/CV-Chaminade-Adjolou-FR-FullStack-Master.pdf",
+      "permanent": true
+    },
+    {
       "source": "/admin",
       "destination": "https://donchamfolio.grosbit.com/admin/login.php",
       "permanent": false

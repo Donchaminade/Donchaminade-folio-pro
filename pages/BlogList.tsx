@@ -1,173 +1,204 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Loader2, Sparkles } from 'lucide-react';
-import BlogCard from '../components/blog/BlogCard';
-import BlogFeaturedHero from '../components/blog/BlogFeaturedHero';
-import BlogShell from '../components/blog/BlogShell';
-import { BLOG_BRAND, setBlogCategoriesRegistry, type BlogCategoryDef } from '../lib/blogCategories';
-import { BlogCategoryApi, BlogPostSummary, fetchBlogList, isApiConfigured } from '../lib/api';
+import React, { useEffect, useMemo, useState } from 'react';
+import { BlogCategoryApi, BlogPostSummary, fetchBlogList } from '../lib/api';
+import { getBlogCategory, setBlogCategoriesRegistry } from '../lib/blogCategories';
+import { mediaUrl } from '../lib/media';
+import { navigate } from '../lib/navigation';
+import { MobileNav, PageDecor, SiteFooter, SiteHeader } from '../components/layout/SiteChrome';
+
+function pillClass(id: string): string {
+  if (id.includes('sante')) return 'pill sante';
+  if (id.includes('spir')) return 'pill spi';
+  if (id.includes('moti')) return 'pill moti';
+  return 'pill';
+}
+
+function patternClass(id: string): string {
+  if (id.includes('sante')) return 'pattern p-wave';
+  if (id.includes('spir')) return 'pattern p-ray';
+  if (id.includes('moti')) return 'pattern p-tri';
+  return 'pattern p-dot';
+}
+
+function formatDate(value: string): string {
+  if (!value) return '';
+  return new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function openPost(event: React.MouseEvent<HTMLAnchorElement>, slug: string) {
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+  event.preventDefault();
+  navigate(`/blog/${slug}`);
+}
+
+const Cover: React.FC<{ post: BlogPostSummary; className?: string }> = ({ post, className }) => {
+  const cat = getBlogCategory(post.category);
+  if (post.cover_image) {
+    return <img className={className} src={mediaUrl(post.cover_image)} alt="" loading="lazy" />;
+  }
+  return <div className={patternClass(cat.id)} aria-hidden="true" />;
+};
 
 const BlogList: React.FC = () => {
   const [posts, setPosts] = useState<BlogPostSummary[]>([]);
-  const [filterCategories, setFilterCategories] = useState<BlogCategoryDef[]>([]);
-  const [category, setCategory] = useState<string>('all');
+  const [categories, setCategories] = useState<BlogCategoryApi[]>([]);
+  const [category, setCategory] = useState('all');
+  const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
 
-  const applyCategories = (apiCats: BlogCategoryApi[]) => {
-    const mapped: BlogCategoryDef[] = apiCats.map((c) => ({
-      id: c.slug,
-      label: c.label,
-      emoji: c.emoji || '📝',
-    }));
-    setFilterCategories(mapped);
-    setBlogCategoriesRegistry(mapped);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchBlogList(1, undefined, 50)
+      .then((res) => {
+        if (cancelled) return;
+        setPosts(res.data);
+        setHasMore(res.hasMore);
+        setPage(1);
+        if (res.categories?.length) {
+          setCategories(res.categories);
+          setBlogCategoriesRegistry(res.categories.map((item) => ({ id: item.slug, label: item.label, emoji: item.emoji || '📝' })));
+        }
+      })
+      .catch((err) => { if (!cancelled) setError(err instanceof Error ? err.message : 'Erreur de chargement'); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const counts = useMemo(() => {
+    const map = new Map<string, number>();
+    posts.forEach((post) => map.set(post.category, (map.get(post.category) || 0) + 1));
+    return map;
+  }, [posts]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return posts.filter((post) => {
+      if (category !== 'all' && post.category !== category) return false;
+      if (!q) return true;
+      return `${post.title} ${post.excerpt}`.toLowerCase().includes(q);
+    });
+  }, [posts, category, query]);
+
+  const featured = category === 'all' && !query ? filtered[0] : undefined;
+  const grid = featured ? filtered.slice(1) : filtered;
+
+  const loadMore = async () => {
+    const next = page + 1;
+    const res = await fetchBlogList(next, undefined, 50);
+    setPosts((current) => [...current, ...res.data]);
+    setHasMore(res.hasMore);
+    setPage(next);
   };
 
-  const load = useCallback(
-    async (pageNum: number, cat: string, append: boolean) => {
-      if (!isApiConfigured()) {
-        setError('Configurez VITE_API_URL pour afficher le blog.');
-        setLoading(false);
-        return;
-      }
-      try {
-        const res = await fetchBlogList(pageNum, cat === 'all' ? undefined : cat);
-        if (res.categories?.length) {
-          applyCategories(res.categories);
-        }
-        setPosts((prev) => (append ? [...prev, ...res.data] : res.data));
-        setHasMore(res.hasMore);
-        setPage(pageNum);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'Erreur de chargement');
-      }
-    },
-    []
-  );
-
-  useEffect(() => {
-    setLoading(true);
-    setError('');
-    load(1, category, false).finally(() => setLoading(false));
-  }, [category, load]);
-
-  const featured = posts[0];
-  const gridPosts = posts.length > 1 ? posts.slice(1) : posts.length === 1 ? [] : [];
-
   return (
-    <BlogShell backLabel="Portfolio" backTo="/">
-      <main className="max-w-6xl mx-auto px-4 sm:px-5 py-12 md:py-20 min-w-0 overflow-x-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12 md:mb-16"
-        >
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${BLOG_BRAND.border} ${BLOG_BRAND.bgSoft} ${BLOG_BRAND.text} text-xs font-bold mb-6`}>
-            <Sparkles size={14} /> Idées · Tech · Énergie · Foi
+    <div className="page-pad">
+      <a className="skip" href="#main">Aller au contenu</a>
+      <PageDecor />
+      <SiteHeader current="blog" />
+      <main id="main">
+        <section className="b-hero">
+          <div className="dots" aria-hidden="true" />
+          <div className="wrap">
+            <div>
+              <p className="kicker">Le blog</p>
+              <h1>Idées, tech et <em>équilibre</em>, écrits depuis Lomé</h1>
+              <p className="lead">Analyses longues en français sur le développement, les agents IA et le cloud, et des textes plus personnels sur l’énergie, la foi et l’engagement.</p>
+              <label className="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+                <span className="sr-only">Rechercher un article</span>
+                <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un article…" />
+              </label>
+            </div>
+            <svg className="illu" viewBox="0 0 440 360" role="img" aria-label="Illustration : carnet d’articles, code et idées">
+              <circle cx="220" cy="180" r="150" fill="none" stroke="#7E9DC7" strokeOpacity=".45" strokeDasharray="4 8" />
+              <g className="float">
+                <rect x="120" y="70" width="190" height="230" rx="16" fill="#F4F7FB" transform="rotate(-6 215 185)" />
+              </g>
+              <g className="float2">
+                <rect x="292" y="58" width="104" height="64" rx="14" fill="#0F2440" stroke="#7E9DC7" />
+                <text x="344" y="99" textAnchor="middle" fontFamily="ui-monospace,monospace" fontSize="24" fontWeight="700" fill="#8BCBFF">&lt;/&gt;</text>
+              </g>
+              <g className="float">
+                <circle cx="86" cy="118" r="26" fill="#F6C35B" />
+              </g>
+            </svg>
           </div>
-          <h1 className="font-serif-blog text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-5 break-words">
-            Un espace pour{' '}
-            <span className={BLOG_BRAND.text}>penser, créer et inspirer</span>
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed font-light">
-            Développement, énergie, motivation, spiritualité… Chaque article se lit d&apos;un seul trait — comme une page Notion.
-          </p>
-        </motion.div>
+        </section>
+        <div className="band" aria-hidden="true" />
+        <section className="section" style={{ paddingTop: 36 }}>
+          <div className="wrap">
+            <nav className="cats" aria-label="Catégories">
+              <button type="button" className={category === 'all' ? 'on' : ''} onClick={() => setCategory('all')}>
+                Tous <span className="n">{posts.length}</span>
+              </button>
+              {categories.map((item) => (
+                <button key={item.slug} type="button" className={category === item.slug ? 'on' : ''} onClick={() => setCategory(item.slug)}>
+                  {item.emoji} {item.label} <span className="n">{counts.get(item.slug) || 0}</span>
+                </button>
+              ))}
+            </nav>
 
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-10 custom-scrollbar -mx-1 px-1">
-          <button
-            type="button"
-            onClick={() => setCategory('all')}
-            className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${
-              category === 'all'
-                ? `${BLOG_BRAND.bg} text-white border-transparent shadow-lg ${BLOG_BRAND.shadow}`
-                : 'bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10'
-            }`}
-          >
-            Tout
-          </button>
-          {filterCategories.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => setCategory(c.id)}
-              className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all border ${
-                category === c.id
-                  ? `${BLOG_BRAND.bg} text-white border-transparent shadow-lg ${BLOG_BRAND.shadow}`
-                  : 'bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10'
-              }`}
-            >
-              {c.emoji} {c.label}
-            </button>
-          ))}
-        </div>
+            {loading && <p className="muted">Chargement des articles…</p>}
+            {error && <p role="alert">{error}</p>}
 
-        {loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-72 rounded-2xl bg-slate-200/80 dark:bg-slate-800/80 animate-pulse" />
-            ))}
-          </div>
-        )}
-
-        {error && (
-          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-6 flex gap-4 max-w-xl">
-            <AlertCircle className="text-amber-500 shrink-0" size={24} />
-            <p className="text-slate-600 dark:text-slate-400 text-sm">{error}</p>
-          </div>
-        )}
-
-        <AnimatePresence mode="wait">
-          {!loading && !error && (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              {posts.length === 0 && (
-                <p className="text-slate-500 py-16 text-center">Aucun article dans cette catégorie.</p>
-              )}
-
-              {featured && category === 'all' && page === 1 && (
-                <div className="mb-10">
-                  <BlogFeaturedHero post={featured} />
+            {featured && (
+              <a className="featured card" href={`/blog/${featured.slug}`} onClick={(event) => openPost(event, featured.slug)}>
+                <div className="fmedia"><Cover post={featured} /></div>
+                <div className="fbody">
+                  <span className={pillClass(featured.category)}>{getBlogCategory(featured.category).emoji} {getBlogCategory(featured.category).label}</span>
+                  <p className="kicker">À la une</p>
+                  <h2>{featured.title}</h2>
+                  <p>{featured.excerpt}</p>
+                  <div className="meta"><span>{formatDate(featured.published_at)}</span><span>{featured.reading_time} min de lecture</span></div>
+                  <span className="readmore">Lire l’article →</span>
                 </div>
-              )}
+              </a>
+            )}
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(category === 'all' && page === 1 ? gridPosts : posts).map((post, i) => (
-                  <BlogCard key={post.id} post={post} index={i} />
-                ))}
-              </div>
+            <div className="section-head" style={{ marginTop: 44 }}>
+              <div><p className="kicker">Derniers articles</p><h2 style={{ fontSize: 'var(--fs-xl)' }}>À lire ensuite</h2></div>
+            </div>
+            <div className="bgrid">
+              {grid.map((post) => {
+                const cat = getBlogCategory(post.category);
+                return (
+                  <a key={post.id} className="bcard card" href={`/blog/${post.slug}`} onClick={(event) => openPost(event, post.slug)}>
+                    <div className="bmedia">
+                      <Cover post={post} />
+                      <span className={pillClass(post.category)}>{cat.emoji} {cat.label}</span>
+                    </div>
+                    <div className="bbody">
+                      <h3>{post.title}</h3>
+                      <p>{post.excerpt}</p>
+                      <div className="meta"><span>{formatDate(post.published_at)}</span><span>{post.reading_time} min</span></div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+            {!loading && filtered.length === 0 && <p className="muted">Aucun article ne correspond.</p>}
+            {hasMore && category === 'all' && !query && (
+              <div className="more"><button type="button" className="btn btn-secondary btn-lg" onClick={loadMore}>Charger plus d’articles</button></div>
+            )}
 
-              {hasMore && (
-                <div className="flex justify-center mt-12">
-                  <button
-                    type="button"
-                    disabled={loadingMore}
-                    onClick={async () => {
-                      setLoadingMore(true);
-                      await load(page + 1, category, true);
-                      setLoadingMore(false);
-                    }}
-                    className={`inline-flex items-center gap-2 px-8 py-3 rounded-full ${BLOG_BRAND.bg} ${BLOG_BRAND.bgHover} text-white font-bold text-sm hover:scale-105 transition-transform disabled:opacity-50 shadow-lg ${BLOG_BRAND.shadow}`}
-                  >
-                    {loadingMore ? <Loader2 size={18} className="animate-spin" /> : null}
-                    Charger plus d&apos;articles
-                  </button>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+            <div className="section-head" style={{ marginTop: 64 }}>
+              <div><p className="kicker">Séries</p><h2 style={{ fontSize: 'var(--fs-xl)' }}>Explorer par thème</h2></div>
+            </div>
+            <div className="series">
+              <button type="button" className="s1" onClick={() => { setCategory('all'); setQuery('agent'); }}><strong>Agents & IA</strong><span>Outils, harness, MCP</span></button>
+              <button type="button" className="s2" onClick={() => { setCategory('all'); setQuery('cloud'); }}><strong>Cloud & DevOps</strong><span>Cloudflare, Docker, CI</span></button>
+              <button type="button" className="s3" onClick={() => setCategory(categories.find((item) => /sante|spir/i.test(item.slug))?.slug || 'sante')}><strong>Équilibre & foi</strong><span>Lâcher prise, santé mentale</span></button>
+              <button type="button" className="s4" onClick={() => { setCategory('all'); setQuery('bénévol'); }}><strong>Engagement</strong><span>Bénévolat, communautés</span></button>
+            </div>
+          </div>
+        </section>
       </main>
-    </BlogShell>
+      <SiteFooter year={String(new Date().getFullYear())} />
+      <MobileNav current="blog" />
+    </div>
   );
 };
 

@@ -76,7 +76,7 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
     const picon = facts.projects.find((p) => /picon/i.test(p.title));
     if (lang === 'en') {
       return [
-        'I currently work at GROSBIT SARLU (February 2026 – present) as IT Support and web & mobile developer (Next.js, Flutter).',
+        'At GROSBIT SARLU (Nov 2025 – June 2026, fixed-term / freelance, remote) I worked as IT Support and web & mobile developer (Next.js, Flutter).',
         exp ? exp.description.join(' ') : '',
         'GROSBIT is a Cisco partner; I help deploy network solutions and keep infrastructure running.',
         picon
@@ -87,7 +87,7 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
         .join(' ');
     }
     return [
-      'Je travaille actuellement chez GROSBIT SARLU (février 2026 – présent) comme IT Support et développeur web & mobile (Next.js, Flutter).',
+      'Chez GROSBIT SARLU (nov. 2025 – juin 2026, CDD / freelance, remote), j’étais IT Support et développeur web & mobile (Next.js, Flutter).',
       exp ? exp.description.join(' ') : '',
       'GROSBIT est partenaire Cisco : assistance au déploiement réseau et maintien en conditions opérationnelles.',
       picon
@@ -217,8 +217,8 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
     const t = facts.testimonials[0];
     if (!t) {
       return lang === 'en'
-        ? 'Public testimonials are on the site’s Réf. section.'
-        : 'Les témoignages publics sont dans la section Réf. du site.';
+        ? 'There are no published testimonials on the portfolio.'
+        : 'Il n’y a pas de témoignage publié sur le portfolio.';
     }
     return lang === 'en'
       ? `Example: “${t.quote}” — ${t.name}, ${t.role || ''} ${t.company || ''}.`
@@ -239,6 +239,6 @@ export function fallbackAnswer(query: string, facts: PortfolioFacts, lang: ChatL
 
   const linkedin = p.linkedin_url || 'https://www.linkedin.com/in/chaminadeadjolou';
   return lang === 'en'
-    ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ''} ${p.bio} Current role: GROSBIT SARLU (Feb 2026 – present). Education: Lomé Business School (2024) and DEFITECH (2023). LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.`
-    : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Basé à ${p.location}.` : ''} ${p.bio} Poste actuel : GROSBIT SARLU (février 2026 – présent). Formations : Lomé Business School (2024) et DEFITECH (2023). LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
+    ? `I'm ${p.full_name}, ${p.hero_title} ${p.location ? `Based in ${p.location}.` : ''} ${p.bio} GROSBIT SARLU: Nov 2025 – June 2026 (fixed-term / freelance, remote). Education: Lomé Business School (2024) and DEFITECH (2023). LinkedIn: ${linkedin}. Ask me about Flutter, projects, PyCon, YAS coaching, or latest blogs.`
+    : `Je suis ${p.full_name}, ${p.hero_title} ${p.location ? `Basé à ${p.location}.` : ''} ${p.bio} GROSBIT SARLU : nov. 2025 – juin 2026 (CDD / freelance, remote). Formations : Lomé Business School (2024) et DEFITECH (2023). LinkedIn : ${linkedin}. Demandez-moi Flutter, les projets, PyCon, le coaching YAS ou les derniers blogs.`;
 }

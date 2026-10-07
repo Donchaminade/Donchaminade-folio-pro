@@ -32,12 +32,16 @@ const ClientsMarquee: React.FC = () => {
       <div className="flex w-max items-center animate-marquee-slow">
         <div className="flex gap-8 md:gap-12 pr-8 md:pr-12 items-center cursor-default">
           {clients.map((client, i) => (
-            <ClientItem key={`oc-${i}`} client={client} />
+            <React.Fragment key={`oc-${i}`}>
+              <ClientItem client={client} />
+            </React.Fragment>
           ))}
         </div>
         <div className="flex gap-8 md:gap-12 pr-8 md:pr-12 items-center cursor-default" aria-hidden="true">
           {clients.map((client, i) => (
-            <ClientItem key={`dc-${i}`} client={client} />
+            <React.Fragment key={`dc-${i}`}>
+              <ClientItem client={client} />
+            </React.Fragment>
           ))}
         </div>
       </div>

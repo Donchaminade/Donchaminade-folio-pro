@@ -10,9 +10,6 @@ export function mergeProjects(apiProjects: Project[] | undefined, catalog: Proje
   if (fromApi.length === 0) {
     return catalog;
   }
-  if (fromApi.length >= catalog.length) {
-    return fromApi;
-  }
   const apiTitles = new Set(fromApi.map((p) => keyOf(p.title)));
   const extras = catalog.filter((p) => !apiTitles.has(keyOf(p.title)));
   return [...fromApi, ...extras];
