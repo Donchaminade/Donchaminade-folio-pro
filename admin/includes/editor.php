@@ -51,7 +51,8 @@ function adminEditor(string $fieldName, string $content = ''): void
         </div>
         <div id="quill-editor" class="min-h-[280px] text-slate-100"></div>
     </div>
-    <textarea name="<?= e($fieldName) ?>" id="quill-content" class="hidden" required><?= $safeContent ?></textarea>
+    <textarea name="<?= e($fieldName) ?>" id="quill-content" class="hidden" tabindex="-1" aria-hidden="true"><?= $safeContent ?></textarea>
+    <p id="quill-content-error" class="hidden mt-2 text-sm font-semibold text-red-400" role="alert"></p>
     <p class="text-xs text-slate-500 mt-2">Rédigez normalement : titres, listes, images (icône image), citations, code…</p>
 
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
@@ -97,8 +98,37 @@ function adminEditor(string $fieldName, string $content = ''): void
             return div.innerHTML;
         }
 
+        function stripInlineColors(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            const props = ['color', 'background-color', 'background', 'caret-color', '-webkit-text-fill-color'];
+            div.querySelectorAll('[style], [color], [bgcolor]').forEach((el) => {
+                props.forEach((prop) => el.style.removeProperty(prop));
+                el.removeAttribute('color');
+                el.removeAttribute('bgcolor');
+                const style = el.getAttribute('style');
+                if (style !== null && style.replace(/;/g, '').trim() === '') {
+                    el.removeAttribute('style');
+                }
+            });
+            return div.innerHTML;
+        }
+
+        function isEditorEmpty(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            if (div.querySelector('img')) return false;
+            const text = (div.textContent || '').replace(/\u00a0/g, ' ').trim();
+            return text === '';
+        }
+
         const quill = new Quill('#quill-editor', {
             theme: 'snow',
+            formats: [
+                'header', 'bold', 'italic', 'underline', 'strike',
+                'list', 'indent', 'align', 'link', 'image',
+                'blockquote', 'code-block', 'code'
+            ],
             modules: {
                 toolbar: {
                     container: '#quill-toolbar',
@@ -137,17 +167,66 @@ function adminEditor(string $fieldName, string $content = ''): void
             }
         });
 
-        const initial = document.getElementById('quill-content').value;
-        if (initial) {
-            quill.root.innerHTML = rewriteImagesForDisplay(initial);
+        quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+            (delta.ops || []).forEach((op) => {
+                if (!op.attributes) return;
+                delete op.attributes.color;
+                delete op.attributes.background;
+            });
+            return delta;
+        });
+
+        const field = document.getElementById('quill-content');
+        const errorEl = document.getElementById('quill-content-error');
+
+        function serializeContent() {
+            let html = stripInlineColors(quill.root.innerHTML.trim());
+            html = rewriteImagesForStorage(html);
+            return isEditorEmpty(html) ? '' : html;
         }
 
+        function syncField() {
+            if (field) field.value = serializeContent();
+        }
+
+        function showContentError(message) {
+            if (!errorEl) return;
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function hideContentError() {
+            if (!errorEl) return;
+            errorEl.textContent = '';
+            errorEl.classList.add('hidden');
+        }
+
+        const initial = field ? field.value : '';
+        if (initial) {
+            quill.root.innerHTML = rewriteImagesForDisplay(stripInlineColors(initial));
+        }
+        syncField();
+
+        quill.on('text-change', () => {
+            syncField();
+            hideContentError();
+        });
+
         const form = document.querySelector('form');
-        form?.addEventListener('submit', () => {
-            let html = quill.root.innerHTML.trim();
-            html = rewriteImagesForStorage(html);
-            const empty = html === '' || html === '<p><br></p>';
-            document.getElementById('quill-content').value = empty ? '' : html;
+        form?.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            if (!target.closest('button[type="submit"], input[type="submit"]')) return;
+            syncField();
+        }, true);
+        form?.addEventListener('submit', (event) => {
+            const html = serializeContent();
+            if (field) field.value = html;
+            if (!html) {
+                event.preventDefault();
+                showContentError('Rédigez le contenu de l’article avant d’enregistrer.');
+                quill.focus();
+            }
         });
     })();
     </script>
