@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
+import { GraduationCap, Sparkles, Trophy } from 'lucide-react';
 import RecommendModal from '../RecommendModal';
 import TestimonialSubmitModal from '../TestimonialSubmitModal';
 import { useI18n } from '../../lib/i18n';
 import { BOOKING_URL, isStockPhoto, type PortfolioView } from '../../lib/portfolioView';
 
+const SKILL_PREVIEW = 4;
+
 export const AboutSection: React.FC<{ data: PortfolioView }> = ({ data }) => {
   const { t } = useI18n();
+  const [skillsOpen, setSkillsOpen] = useState(false);
   if (!data.education.length && !data.softSkills.length && !data.awards.length) return null;
+  const skills = skillsOpen ? data.softSkills : data.softSkills.slice(0, SKILL_PREVIEW);
+  const moreSkills = data.softSkills.length > SKILL_PREVIEW;
   return (
     <section className="section" id="apropos">
       <div className="wrap">
@@ -17,45 +23,54 @@ export const AboutSection: React.FC<{ data: PortfolioView }> = ({ data }) => {
             <p>{t.aboutLead}</p>
           </div>
         </div>
-        <div className="stack-grid">
+        <div className="about-grid">
           {data.education.length > 0 && (
-            <article className="card">
-              <h3>{t.education}</h3>
-              <ul className="timeline">
+            <article className="about-card">
+              <h3 className="about-card-title"><GraduationCap size={18} aria-hidden="true" />{t.education}</h3>
+              <ol className="edu-list">
                 {data.education.map((item) => (
                   <li key={`${item.school}-${item.year}`}>
-                    <div className="when">{item.year}</div>
-                    <div className="what">
-                      <h3>{item.degree}</h3>
-                      <p className="org">{item.school}{item.field ? <span> · {item.field}</span> : null}</p>
-                    </div>
+                    {item.year ? <span className="year-badge">{item.year}</span> : null}
+                    <strong>{item.degree}</strong>
+                    <p>{item.school}{item.field ? <span> · {item.field}</span> : null}</p>
                   </li>
                 ))}
-              </ul>
+              </ol>
             </article>
           )}
           {data.softSkills.length > 0 && (
-            <article className="card">
-              <h3>{t.softSkills}</h3>
-              <ul className="quote-list">
-                {data.softSkills.map((item) => (
+            <article className="about-card">
+              <h3 className="about-card-title"><Sparkles size={18} aria-hidden="true" />{t.softSkills}</h3>
+              <ul className="skill-list">
+                {skills.map((item) => (
                   <li key={item.title}>
                     <strong>{item.title}</strong>
-                    <p className="muted">{item.impact}</p>
+                    {item.impact ? <p>{item.impact}</p> : null}
                   </li>
                 ))}
               </ul>
+              {moreSkills && (
+                <button type="button" className="btn btn-link about-more" aria-expanded={skillsOpen} onClick={() => setSkillsOpen((open) => !open)}>
+                  {skillsOpen ? t.seeLess : t.seeMore}
+                </button>
+              )}
             </article>
           )}
           {data.awards.length > 0 && (
-            <article className="card">
-              <h3>{t.awards}</h3>
-              <ul className="quote-list">
+            <article className="about-card">
+              <h3 className="about-card-title"><Trophy size={18} aria-hidden="true" />{t.awards}</h3>
+              <ul className="award-list">
                 {data.awards.map((item) => (
-                  <li key={`${item.title}-${item.year}`}>
-                    <strong>{item.title}</strong>
-                    <p className="muted">{item.issuer} · {item.year}</p>
-                    {item.description ? <p>{item.description}</p> : null}
+                  <li key={`${item.title}-${item.year}`} className="award-mini">
+                    <span className="award-ico" aria-hidden="true"><Trophy size={16} /></span>
+                    <div>
+                      <div className="award-top">
+                        <strong>{item.title}</strong>
+                        {item.year ? <span className="year-badge">{item.year}</span> : null}
+                      </div>
+                      {item.issuer ? <p className="award-issuer">{item.issuer}</p> : null}
+                      {item.description ? <p>{item.description}</p> : null}
+                    </div>
                   </li>
                 ))}
               </ul>

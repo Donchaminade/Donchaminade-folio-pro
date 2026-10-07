@@ -344,6 +344,115 @@ html.dark .form-note.err { color: #ffb4a8; }
 .quote-list { display: grid; gap: 12px; }
 .quote-list blockquote { margin: 0; padding: 16px 18px; }
 
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.about-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.about-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font: 700 1.05rem / 1.2 var(--font-ui);
+  letter-spacing: 0;
+}
+.about-card-title svg { color: var(--accent); flex: none; }
+.year-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+.edu-list, .skill-list, .award-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.edu-list li, .skill-list li { min-width: 0; display: grid; gap: 6px; }
+.edu-list strong, .skill-list strong, .award-mini strong {
+  font: 700 var(--fs-base) / 1.35 var(--font-ui);
+  overflow-wrap: anywhere;
+}
+.edu-list p, .skill-list p, .award-mini p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.skill-list li { position: relative; padding-left: 16px; }
+.skill-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.skill-list p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.about-more { align-self: flex-start; margin-top: auto; padding-left: 0; }
+.award-mini {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.award-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  color: var(--accent);
+}
+.award-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.award-issuer { font-weight: 600; }
+.award-mini p:last-child {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (max-width: 980px) {
+  .about-grid { grid-template-columns: 1fr; }
+}
+
 .menu-panel {
   display: none; border-top: 1px solid var(--border); background: var(--nav-bg);
 }
