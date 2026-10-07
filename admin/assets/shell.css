@@ -1,14 +1,14 @@
 /* Design system admin — marine sombre / clair blanc. Compilé avec Tailwind, jamais servi via CDN. */
 
 :root {
-  --a-bg: #0e1520;
-  --a-surface: #152033;
-  --a-elevated: #1c2b42;
-  --a-border: rgba(214, 226, 242, 0.12);
+  --a-bg: #1e3a5f;
+  --a-surface: #244670;
+  --a-elevated: #2c5282;
+  --a-border: rgba(139, 203, 255, 0.28);
   --a-ink: #f4f7fb;
-  --a-muted: #9aadc4;
-  --a-accent: #7eb0e8;
-  --a-accent-strong: #3d6ea8;
+  --a-muted: #bdcbdf;
+  --a-accent: #8bcbff;
+  --a-accent-strong: #8bcbff;
   --a-danger: #d16b6b;
   --a-ok: #3f9d72;
   --a-shadow: 0 18px 40px rgba(4, 10, 20, 0.35);
@@ -20,9 +20,9 @@
 }
 
 html.admin-light {
-  --a-bg: #f7f8fa;
+  --a-bg: #ffffff;
   --a-surface: #ffffff;
-  --a-elevated: #eef2f6;
+  --a-elevated: #f3f6fb;
   --a-border: rgba(16, 36, 64, 0.1);
   --a-ink: #122033;
   --a-muted: #5c6d84;
@@ -132,7 +132,8 @@ body.admin-sidebar-collapsed .admin-brand-wrap { justify-content: center; }
 .icon-btn .ico { width: 1.15rem; height: 1.15rem; }
 html:not(.admin-light) .theme-icon-moon { display: none !important; }
 html.admin-light .theme-icon-sun { display: none !important; }
-html.admin-light header.sticky { background: rgba(247, 248, 250, 0.92) !important; }
+html.admin-light header.sticky { background: rgba(255, 255, 255, 0.92) !important; }
+html:not(.admin-light) header.sticky { background: rgba(30, 58, 95, 0.92) !important; }
 
 .admin-nav-badge {
   min-width: 1.125rem;
@@ -229,7 +230,11 @@ html.admin-light header.sticky { background: rgba(247, 248, 250, 0.92) !importan
   font-family: inherit;
   transition: background 0.2s ease, transform 0.15s ease;
 }
-.btn:hover, .admin-btn:hover { background: var(--a-accent); }
+html:not(.admin-light) .btn:not(.btn-secondary):not(.btn-danger),
+html:not(.admin-light) .admin-btn:not(.btn-secondary):not(.btn-danger),
+html:not(.admin-light) .lang-tabbar button.is-on,
+html:not(.admin-light) .login-card button[type="submit"] { color: #0f2440; }
+.btn:hover, .admin-btn:hover { filter: brightness(1.08); }
 .btn:active, .admin-btn:active { transform: scale(0.98); }
 .btn-danger { background: var(--a-danger); color: #fff; }
 .btn-secondary { background: var(--a-elevated); color: var(--a-ink); border: 1px solid var(--a-border); }
@@ -426,6 +431,23 @@ html.admin-light .bg-slate-900,
 html.admin-light .bg-slate-900\/60,
 html.admin-light .bg-slate-950,
 html.admin-light .bg-slate-800 { background-color: var(--a-surface); }
+html:not(.admin-light) .bg-slate-900,
+html:not(.admin-light) .bg-slate-900\/40,
+html:not(.admin-light) .bg-slate-900\/60,
+html:not(.admin-light) .bg-slate-900\/95,
+html:not(.admin-light) .bg-slate-800,
+html:not(.admin-light) .bg-slate-800\/80,
+html:not(.admin-light) .bg-slate-700 {
+  background-color: var(--a-surface) !important;
+}
+html:not(.admin-light) .bg-slate-950,
+html:not(.admin-light) .bg-slate-950\/50,
+html:not(.admin-light) .bg-slate-950\/80,
+html:not(.admin-light) .bg-slate-950\/90 {
+  background-color: var(--a-bg) !important;
+}
+html:not(.admin-light) .border-white\/10,
+html:not(.admin-light) .border-white\/5 { border-color: var(--a-border); }
 html.admin-light .border-white\/10,
 html.admin-light .border-white\/5 { border-color: var(--a-border); }
 html.admin-light .bg-blue-600,

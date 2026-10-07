@@ -557,7 +557,7 @@ function localizePortfolio(view: PortfolioView, bundle: PortfolioBundle | null):
     ...view,
     roleLine: enText(view.roleLine, profile?.hero_title_en),
     lead: enText(view.lead, profile?.bio_en),
-    availability: enText(view.availability, profile?.availability_text_en),
+    availability: enText(view.availability, profile?.availability_text_en) || 'Available for new challenges',
     badges: view.badges.map((badge) => enText(badge, profile?.hero_subtitle_en)).filter(Boolean),
     projects: view.projects.map((project, index) => localizeProject(project, bundle?.projects?.[index])),
     featured: view.featured.map((project) => {

@@ -217,7 +217,7 @@ export const BookFab: React.FC = () => {
   const { t } = useI18n();
   return (
     <a className="book-fab btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">
-      {t.book}
+      {t.bookFloat}
     </a>
   );
 };

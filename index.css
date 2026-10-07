@@ -647,8 +647,14 @@ html.dark .toc a.on, html.dark .blog-toc-link.is-active { background: rgba(139, 
 .page-tile { min-width: 180px; padding: 16px 18px; display: grid; gap: 4px; text-decoration: none; color: inherit; }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-.book-fab { position: fixed; right: 18px; bottom: 84px; z-index: 30; box-shadow: var(--shadow); }
-@media (min-width: 900px) { .book-fab { bottom: 24px; } }
+.book-fab {
+  position: fixed; right: 16px; bottom: 84px; z-index: 64;
+  max-width: calc(100vw - 32px); white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+@media (max-width: 900px) {
+  .book-fab { bottom: 152px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; flex-wrap: wrap; width: auto; padding: 0 24px 12px; }

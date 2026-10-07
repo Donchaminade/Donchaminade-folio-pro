@@ -106,6 +106,15 @@ test('listes API vides : secours du catalogue, texte de profil conservé', () =>
   assert.equal(view.stacks.length, 0);
 });
 
+test('en anglais, une disponibilité française sans champ EN devient une phrase de secours', () => {
+  const view = buildPortfolioView({
+    profile: {
+      availability_text: 'Disponible pour de nouveaux défis',
+    },
+  }, 'en');
+  assert.equal(view.availability, 'Available for new challenges');
+});
+
 test('le chatbot ne réécrit pas les fiches déjà fournies par l’API', () => {
   const facts: PortfolioFacts = {
     profile: {

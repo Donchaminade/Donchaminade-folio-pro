@@ -114,7 +114,7 @@ function adminLayout(string $title, string $content, string $active = '', ?strin
     </aside>
 
     <main id="adminMain" class="admin-main min-h-full">
-        <header class="sticky top-0 z-30 flex items-center gap-3 px-4 py-3 lg:px-8 border-b border-[var(--a-border)] bg-[rgba(18,20,23,0.92)] backdrop-blur-md">
+        <header class="sticky top-0 z-30 flex items-center gap-3 px-4 py-3 lg:px-8 border-b border-[var(--a-border)] backdrop-blur-md">
             <button type="button" id="adminMobileMenuBtn" class="icon-btn lg:hidden p-2" aria-label="Menu">
                 <?= adminIcon('menu', 'w-5 h-5') ?>
             </button>

@@ -327,7 +327,7 @@
       const light = document.documentElement.classList.toggle('admin-light');
       try { localStorage.setItem('admin-theme', light ? 'light' : 'dark'); } catch (_) {}
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', light ? '#f7f8fa' : '#0e1520');
+      if (meta) meta.setAttribute('content', light ? '#ffffff' : '#1e3a5f');
     });
   }
 

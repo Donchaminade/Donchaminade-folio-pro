@@ -148,7 +148,6 @@ const ProjectTile: React.FC<{ project: ProjectView; detailLabel: string }> = ({ 
 const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ data, onShowAll }) => {
   const { lang, t } = useI18n();
   const [filter, setFilter] = useState('all');
-  const [cvLang, setCvLang] = useState<'fr' | 'en'>('fr');
   const [collaborateOpen, setCollaborateOpen] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [feedback, setFeedback] = useState('');
@@ -168,7 +167,11 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
     () => (filter === 'all' ? data.featured : data.projects.filter((project) => matchesFilter(project, filterKey))),
     [data.featured, data.projects, filter, filterKey]
   );
-  const cvHref = cvLang === 'fr' ? CV_FR : CV_EN;
+  const cvHref = lang === 'en' ? CV_EN : CV_FR;
+  const cvFile = lang === 'en' ? CV_EN_FILE : CV_FR_FILE;
+  const otherCv = lang === 'en'
+    ? { href: CV_FR, file: CV_FR_FILE, hreflang: 'fr' as const }
+    : { href: CV_EN, file: CV_EN_FILE, hreflang: 'en' as const };
 
   const send = async (event: FormEvent) => {
     event.preventDefault();
@@ -197,20 +200,16 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
         <div className="blob" style={{ width: 300, height: 300, background: '#2BA3A0', bottom: -60, left: -80 }} />
         <div className="wrap hero-grid">
           <div>
-            <p className="status"><span className="pulse" aria-hidden="true" />{data.availability}</p>
+            <p className="status"><span className="pulse" aria-hidden="true" />{data.availability || t.availableNow}</p>
             <h1>{data.name}</h1>
             <p className="role"><RoleLine text={data.roleLine} /></p>
             <p className="lead">{data.lead}</p>
             <ul className="badges">{data.badges.map((badge) => <li key={badge}>{badge}</li>)}</ul>
             <div className="ctas">
               <a className="btn btn-primary btn-lg" href="#projets">{t.seeProjects}</a>
-              <a className="btn btn-secondary btn-lg" href={cvHref} download={cvLang === 'fr' ? CV_FR_FILE : CV_EN_FILE}>
+              <a className="btn btn-secondary btn-lg" href={cvHref} download={cvFile} hreflang={lang}>
                 {t.downloadCv}
               </a>
-              <span className="cv-switch" role="group" aria-label={t.cvLang}>
-                <button type="button" className={cvLang === 'fr' ? 'on' : ''} onClick={() => setCvLang('fr')}>FR</button>
-                <button type="button" className={cvLang === 'en' ? 'on' : ''} onClick={() => setCvLang('en')}>EN</button>
-              </span>
               <a className="btn btn-link" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">{t.book30}</a>
             </div>
             <ul className="socials" aria-label={t.socials}>
@@ -353,7 +352,8 @@ const HomeView: React.FC<{ data: PortfolioView; onShowAll: () => void }> = ({ da
                 <a className="btn btn-secondary" href={CV_EN} download={CV_EN_FILE} hreflang="en">{t.download}</a>
               </div>
             </div>
-            <a className="btn btn-link" href={cvLang === 'en' ? CV_EN : CV_FR} target="_blank" rel="noopener noreferrer">{t.openPreview}</a>
+            <a className="btn btn-link" href={cvHref} target="_blank" rel="noopener noreferrer">{t.openPreview}</a>
+            <a className="btn btn-link" href={otherCv.href} download={otherCv.file} hreflang={otherCv.hreflang}>{t.cvAlternate}</a>
           </aside>
         </div>
       </section>
