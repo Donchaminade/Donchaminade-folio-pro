@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowUp, Clock, Eye } from 'lucide-react';
 import BlogEngagement from '../components/blog/BlogEngagement';
@@ -12,6 +12,11 @@ import { fetchBlogCategories } from '../lib/api';
 import { getBlogCategory, setBlogCategoriesRegistry } from '../lib/blogCategories';
 import { mediaUrl } from '../lib/media';
 import { BlogPostDetail, fetchBlogPost, fetchBlogPreview, isApiConfigured } from '../lib/api';
+import {
+  prepareBlogBody,
+  readLocationHeadingId,
+  scrollToBlogHeading,
+} from '../lib/blogHeadings';
 import { navigate } from '../lib/navigation';
 
 interface Props {
@@ -55,6 +60,62 @@ const BlogPostPage: React.FC<Props> = ({ slug, previewToken }) => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const articleContent = post?.content ?? '';
+  const body = useMemo(() => prepareBlogBody(articleContent), [articleContent]);
+
+  useEffect(() => {
+    if (!articleContent) return;
+    const root = contentRef.current;
+    let programmatic = false;
+    let cancelled = false;
+
+    const scrollToHash = (behavior: ScrollBehavior) => {
+      if (cancelled) return;
+      const id = readLocationHeadingId();
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      programmatic = true;
+      scrollToBlogHeading(el, behavior);
+      window.setTimeout(() => {
+        programmatic = false;
+      }, 80);
+    };
+
+    const onUserScroll = () => {
+      if (!programmatic) cancelled = true;
+    };
+    const onPop = () => {
+      cancelled = false;
+      scrollToHash('smooth');
+    };
+
+    window.addEventListener('wheel', onUserScroll, { passive: true });
+    window.addEventListener('touchmove', onUserScroll, { passive: true });
+    window.addEventListener('popstate', onPop);
+
+    scrollToHash('auto');
+    const raf = window.requestAnimationFrame(() => scrollToHash('auto'));
+    const timers = [
+      window.setTimeout(() => scrollToHash('auto'), 350),
+      window.setTimeout(() => scrollToHash('auto'), 700),
+    ];
+    const onImageLoad = (event: Event) => {
+      if (event.target instanceof HTMLImageElement) scrollToHash('auto');
+    };
+    root?.addEventListener('load', onImageLoad, true);
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(raf);
+      timers.forEach((timer) => window.clearTimeout(timer));
+      window.removeEventListener('wheel', onUserScroll);
+      window.removeEventListener('touchmove', onUserScroll);
+      window.removeEventListener('popstate', onPop);
+      root?.removeEventListener('load', onImageLoad, true);
+    };
+  }, [articleContent]);
 
   if (loading) {
     return (
@@ -181,7 +242,7 @@ const BlogPostPage: React.FC<Props> = ({ slug, previewToken }) => {
               )}
             </header>
 
-            <BlogContent ref={contentRef} content={post.content} />
+            <BlogContent ref={contentRef} body={body} />
 
             {!isPreview && (
             <motion.section
@@ -195,7 +256,7 @@ const BlogPostPage: React.FC<Props> = ({ slug, previewToken }) => {
             )}
           </motion.article>
 
-          <BlogTableOfContents contentRef={contentRef} htmlContent={post.content} />
+          <BlogTableOfContents items={body.items} />
         </div>
       </div>
 
