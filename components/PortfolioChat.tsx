@@ -117,12 +117,10 @@ const PortfolioChat: React.FC = () => {
             aria-expanded={open}
             aria-controls="portfolio-chat-dialog"
             aria-label="Ouvrir l’assistant portfolio"
-            className="fixed left-3 bottom-[5.5rem] lg:left-5 lg:bottom-8 z-[65] min-h-12 pl-3 pr-4 py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-[0_18px_40px_rgba(37,99,235,0.35)] border border-white/20 flex items-center gap-2.5 touch-manipulation"
+            className="chat-fab"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15">
-              <MessageCircle size={18} />
-            </span>
-            <span className="text-[10px] font-black uppercase tracking-widest">Assistant</span>
+            <MessageCircle size={22} />
+            <span className="sr-only">Assistant</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -130,7 +128,7 @@ const PortfolioChat: React.FC = () => {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-[80] flex items-end justify-center lg:items-end lg:justify-start p-0 sm:p-3 lg:p-6"
+            className="fixed inset-0 z-[80] flex items-end justify-center lg:items-end lg:justify-end p-0 sm:p-3 lg:p-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

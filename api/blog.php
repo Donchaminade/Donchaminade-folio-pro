@@ -4,6 +4,25 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/bootstrap.php';
 
+/**
+ * Réponse publique d'un article : aucun jeton d'aperçu ni champ interne.
+ */
+function publicBlogPost(array $post): array
+{
+    $allowed = [
+        'id', 'slug', 'title', 'excerpt', 'category', 'content', 'cover_image',
+        'reading_time', 'published_at', 'views_count', 'likes_count', 'shares_count',
+        'comments_count', 'liked', 'share_url', 'og_image_url', 'comments',
+    ];
+    $public = [];
+    foreach ($allowed as $key) {
+        if (array_key_exists($key, $post)) {
+            $public[$key] = $post[$key];
+        }
+    }
+    return $public;
+}
+
 Response::cors();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -95,7 +114,7 @@ if ($method === 'GET') {
         $post['comments'] = $repo->getPublicCommentsTree($postId);
         $post['comments_count'] = $repo->countPublicComments($postId);
 
-        Response::json(['success' => true, 'data' => $post]);
+        Response::json(['success' => true, 'data' => publicBlogPost($post)]);
     }
 
     Response::error('Action GET inconnue', 404);

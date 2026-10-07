@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { List } from 'lucide-react';
 import {
   blogStickyOffset,
   pushHeadingHash,
   scrollToBlogHeading,
   type TocItem,
 } from '../../lib/blogHeadings';
+import BlogShareActions from './BlogShareActions';
 
 interface Props {
   items: TocItem[];
+  mode: 'mobile' | 'desktop';
+  share?: {
+    slug: string;
+    title: string;
+    shareUrl?: string;
+    sharesCount: number;
+    onSharesUpdate: (count: number) => void;
+  };
 }
 
-const BlogTableOfContents: React.FC<Props> = ({ items }) => {
+const BlogTableOfContents: React.FC<Props> = ({ items, mode, share }) => {
   const [activeId, setActiveId] = useState('');
 
   useEffect(() => {
     if (!activeId) return;
-    const link = document.querySelector<HTMLAnchorElement>(`a.blog-toc-link[href="#${activeId}"]`);
-    const list = link?.closest('ul');
+    const link = document.querySelector<HTMLAnchorElement>(`a.blog-toc-link[href="#${CSS.escape(activeId)}"]`);
+    const list = link?.closest('ol, ul');
     if (!link || !list) return;
     const linkRect = link.getBoundingClientRect();
     const listRect = list.getBoundingClientRect();
@@ -55,42 +63,59 @@ const BlogTableOfContents: React.FC<Props> = ({ items }) => {
 
   if (items.length < 2) return null;
 
+  const list = (
+    <ol>
+      {items.map((item) => (
+        <li key={item.id} className={item.level === 3 ? 'd3' : undefined}>
+          <a
+            href={`#${item.id}`}
+            className={`blog-toc-link${item.level === 3 ? ' depth-3' : ''}${activeId === item.id ? ' is-active' : ''}`}
+            onClick={(event) => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+                return;
+              }
+              const el = document.getElementById(item.id);
+              if (!el) return;
+              event.preventDefault();
+              setActiveId(item.id);
+              scrollToBlogHeading(el, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+              pushHeadingHash(item.id);
+            }}
+          >
+            {item.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  );
+
+  if (mode === 'mobile') {
+    return (
+      <details className="toc-mobile card">
+        <summary>
+          Sommaire · {items.length} parties <span aria-hidden="true">▾</span>
+        </summary>
+        {list}
+      </details>
+    );
+  }
+
   return (
-    <nav className="hidden xl:block sticky top-28 self-start w-56 shrink-0" aria-label="Sommaire">
-      <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 backdrop-blur-md p-4 shadow-sm">
-        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3">
-          <List size={14} /> Sommaire
+    <nav className="toc card" aria-label="Sommaire">
+      <h2>Sommaire</h2>
+      {list}
+      {share && (
+        <div className="share">
+          <BlogShareActions
+            slug={share.slug}
+            title={share.title}
+            shareUrl={share.shareUrl}
+            sharesCount={share.sharesCount}
+            onSharesUpdate={share.onSharesUpdate}
+            size="md"
+          />
         </div>
-        <ul className="space-y-0.5 max-h-[50vh] overflow-y-auto custom-scrollbar">
-          {items.map((item) => (
-            <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                className={`blog-toc-link ${item.level === 3 ? 'depth-3' : ''} ${activeId === item.id ? 'is-active' : ''}`}
-                onClick={(event) => {
-                  if (
-                    event.metaKey ||
-                    event.ctrlKey ||
-                    event.shiftKey ||
-                    event.altKey ||
-                    event.button !== 0
-                  ) {
-                    return;
-                  }
-                  const el = document.getElementById(item.id);
-                  if (!el) return;
-                  event.preventDefault();
-                  setActiveId(item.id);
-                  scrollToBlogHeading(el, 'smooth');
-                  pushHeadingHash(item.id);
-                }}
-              >
-                {item.text}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      )}
     </nav>
   );
 };

@@ -12,7 +12,7 @@ const DEFAULT_CV = '/CV_ADJOLOU_DONDAH_CHAMINADE.pdf';
 
 const DEFAULT_SOCIALS = {
   linkedin: 'https://linkedin.com/in/chaminadeadjolou',
-  twitter: 'https://x.com/Donchaminde',
+  twitter: 'https://x.com/Donchaminade',
   github: 'https://github.com/Donchaminade',
   whatsapp: '+22899181626',
 };

@@ -1,10 +1,7 @@
 import { Stat, Skill, SkillBlock, SoftSkill, Experience, Project, Community, Education, Testimonial, ManagedPage, Award, GalleryImage, Client } from './types';
 
 export const STATS: Stat[] = [
-  { label: "Expérience Web", value: '3', suffix: 'ans' },
-  { label: 'Expérience Mobile', value: '2', suffix: 'ans' },
-  { label: 'Comm. Digitale', value: '2', suffix: 'ans' },
-  { label: 'Projets Impactants', value: '5', suffix: '+' }
+  { label: "Expérience web et mobile", value: '4', suffix: '+ ans' },
 ];
 
 export const TECH_ICONS: Record<string, string> = {
@@ -309,8 +306,8 @@ export const EXPERIENCES: Experience[] = [
   {
     company: 'GROSBIT SARLU',
     role: 'IT Support, Développeur Web & Mobile',
-    period: 'Février 2026 - Présent',
-    tags: ['Cisco', 'Support IT', 'Next.js', 'Flutter', 'Remote'],
+    period: 'Nov. 2025 – juin 2026',
+    tags: ['CDD', 'Freelance', 'Remote', 'Next.js', 'Flutter'],
     description: [
       'Assistance technique (IT Support) et assistance au déploiement de solutions réseau pour les clients (entreprise partenaire Cisco).',
       'Développement d’applications web et mobiles (Next.js, Flutter).',
@@ -352,7 +349,7 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Efficorpe',
-    role: 'Développeur Frontend Mobile',
+    role: 'Développeur Frontend Mobile · Stage',
     period: 'Août 2025 - Octobre 2025',
     tags: ['Flutter', 'Dart', 'Supabase', 'Agile'],
     description: [
@@ -375,7 +372,7 @@ export const EXPERIENCES: Experience[] = [
   },
   {
     company: 'Axone Digital Company',
-    role: 'Développeur Web/Mobile',
+    role: 'Développeur Web & Mobile · Stage',
     period: 'Décembre 2024 - Juillet 2025',
     tags: ['Php', 'TypeScript', 'Next.js', 'MySQL', 'Tailwind', 'PostgreSQL'],
     description: [
@@ -402,13 +399,13 @@ export const PROJECTS: Project[] = [
 
   // PICON
   {
-    title: 'PICON',
-    description: 'Application mobile innovante développée en 2026.',
-    detailedDescription: 'Conception et développement d\'une application mobile complète sur mesure. Elle vise à optimiser les processus d\impression de photos en ligne avec integration de moyens de paiementet à offrir une expérience utilisateur exceptionnelle.',
-    tags: ['Flutter', 'Dart'],
+    title: 'Picon',
+    description: 'App de tirage photo publiée sur Google Play (com.photopicon.app). 26 écrans Flutter, Firebase Auth, hors ligne, paiement mobile money.',
+    detailedDescription: 'Application publiée sur Google Play (com.photopicon.app). Environ 89 % du code Dart, Firebase Auth, mode hors ligne et paiement mobile money. Contribution au backend Spring Boot.',
+    tags: ['Flutter', 'Firebase', 'Spring Boot'],
     image: '/picon.png',
     additionalImages: [],
-    link: 'https://photopicon.vercel.app',
+    link: 'https://play.google.com/store/apps/details?id=com.photopicon.app',
     github: 'https://github.com/Donchaminade/photopicon',
     type: 'Mobile'
   },
@@ -478,9 +475,9 @@ export const PROJECTS: Project[] = [
   // PayFlex
   {
     title: 'PayFlex',
-    description: 'Solution de paiement flexible pour les apprentis et artisans.',
-    detailedDescription: 'Plateforme innovante dédiée aux artisans pour faciliter la gestion financière et les paiements échelonnés de leurs apprentis.',
-    tags: ['React', 'Tailwind'],
+    description: 'Cotisation journalière et financement d’équipements pour artisans. API Spring Boot et application Flutter.',
+    detailedDescription: 'API Spring Boot (179 handlers, 34 tables Flyway) et application Flutter. Vitrine Next.js.',
+    tags: ['Spring Boot', 'Flutter', 'Next.js'],
     image: '/payf.png',
     additionalImages: [
       '/payff.png',
@@ -703,7 +700,7 @@ export const PROJECTS: Project[] = [
   {
     title: 'CoachFlow',
     description: 'Application mobile de coaching IA : personas expertes, contexte personnel et conversation vocale.',
-    detailedDescription: 'CoachFlow démocratise le coaching personnel via des personas IA, un contexte unique et Llama 3.1. Offline-first, biométrie, backend Supabase. Démo publique non publiée à ce jour.',
+    detailedDescription: 'CoachFlow démocratise le coaching personnel via des personas IA et un contexte personnel. Offline-first, biométrie, backend Supabase. Démo publique non publiée à ce jour.',
     tags: ['Flutter', 'Dart', 'Supabase', 'Riverpod'],
     image: '',
     additionalImages: [],
@@ -757,29 +754,7 @@ export const PROJECTS: Project[] = [
   }
 ];
 
-export const TESTIMONIALS: Testimonial[] = [
-  {
-    quote: "Chaminade est un développeur exceptionnel. Sa capacité à transformer des concepts complexes en interfaces Flutter fluides a été un atout majeur pour notre projet Efficorpe.",
-    name: "Koffi Mensah",
-    role: "Lead Developer",
-    company: "Efficorpe",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
-  },
-  {
-    quote: "En tant que formateur, il sait transmettre sa passion pour l'IA et le web avec une clarté remarquable. Ses ateliers sont toujours très appréciés des étudiants.",
-    name: "Abla Doe",
-    role: "Responsable Pédagogique",
-    company: "ISF Informatique",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
-  },
-  {
-    quote: "Sa polyvalence entre le développement et la gestion communautaire est rare. Il a su dynamiser notre présence digitale tout en fournissant un code de qualité chez Axone.",
-    name: "Jean-Pierre Kouakou",
-    role: "Product Manager",
-    company: "Axone Digital",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
-  }
-];
+export const TESTIMONIALS: Testimonial[] = [];
 
 export const MANAGED_PAGES: ManagedPage[] = [
   {
@@ -808,7 +783,7 @@ export const MANAGED_PAGES: ManagedPage[] = [
   },
   {
     name: "Hyver",
-    logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=100",
+    logo: "",
     link: "#",
     followers: "500+",
     category: "Startup Agency",
@@ -967,14 +942,7 @@ export const GALLERY_IMAGES: GalleryImage[] = [
   }
 ];
 
-export const CLIENTS: Client[] = [
-  { name: 'Efficorpe', logo: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=100' },
-  { name: 'Ecobank', logo: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=100' },
-  { name: 'GDG', logo: 'https://www.gstatic.com/devrel-devsite/prod/vc893708466e31e515d90616b3f7495b46e393b6e76d99723223087268d813470/developers/images/touchicon-180.png' },
-  { name: 'Axone', logo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=100' },
-  { name: 'Python Togo', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg' },
-  { name: 'ISF', logo: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=100' }
-];
+export const CLIENTS: Client[] = [];
 
 export const RELATIONNELLES = [
   "Leadership & Organisation",

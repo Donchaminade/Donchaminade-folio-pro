@@ -1,17 +1,17 @@
 export function getApiBase(): string {
-  const explicit = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
+  const explicit = (import.meta.env?.VITE_API_URL as string | undefined)?.trim();
   if (explicit) {
     return explicit.replace(/\/$/, '');
   }
   // En dev : proxy Vite → XAMPP (voir vite.config.ts)
-  if (import.meta.env.DEV) {
+  if (import.meta.env?.DEV) {
     return '';
   }
   return '';
 }
 
 export function isApiConfigured(): boolean {
-  return getApiBase() !== '' || import.meta.env.DEV;
+  return getApiBase() !== '' || Boolean(import.meta.env?.DEV);
 }
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
@@ -96,7 +96,8 @@ export async function fetchBlogCategories(): Promise<BlogCategoryApi[]> {
 
 export async function fetchBlogList(
   page = 1,
-  category?: string
+  category?: string,
+  limit = 12
 ): Promise<{
   data: BlogPostSummary[];
   page: number;
@@ -112,7 +113,7 @@ export async function fetchBlogList(
       hasMore: boolean;
       categories?: BlogCategoryApi[];
     }
-  >(`/api/blog.php?action=list&page=${page}&limit=12${cat}`);
+  >(`/api/blog.php?action=list&page=${page}&limit=${limit}${cat}`);
   return {
     data: res.data,
     page: res.page,
@@ -186,9 +187,18 @@ export function countBlogComments(comments: BlogComment[]): number {
   return comments.reduce((n, c) => n + 1 + countBlogComments(c.replies ?? []), 0);
 }
 
+let portfolioPromise: Promise<unknown> | null = null;
+
 export async function fetchPortfolio<T>(): Promise<T> {
-  const res = await apiFetch<ApiResponse<T>>('/api/index.php?resource=portfolio');
-  return res.data;
+  if (!portfolioPromise) {
+    portfolioPromise = apiFetch<ApiResponse<T>>('/api/index.php?resource=portfolio')
+      .then((res) => res.data)
+      .catch((error) => {
+        portfolioPromise = null;
+        throw error;
+      });
+  }
+  return portfolioPromise as Promise<T>;
 }
 
 export interface RecommendationPayload {

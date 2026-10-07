@@ -15,6 +15,7 @@ import {
   KNOWLEDGE_PROFILE,
   KNOWLEDGE_SALARY_CONTEXT,
   KNOWLEDGE_VALUE_CONTEXT,
+  isFakeChatTestimonial,
   withKnowledge,
 } from './knowledge';
 import { detectIntent } from './language';
@@ -106,7 +107,7 @@ function snapshotFacts(blogs: ChatBlogFact[] = SNAPSHOT_BLOGS): PortfolioFacts {
     projects: CATALOG_PROJECTS,
     experiences: CATALOG_EXPERIENCES,
     blogs,
-    testimonials: CATALOG_TESTIMONIALS,
+    testimonials: CATALOG_TESTIMONIALS.filter((item) => item.name && item.quote && !isFakeChatTestimonial(item.name)),
     communities: CATALOG_COMMUNITIES,
     awards: CATALOG_AWARDS,
     skills: CATALOG_SKILLS,
@@ -302,11 +303,11 @@ async function loadLiveFacts(): Promise<PortfolioFacts> {
       })),
       blogs: (() => {
         const live = mapBlogs(blogRes?.data);
-        if (live.length === 0) return fallback.blogs;
-        const seen = new Set(live.map((b) => b.slug));
-        return [...live, ...fallback.blogs.filter((b) => !seen.has(b.slug))];
+        return live.length > 0 ? live : fallback.blogs;
       })(),
-      testimonials: liveTestimonials.length ? liveTestimonials : fallback.testimonials,
+      testimonials: (liveTestimonials.length ? liveTestimonials : fallback.testimonials).filter(
+        (item) => item.name && item.quote && !isFakeChatTestimonial(item.name)
+      ),
       communities: mergedCommunities.map((c) => ({
         name: c.name,
         role: c.role,
@@ -377,7 +378,7 @@ function formatFactsBlock(facts: PortfolioFacts): string[] {
     `BIO: ${p.bio}`,
     current
       ? `POSTE ACTUEL: ${current.role} @ ${current.company} (${current.period})`
-      : 'POSTE ACTUEL: GROSBIT SARLU — IT Support, Développeur Web & Mobile (Février 2026 – Présent)',
+      : 'GROSBIT SARLU — IT Support, Développeur Web & Mobile (nov. 2025 – juin 2026, CDD / freelance, remote)',
     p.availability_text ? `DISPO: ${p.availability_text}` : '',
     `CONTACT: email ${p.email || ''} · tel ${phones} · LinkedIn ${p.linkedin_url || 'https://www.linkedin.com/in/chaminadeadjolou'} · GitHub ${p.github_url || ''} · X ${p.twitter_url || ''}`,
     `FORMATION: ${facts.education.join(' | ')}`,

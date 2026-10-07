@@ -6,14 +6,26 @@ return [
     [
         'company' => 'GROSBIT SARLU',
         'role' => 'IT Support, Développeur Web & Mobile',
-        'period' => 'Février 2026 - Présent',
+        'period' => 'Nov. 2025 – juin 2026',
         'sort_order' => 1,
         'description' => [
+            'CDD / freelance, remote.',
             'Assistance technique (IT Support) et assistance au déploiement de solutions réseau pour les clients (entreprise partenaire Cisco).',
             'Développement d’applications web et mobiles (Next.js, Flutter).',
             'Maintien en conditions opérationnelles des infrastructures et assistance à la résolution des incidents.',
         ],
-        'tags' => ['Cisco', 'Support IT', 'Next.js', 'Flutter', 'Remote'],
+        'tags' => ['CDD', 'Freelance', 'Remote', 'Cisco', 'Support IT', 'Next.js', 'Flutter'],
+    ],
+    [
+        'company' => 'Picon Studio',
+        'role' => 'Développeur Frontend Mobile',
+        'period' => 'Déc. 2025 – févr. 2026',
+        'sort_order' => 2,
+        'description' => [
+            'Livraison de l’app Picon sur Google Play : 26 écrans Flutter, Firebase Auth, hors ligne.',
+            'Contribution au backend Spring Boot (JWT, WebSocket).',
+        ],
+        'tags' => ['Flutter', 'Firebase', 'Spring Boot', 'CDD', 'Freelance'],
     ],
     [
         'company' => 'PyCon Togo 2026',
@@ -53,7 +65,7 @@ return [
     ],
     [
         'company' => 'Efficorpe',
-        'role' => 'Développeur Frontend Mobile',
+        'role' => 'Développeur Frontend Mobile · Stage',
         'period' => 'Août 2025 - Octobre 2025',
         'sort_order' => 5,
         'description' => [
@@ -77,7 +89,7 @@ return [
     ],
     [
         'company' => 'Axone Digital Company',
-        'role' => 'Développeur Web/Mobile',
+        'role' => 'Développeur Web & Mobile · Stage',
         'period' => 'Décembre 2024 - Juillet 2025',
         'sort_order' => 7,
         'description' => [

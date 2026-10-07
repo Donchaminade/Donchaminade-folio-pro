@@ -8,9 +8,8 @@ import type {
 } from './types';
 
 /**
- * Faits publics fusionnés (CV + LinkedIn + catalogue).
- * L’API portfolio reste la source de vérité pour les projets actuellement affichés.
- * Ces extraits comblent les trous (timeline, formations, communautés, projets perso).
+ * Secours du chatbot lorsque l’API ne renvoie pas un champ.
+ * Une liste ou une bio déjà fournie par l’admin n’est pas réécrite.
  */
 export const KNOWLEDGE_PROFILE: ChatProfileFact = {
   full_name: 'ADJOLOU Dondah Chaminade',
@@ -22,17 +21,17 @@ export const KNOWLEDGE_PROFILE: ChatProfileFact = {
   ],
   hero_title: 'Développeur Web & Mobile.',
   headline:
-    'Web & Mobile Developer — Next.js, React, Flutter, Java Spring Boot, Node.js, Python, PHP ; Event & Team Coordinator ; Community Manager ; Ambassadeur Cursor',
-  bio: 'Développeur web et mobile basé à Lomé (Togo). Environ 3 ans d’expérience web, 2 ans en mobile et 2 ans en communication digitale / organisation d’événements tech. Je conçois des solutions numériques centrées utilisateur (React/Next.js, Flutter, PHP, Node.js, Python, Java/Spring Boot). Poste actuel : IT Support et développeur web & mobile chez GROSBIT SARLU (Février 2026 – Présent). Formé à Lomé Business School (Licence Pro 2024) et à l’École Polytechnique DEFITECH (BTS 2023). Intérêts publics : HiveQL et IA.',
+    'Web & Mobile Developer — Next.js, React, Flutter, Java Spring Boot, Node.js, Python, PHP ; Event & Team Coordinator ; Community Manager ; Ambassadeur SpaceXAI',
+  bio: 'Développeur web et mobile basé à Lomé (Togo), 4+ ans d’expérience. Je conçois des solutions numériques centrées utilisateur (React/Next.js, Flutter, React Native/Expo, PHP, Node.js, Python, Java/Spring Boot). GROSBIT SARLU : IT Support et développeur web & mobile (nov. 2025 – juin 2026, CDD / freelance, remote). Formé à Lomé Business School (Licence Pro 2024) et à l’École Polytechnique DEFITECH (BTS 2023). Intérêts publics : HiveQL et IA.',
   location: 'Lomé, Togo',
   availability_text: 'Disponible pour de nouveaux défis',
-  experience_badge: '3+ ans',
+  experience_badge: '4+ ans',
   email: 'chaminade.dondah.adjolou@gmail.com',
   phone: '+228 99 18 16 26',
   phones: ['+228 99 18 16 26', '+228 92 59 56 61'],
   whatsapp: '22899181626',
   linkedin_url: 'https://www.linkedin.com/in/chaminadeadjolou',
-  twitter_url: 'https://x.com/Donchaminde',
+  twitter_url: 'https://x.com/Donchaminade',
   github_url: 'https://github.com/Donchaminade',
 };
 
@@ -84,11 +83,11 @@ export const KNOWLEDGE_EXPERIENCES: ChatExperienceFact[] = [
   },
   {
     company: 'Cursor Togo Community',
-    role: 'Responsable senior / communauté — Ambassadeur Cursor',
+    role: 'Responsable senior / communauté — Ambassadeur SpaceXAI',
     period: 'Mention publique LinkedIn',
     description: [
-      'Responsable senior de la Cursor Togo Community.',
-      'Ambassadeur Cursor : animation communautaire et accompagnement autour de l’IDE et des workflows IA.',
+      'Responsable senior de la communauté.',
+      'Ambassadeur SpaceXAI : animation communautaire et accompagnement autour des workflows IA.',
     ],
     tags: ['Cursor', 'Communauté', 'IA'],
   },
@@ -107,12 +106,42 @@ export const KNOWLEDGE_EXPERIENCES: ChatExperienceFact[] = [
 /** Projets perso CV / LinkedIn non (ou partiellement) listés par l’API live. */
 export const KNOWLEDGE_PROJECTS: ChatProjectFact[] = [
   {
-    title: 'Ezoato',
-    description: 'App web et mobile d’accès aux épreuves, examens et devoirs des écoles du Togo.',
+    title: 'EZOA-TO',
+    description:
+      'Plateforme des épreuves d’examens au Togo : routes web, API PHP, app Flutter hors ligne (après un prototype React Native / Expo).',
     detailedDescription:
-      'Projet personnel : accès aux épreuves du nord au sud du Togo. Système de contribution rémunérée (points convertibles après validation). Paiement mobile pour l’accès premium et les retraits. Stack publique : React, Flutter, Node.js, paiement mobile.',
-    tags: ['React', 'Flutter', 'Node.js', 'Paiement Mobile'],
-    type: 'Mobile',
+      'Plateforme des épreuves d’examens au Togo : 28 routes web, 81 actions d’API PHP, 31 tables, app Flutter hors ligne de 26 écrans (après un prototype React Native / Expo). Dépôt : https://github.com/Donchaminade/ezoato',
+    tags: ['React 19', 'PHP', 'Flutter', 'Expo'],
+    type: 'Web',
+    link: 'https://github.com/Donchaminade/ezoato',
+    github: 'https://github.com/Donchaminade/ezoato',
+  },
+  {
+    title: 'CopyTo',
+    description:
+      'Presse-papier synchronisé et chiffré de bout en bout entre PC et mobile : extension Chrome, PWA, serveur, librairie partagée.',
+    detailedDescription:
+      'X25519 + AES-GCM, WebRTC P2P. Dépôt : https://github.com/Donchaminade/copyto',
+    tags: ['TypeScript', 'WebRTC', 'Socket.IO'],
+    type: 'Web',
+    github: 'https://github.com/Donchaminade/copyto',
+  },
+  {
+    title: 'Lignée',
+    description: 'Arbre familial interactif avec fiches éditables et import de récit qui suggère personnes et relations.',
+    detailedDescription: 'PWA. Démo : https://story-lineage.vercel.app — dépôt https://github.com/Donchaminade/story-lineage',
+    tags: ['PWA', 'IA'],
+    type: 'Web',
+    link: 'https://story-lineage.vercel.app',
+    github: 'https://github.com/Donchaminade/story-lineage',
+  },
+  {
+    title: 'K7 Mémoire',
+    description: 'Récits audio de Lomé dans une interface cassette/radio, contenus dans Sanity.',
+    detailedDescription: 'Projet du Sanity Challenge. Démo : https://k7-memoire.vercel.app',
+    tags: ['Next.js', 'Sanity', 'GROQ'],
+    type: 'Web',
+    link: 'https://k7-memoire.vercel.app',
   },
   {
     title: 'Meneur TV',
@@ -135,9 +164,9 @@ export const KNOWLEDGE_PROJECTS: ChatProjectFact[] = [
 export const KNOWLEDGE_COMMUNITIES: ChatCommunityFact[] = [
   {
     name: 'Cursor Togo Community',
-    role: 'Responsable senior / Ambassadeur Cursor',
+    role: 'Responsable senior / Ambassadeur SpaceXAI',
     description:
-      'Animation de la communauté Cursor au Togo : ambassade, coordination d’équipe et accompagnement sur les workflows IA dans l’IDE.',
+      'Ambassadeur SpaceXAI : coordination d’équipe et accompagnement sur les workflows IA. Le lien public de la communauté reste celui publié sur le site.',
   },
   {
     name: 'ETHAfrique',
@@ -253,7 +282,7 @@ export const KNOWLEDGE_VALUE_CONTEXT = `VALEUR AJOUTÉE AU-DELÀ DU CODE :
 - Digitalisation métier : ERP Tayba Market (ventes, stocks, caisses, fidélisation) — de l’audit IT à la mise en prod.
 - Apps opérationnelles : PICON (logistique photo / commande-livraison), Ratoufa (tickets), PayFlex, RachCargo.
 - Pédagogie : formateur ISF / WTM / Ecobank / GDG (IA, web, réseaux sociaux) ; coach 48h Hackathon YAS Togo | Next Gen.
-- Community & logistique : GDG Lomé, WTM, Python Togo, PyCon Togo speakers, Hyver / ETHAfrique / ABC, ambassadeur Cursor Togo ; événements 200–500+ personnes.
+- Community & logistique : GDG Lomé, WTM, Python Togo, PyCon Togo speakers, Hyver / ETHAfrique / ABC, ambassadeur SpaceXAI ; événements 200–500+ personnes.
 - Impact business : un profil qui livre, forme, et ouvre un réseau local — pas seulement des tickets Jira.`;
 
 export const KNOWLEDGE_NETWORK_CONTEXT = `FORCE DU RÉSEAU (faits publics) :
@@ -262,7 +291,7 @@ export const KNOWLEDGE_NETWORK_CONTEXT = `FORCE DU RÉSEAU (faits publics) :
 - Python Togo : social media & logistique ; PyCon Togo 2026 chargé des speakers (arrivées, frontière, site).
 - YAS Togo | Next Gen 2026 : coach hackathon 48h.
 - Hyver, ETHAfrique, ABC : CM / visuels / logistique saisonniers depuis 2024.
-- Cursor Togo Community : responsable senior, ambassadeur Cursor.
+- Communauté publique : responsable senior, ambassadeur SpaceXAI (le lien affiché sur le site n’est pas réécrit).
 - MLH Togo : responsable adjoint, hackathon 50+ participants.
 - Taille : événements tech 200 à 500+ personnes ; pages animées (GDG Lomé 2k+, Python Togo 1k+, WTM 800+, Hyver 500+).
 - Mobilisation citée : plus de 600 participants lors d’événements tech locaux (CM Hyver / Python Togo / ABC).`;
@@ -275,7 +304,7 @@ export function formatSalaryAnswer(lang: 'fr' | 'en'): string {
       'Local full-time (Togo / UEMOA): 4 800 000 – 9 000 000 XOF per year (about 400 000 – 750 000 XOF / month).',
       'Remote international contract: 18 000 – 36 000 EUR per year, or 20 000 – 40 000 USD per year.',
       '',
-      'Why this band: ~3–4 years web, mobile delivery (Next.js, Flutter, Node, PHP), shipped ERP and ops apps (Tayba Market, PICON), plus training, speaking, and logistics for 200–500+ attendee events (GDG Lomé, PyCon Togo speakers, YAS coach). That is a mid-level strong builder with a community multiplier — not a FAANG senior.',
+      'Why this band: 4+ years web, mobile delivery (Next.js, Flutter, Spring Boot, Node, PHP), shipped ERP and ops apps (Tayba Market, Picon), plus training, speaking, and logistics for 200–500+ attendee events (GDG Lomé, PyCon Togo speakers, YAS coach). That is a mid-level strong builder with a community multiplier — not a FAANG senior.',
       '',
       'Negotiation levers: remote vs onsite, full-time vs freelance, scope (IC vs lead/coach), timezone overlap, and whether the role includes community or training. Upper local band fits NGOs, telcos or regional product teams; the lower band fits a local SME with a narrower scope.',
       '',
@@ -288,7 +317,7 @@ export function formatSalaryAnswer(lang: 'fr' | 'en'): string {
     'CDI local Togo / UEMOA : 4 800 000 – 9 000 000 XOF / an (soit 400 000 – 750 000 XOF / mois).',
     'Contrat remote international : 18 000 – 36 000 EUR / an, ou 20 000 – 40 000 USD / an.',
     '',
-    'Pourquoi cette bande : environ 3–4 ans de web, livraison mobile (Next.js, Flutter, Node, PHP), ERP et apps opérationnelles livrées (Tayba Market, PICON), plus la formation, le speaking et la logistique d’événements de 200–500+ personnes (GDG Lomé, speakers PyCon Togo, coach YAS). C’est un mid-level builder solide, multiplicateur communautaire — pas un senior FAANG.',
+    'Pourquoi cette bande : 4+ ans de web, livraison mobile (Next.js, Flutter, Spring Boot, Node, PHP), ERP et apps opérationnelles livrées (Tayba Market, Picon), plus la formation, le speaking et la logistique d’événements de 200–500+ personnes (GDG Lomé, speakers PyCon Togo, coach YAS). C’est un mid-level builder solide, multiplicateur communautaire — pas un senior FAANG.',
     '',
     'Leviers de négociation : remote vs présentiel, CDI vs freelance, périmètre (IC vs lead/coach), fuseau, et la part de communauté ou de formation. Le haut de bande locale correspond plutôt aux ONG, telcos ou équipes produit régionales ; le bas à une PME locale au périmètre plus étroit.',
     '',
@@ -303,7 +332,7 @@ export function formatValueAnswer(lang: 'fr' | 'en'): string {
       '',
       'He has led digitalisation end-to-end at Tayba Market (ERP: sales, stock, cashiers, loyalty), ships operational apps such as PICON for printed-photo logistics, and trains teams (ISF, WTM, Ecobank, GDG) while coaching hackathon squads at YAS / Next Gen.',
       '',
-      'The extra value is leverage: fewer process gaps, faster delivery, and a community door (GDG, PyCon, Cursor Togo) that helps hiring, talks, and events. He is a builder who also organizes — not only a ticket-closer.',
+      'The extra value is leverage: fewer process gaps, faster delivery, and a community door (GDG, PyCon, SpaceXAI) that helps hiring, talks, and events. He is a builder who also organizes — not only a ticket-closer.',
       '',
       'Are you hiring for product delivery, internal digitalisation, or community / training as well?',
     ].join('\n');
@@ -313,7 +342,7 @@ export function formatValueAnswer(lang: 'fr' | 'en'): string {
     '',
     'Il a mené la digitalisation de bout en bout chez Tayba Market (ERP : ventes, stocks, caisses, fidélisation), livre des apps opérationnelles comme PICON pour la logistique photo, forme des publics (ISF, WTM, Ecobank, GDG) et coache des équipes au hackathon YAS / Next Gen.',
     '',
-    'La valeur ajoutée, c’est le levier : moins de trous dans les process, une livraison plus courte, et une porte communautaire (GDG, PyCon, Cursor Togo) utile pour recruter, parler et organiser. C’est un builder qui organise aussi — pas seulement quelqu’un qui ferme des tickets.',
+    'La valeur ajoutée, c’est le levier : moins de trous dans les process, une livraison plus courte, et une porte communautaire (GDG, PyCon, SpaceXAI) utile pour recruter, parler et organiser. C’est un builder qui organise aussi — pas seulement quelqu’un qui ferme des tickets.',
     '',
     'Vous recrutez surtout pour la livraison produit, une digitalisation interne, ou aussi pour la communauté et la formation ?',
   ].join('\n');
@@ -324,7 +353,7 @@ export function formatNetworkAnswer(lang: 'fr' | 'en'): string {
     return [
       'His network is operational, not decorative: he speaks, coaches, and runs logistics for rooms of 200–500+ people.',
       '',
-      'GDG Lomé (speaker on Flutter/Firebase, organizer, team coordinator — including Google I/O Extended), WTM Lomé (mentor & logistics), Python Togo (social + logistics) and PyCon Togo 2026 speaker coordination (arrivals, border transport, on-site). He coaches at the 48h YAS Togo | Next Gen hackathon, contributes seasonally to Hyver, ETHAfrique and ABC, and is senior lead / Cursor ambassador for Cursor Togo. He was also deputy lead for MLH Togo (50+ hackathon).',
+      'GDG Lomé (speaker on Flutter/Firebase, organizer, team coordinator — including Google I/O Extended), WTM Lomé (mentor & logistics), Python Togo (social + logistics) and PyCon Togo 2026 speaker coordination (arrivals, border transport, on-site). He coaches at the 48h YAS Togo | Next Gen hackathon, contributes seasonally to Hyver, ETHAfrique and ABC, and is senior lead / SpaceXAI ambassador. He was also deputy lead for MLH Togo (50+ hackathon).',
       '',
       'Public pages he helps animate: GDG Lomé 2k+, Python Togo 1k+, WTM 800+, Hyver 500+. Community management work has mobilized 600+ participants at local tech events.',
       '',
@@ -334,7 +363,7 @@ export function formatNetworkAnswer(lang: 'fr' | 'en'): string {
   return [
     'Son réseau est opérationnel, pas décoratif : il parle, coache et tient la logistique de salles de 200–500+ personnes.',
     '',
-    'GDG Lomé (speaker Flutter/Firebase, organisateur, chef d’équipes — dont Google I/O Extended), WTM Lomé (mentor & logistique), Python Togo (réseaux + logistique) et PyCon Togo 2026 chargé des speakers (arrivées, transport depuis la frontière, site). Il coache au hackathon 48h YAS Togo | Next Gen, contribue de façon saisonnière à Hyver, ETHAfrique et ABC, et est responsable senior / ambassadeur Cursor Togo. Il a aussi été responsable adjoint MLH Togo (hackathon 50+).',
+    'GDG Lomé (speaker Flutter/Firebase, organisateur, chef d’équipes — dont Google I/O Extended), WTM Lomé (mentor & logistique), Python Togo (réseaux + logistique) et PyCon Togo 2026 chargé des speakers (arrivées, transport depuis la frontière, site). Il coache au hackathon 48h YAS Togo | Next Gen, contribue de façon saisonnière à Hyver, ETHAfrique et ABC, et est responsable senior / ambassadeur SpaceXAI. Il a aussi été responsable adjoint MLH Togo (hackathon 50+).',
     '',
     'Pages publiques animées : GDG Lomé 2k+, Python Togo 1k+, WTM 800+, Hyver 500+. Le community management a déjà mobilisé plus de 600 participants lors d’événements tech locaux.',
     '',
@@ -345,7 +374,7 @@ export function formatNetworkAnswer(lang: 'fr' | 'en'): string {
 export const KNOWLEDGE_FAQ: ChatFaqFact[] = [
   {
     q: 'Où travaille Donchaminade actuellement ?',
-    a: 'Chez GROSBIT SARLU depuis février 2026 (poste actuel, source API portfolio). Rôle : IT Support et développeur web & mobile (Next.js, Flutter). Assistance réseau pour des clients, entreprise partenaire Cisco, maintien en conditions opérationnelles. Travail également sur l’app mobile de commande / livraison de photos imprimées (PICON / PhotoPicon).',
+    a: 'GROSBIT SARLU, nov. 2025 – juin 2026 (CDD / freelance, remote) : IT Support et développeur web & mobile (Next.js, Flutter). Assistance réseau pour des clients, entreprise partenaire Cisco, maintien en conditions opérationnelles. L’app Picon (Google Play, com.photopicon.app) est un projet distinct, livré aussi avec Picon Studio.',
     tags: ['grosbit', 'emploi', 'actuel', 'cisco', 'picon'],
   },
   {
@@ -375,7 +404,7 @@ export const KNOWLEDGE_FAQ: ChatFaqFact[] = [
   },
   {
     q: 'Quels projets personnels hors vitrine API ?',
-    a: 'TogoSaaS (annuaire SaaS togolais, React/TS/PHP/MySQL), Ezoato (épreuves scolaires Togo, React/Flutter/Node + paiement mobile), Togo Communities Hub, Akontaa (dettes/créances Flutter/SQLite), Meneur TV (PWA IPTV), CoachFlow, Billing Shop (cité sur LinkedIn). L’API portfolio prime pour les projets actuellement affichés sur le site (PICON, Tayba ERP, 8e Tranche, etc.).',
+    a: 'TogoSaaS (annuaire SaaS togolais), EZOA-TO (épreuves scolaires, React/PHP/Flutter), CopyTo, Lignée, K7 Mémoire, Togo Communities Hub, Akontaa, Meneur TV, CoachFlow, Billing Shop (cité sur LinkedIn). L’affichage du site prime pour les projets mis en avant (Picon, PayFlex, EZOA-TO, TogoSaaS, TwinFlow, CopyTo, Lignée, K7 Mémoire).',
     tags: ['togosaas', 'ezoato', 'akontaa', 'meneur', 'projets'],
   },
   {
@@ -396,8 +425,8 @@ export const KNOWLEDGE_FAQ: ChatFaqFact[] = [
 ];
 
 export const KNOWLEDGE_NOTES: string[] = [
-  'CONFLITS: pour le poste actuel, privilégier l’API portfolio — GROSBIT SARLU, Février 2026 – Présent.',
-  'Le CV plus ancien (PDF) s’arrête à Efficorpe / formateur et n’a pas encore GROSBIT ni Picon Studio : ne pas s’y fier pour le job actuel.',
+  'CONFLITS: les dates, intitulés, stacks et le badge d’expérience du CONTEXTE priment. Ne pas les réécrire avec une valeur mémorisée.',
+  'Aucun témoignage inventé : si la liste publique est vide, dire qu’il n’y a pas de témoignage publié. Ne jamais citer Koffi Mensah, Abla Doe ou Jean-Pierre Kouakou.',
   'Ne pas inventer le salaire actuel / réel, l’adresse personnelle, la famille, ni les contacts privés de tiers (références CV). Les fourchettes indicatives du contexte (XOF / EUR / USD) sont autorisées pour les prétentions — toujours les labeller comme indicatives.',
   'Témoins / références CV (noms publics seulement, sans téléphone) : Bienvenu Agbavon (Co-Lead GDG Lomé), Agnilonda Pakou (Lead Hyver), Seti Afanou (Lead GDG Lomé), Wachiou Bouraima (co-fondateur Python Togo), Irene Amedji (IT & Community manager).',
 ];
@@ -406,22 +435,13 @@ function keyOf(value: string): string {
   return value.trim().toLowerCase();
 }
 
-function mergeBy<T>(primary: T[], extra: T[], key: (item: T) => string): T[] {
-  const seen = new Set(primary.map(key).filter(Boolean));
-  const more = extra.filter((item) => {
-    const k = key(item);
-    return k && !seen.has(k);
-  });
-  return more.length === 0 ? primary : [...primary, ...more];
-}
-
-export function mergeUniqueStrings(primary: string[], extra: string[]): string[] {
-  const seen = new Set(primary.map(keyOf));
-  const out = [...primary];
-  for (const item of extra) {
-    const k = keyOf(item);
-    if (!k || seen.has(k)) continue;
-    seen.add(k);
+function dedupeBy<T>(items: T[], key: (item: T) => string): T[] {
+  const out: T[] = [];
+  const seen = new Set<string>();
+  for (const item of items) {
+    const id = key(item);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
     out.push(item);
   }
   return out;
@@ -429,6 +449,18 @@ export function mergeUniqueStrings(primary: string[], extra: string[]): string[]
 
 export function withKnowledge(facts: PortfolioFacts): PortfolioFacts {
   const p = facts.profile;
+  const projects = facts.projects?.length
+    ? dedupeBy(facts.projects, (item) => keyOf(item.title))
+    : KNOWLEDGE_PROJECTS;
+  const experiences = facts.experiences?.length
+    ? facts.experiences
+    : KNOWLEDGE_EXPERIENCES;
+  const communities = facts.communities?.length
+    ? facts.communities
+    : KNOWLEDGE_COMMUNITIES;
+  const skills = facts.skills?.length
+    ? facts.skills
+    : [...KNOWLEDGE_SKILLS, ...KNOWLEDGE_SOFT_SKILLS];
   return {
     ...facts,
     profile: {
@@ -437,28 +469,43 @@ export function withKnowledge(facts: PortfolioFacts): PortfolioFacts {
       aliases: p.aliases?.length ? p.aliases : KNOWLEDGE_PROFILE.aliases,
       hero_title: p.hero_title || KNOWLEDGE_PROFILE.hero_title,
       headline: p.headline || KNOWLEDGE_PROFILE.headline,
-      bio: p.bio && p.bio.length > 80 ? p.bio : KNOWLEDGE_PROFILE.bio,
       location: p.location || KNOWLEDGE_PROFILE.location,
       email: p.email || KNOWLEDGE_PROFILE.email,
       phone: p.phone || KNOWLEDGE_PROFILE.phone,
       phones: p.phones?.length ? p.phones : KNOWLEDGE_PROFILE.phones,
       whatsapp: p.whatsapp || KNOWLEDGE_PROFILE.whatsapp,
       linkedin_url: normalizeLinkedIn(p.linkedin_url) || KNOWLEDGE_PROFILE.linkedin_url,
-      twitter_url: p.twitter_url || KNOWLEDGE_PROFILE.twitter_url,
+      twitter_url: fixChatXUrl(p.twitter_url || KNOWLEDGE_PROFILE.twitter_url),
       github_url: p.github_url || KNOWLEDGE_PROFILE.github_url,
       availability_text: p.availability_text || KNOWLEDGE_PROFILE.availability_text,
-      experience_badge: p.experience_badge || KNOWLEDGE_PROFILE.experience_badge,
+      experience_badge: p.experience_badge?.trim() || KNOWLEDGE_PROFILE.experience_badge,
+      bio: (p.bio || '').trim() || KNOWLEDGE_PROFILE.bio,
     },
-    projects: mergeBy(facts.projects, KNOWLEDGE_PROJECTS, (item) => keyOf(item.title)),
-    experiences: mergeBy(facts.experiences, KNOWLEDGE_EXPERIENCES, (item) => keyOf(item.company)),
-    communities: mergeBy(facts.communities, KNOWLEDGE_COMMUNITIES, (item) => keyOf(item.name)),
-    skills: mergeUniqueStrings(
-      facts.skills,
-      [...KNOWLEDGE_SKILLS, ...KNOWLEDGE_SOFT_SKILLS]
-    ),
+    projects,
+    experiences,
+    communities,
+    skills,
     faq: facts.faq?.length ? facts.faq : KNOWLEDGE_FAQ,
     notes: facts.notes?.length ? facts.notes : KNOWLEDGE_NOTES,
+    testimonials: (facts.testimonials || []).filter((item) => item.quote && !isFakeChatTestimonial(item.name)),
   };
+}
+
+export function fixChatXUrl(url?: string): string {
+  const fallback = 'https://x.com/Donchaminade';
+  const value = (url || '').trim();
+  if (!value) return fallback;
+  return value.replace(/https?:\/\/(www\.)?(x|twitter)\.com\/Donchaminde\b/i, fallback);
+}
+
+export function cleanChatBio(bio: string): string {
+  return bio.replace(/\s{2,}/g, ' ').trim();
+}
+
+const FAKE_TESTIMONIAL_NAMES = new Set(['koffi mensah', 'abla doe', 'jean-pierre kouakou']);
+
+export function isFakeChatTestimonial(name?: string): boolean {
+  return FAKE_TESTIMONIAL_NAMES.has((name || '').trim().toLowerCase());
 }
 
 export function normalizeLinkedIn(url?: string): string {

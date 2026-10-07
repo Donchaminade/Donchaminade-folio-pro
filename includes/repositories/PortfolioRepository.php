@@ -71,7 +71,7 @@ final class PortfolioRepository
             $project['tagDetails'] = (new TechnologyRepository($this->db))->resolveTags($tagNames);
 
             $project['detailedDescription'] = $project['detailed_description'] ?? null;
-            unset($project['detailed_description'], $project['is_active'], $project['is_featured'], $project['created_at'], $project['updated_at']);
+            unset($project['detailed_description'], $project['is_active'], $project['created_at'], $project['updated_at']);
         }
 
         return $projects;

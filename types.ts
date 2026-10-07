@@ -80,6 +80,7 @@ export interface Project {
   link: string;
   github?: string;
   type: 'Web' | 'Mobile' | 'Design';
+  is_featured?: boolean | number | string;
 }
 
 export interface Community {

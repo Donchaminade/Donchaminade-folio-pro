@@ -9,15 +9,16 @@ import type {
 /** Snapshot public (sans constants.tsx) pour la fonction Vercel. */
 export const CATALOG_PROJECTS: ChatProjectFact[] = [
   {
-    "title": "PICON",
-    "description": "Application mobile innovante développée en 2026.",
-    "detailedDescription": "Conception et développement d'une application mobile complète sur mesure. Elle vise à optimiser les processus dimpression de photos en ligne avec integration de moyens de paiementet à offrir une expérience utilisateur exceptionnelle.",
+    "title": "Picon",
+    "description": "App de tirage photo publiée sur Google Play (com.photopicon.app). 26 écrans Flutter, Firebase Auth, hors ligne, paiement mobile money.",
+    "detailedDescription": "Application publiée sur Google Play (com.photopicon.app). Environ 89 % du code Dart, Firebase Auth, mode hors ligne et paiement mobile money. Contribution au backend Spring Boot.",
     "tags": [
       "Flutter",
-      "Dart"
+      "Firebase",
+      "Spring Boot"
     ],
     "type": "Mobile",
-    "link": "https://photopicon.vercel.app",
+    "link": "https://play.google.com/store/apps/details?id=com.photopicon.app",
     "github": "https://github.com/Donchaminade/photopicon"
   },
   {
@@ -72,11 +73,12 @@ export const CATALOG_PROJECTS: ChatProjectFact[] = [
   },
   {
     "title": "PayFlex",
-    "description": "Solution de paiement flexible pour les apprentis et artisans.",
-    "detailedDescription": "Plateforme innovante dédiée aux artisans pour faciliter la gestion financière et les paiements échelonnés de leurs apprentis.",
+    "description": "Cotisation journalière et financement d’équipements pour artisans. API Spring Boot et application Flutter.",
+    "detailedDescription": "API Spring Boot (179 handlers, 34 tables Flyway) et application Flutter. Vitrine Next.js.",
     "tags": [
-      "React",
-      "Tailwind"
+      "Spring Boot",
+      "Flutter",
+      "Next.js"
     ],
     "type": "Web",
     "link": "https://pay-flex.vercel.app/",
@@ -270,7 +272,7 @@ export const CATALOG_PROJECTS: ChatProjectFact[] = [
   {
     "title": "CoachFlow",
     "description": "Application mobile de coaching IA : personas expertes, contexte personnel et conversation vocale.",
-    "detailedDescription": "CoachFlow démocratise le coaching personnel via des personas IA, un contexte unique et Llama 3.1. Offline-first, biométrie, backend Supabase. Démo publique non publiée à ce jour.",
+    "detailedDescription": "CoachFlow démocratise le coaching personnel via des personas IA et un contexte personnel. Offline-first, biométrie, backend Supabase. Démo publique non publiée à ce jour.",
     "tags": [
       "Flutter",
       "Dart",
@@ -333,6 +335,42 @@ export const CATALOG_PROJECTS: ChatProjectFact[] = [
     "type": "Web",
     "link": "https://grosbit.vercel.app",
     "github": "https://github.com/Donchaminade/grosbit"
+  },
+  {
+    "title": "EZOA-TO",
+    "description": "Plateforme des épreuves d’examens au Togo : routes web, API PHP, app Flutter hors ligne (après un prototype React Native / Expo).",
+    "detailedDescription": "28 routes web, 81 actions d’API PHP, 31 tables, app Flutter hors ligne de 26 écrans (après un prototype React Native / Expo).",
+    "tags": ["React 19", "PHP", "Flutter", "Expo"],
+    "type": "Web",
+    "link": "https://github.com/Donchaminade/ezoato",
+    "github": "https://github.com/Donchaminade/ezoato"
+  },
+  {
+    "title": "CopyTo",
+    "description": "Presse-papier synchronisé et chiffré de bout en bout entre PC et mobile.",
+    "detailedDescription": "Extension Chrome, PWA, serveur et librairie partagée. X25519 + AES-GCM, WebRTC P2P.",
+    "tags": ["TypeScript", "WebRTC", "Socket.IO"],
+    "type": "Web",
+    "link": "https://github.com/Donchaminade/copyto",
+    "github": "https://github.com/Donchaminade/copyto"
+  },
+  {
+    "title": "Lignée",
+    "description": "Arbre familial interactif avec fiches éditables et import de récit.",
+    "detailedDescription": "Fiches éditables et import de récit qui suggère personnes et relations.",
+    "tags": ["PWA", "IA"],
+    "type": "Web",
+    "link": "https://story-lineage.vercel.app",
+    "github": "https://github.com/Donchaminade/story-lineage"
+  },
+  {
+    "title": "K7 Mémoire",
+    "description": "Récits audio de Lomé dans une interface cassette/radio, contenus dans Sanity.",
+    "detailedDescription": "Projet du Sanity Challenge. Studio Sanity sur /studio.",
+    "tags": ["Next.js", "Sanity", "GROQ"],
+    "type": "Web",
+    "link": "https://k7-memoire.vercel.app",
+    "github": "#"
   }
 ];
 
@@ -340,19 +378,30 @@ export const CATALOG_EXPERIENCES: ChatExperienceFact[] = [
   {
     "company": "GROSBIT SARLU",
     "role": "IT Support, Développeur Web & Mobile",
-    "period": "Février 2026 - Présent",
+    "period": "Nov. 2025 – juin 2026",
     "description": [
+      "CDD / freelance, remote.",
       "Assistance technique (IT Support) et assistance au déploiement de solutions réseau pour les clients (entreprise partenaire Cisco).",
-      "Développement d’applications web et mobiles (Next.js, Flutter).",
-      "Maintien en conditions opérationnelles des infrastructures et assistance à la résolution des incidents."
+      "Développement d’applications web et mobiles (Next.js, Flutter)."
     ],
     "tags": [
+      "CDD",
+      "Freelance",
+      "Remote",
       "Cisco",
-      "Support IT",
       "Next.js",
-      "Flutter",
-      "Remote"
+      "Flutter"
     ]
+  },
+  {
+    "company": "Picon Studio",
+    "role": "Développeur Frontend Mobile",
+    "period": "Déc. 2025 – févr. 2026",
+    "description": [
+      "Livraison de l’app Picon sur Google Play : 26 écrans Flutter, Firebase Auth, hors ligne.",
+      "Contribution au backend Spring Boot (JWT, WebSocket)."
+    ],
+    "tags": ["Flutter", "Firebase", "Spring Boot", "CDD", "Freelance"]
   },
   {
     "company": "PyCon Togo 2026",
@@ -403,7 +452,7 @@ export const CATALOG_EXPERIENCES: ChatExperienceFact[] = [
   },
   {
     "company": "Efficorpe",
-    "role": "Développeur Frontend Mobile",
+    "role": "Développeur Frontend Mobile · Stage",
     "period": "Août 2025 - Octobre 2025",
     "description": [
       "Création et intégration d’interfaces mobiles interactives sous Flutter.",
@@ -435,7 +484,7 @@ export const CATALOG_EXPERIENCES: ChatExperienceFact[] = [
   },
   {
     "company": "Axone Digital Company",
-    "role": "Développeur Web/Mobile",
+    "role": "Développeur Web & Mobile · Stage",
     "period": "Décembre 2024 - Juillet 2025",
     "description": [
       "Réalisation d’applications web et mobiles dynamiques à forte valeur ajoutée.",
@@ -469,26 +518,7 @@ export const CATALOG_EXPERIENCES: ChatExperienceFact[] = [
   }
 ];
 
-export const CATALOG_TESTIMONIALS: ChatTestimonialFact[] = [
-  {
-    "quote": "Chaminade est un développeur exceptionnel. Sa capacité à transformer des concepts complexes en interfaces Flutter fluides a été un atout majeur pour notre projet Efficorpe.",
-    "name": "Koffi Mensah",
-    "role": "Lead Developer",
-    "company": "Efficorpe"
-  },
-  {
-    "quote": "En tant que formateur, il sait transmettre sa passion pour l'IA et le web avec une clarté remarquable. Ses ateliers sont toujours très appréciés des étudiants.",
-    "name": "Abla Doe",
-    "role": "Responsable Pédagogique",
-    "company": "ISF Informatique"
-  },
-  {
-    "quote": "Sa polyvalence entre le développement et la gestion communautaire est rare. Il a su dynamiser notre présence digitale tout en fournissant un code de qualité chez Axone.",
-    "name": "Jean-Pierre Kouakou",
-    "role": "Product Manager",
-    "company": "Axone Digital"
-  }
-];
+export const CATALOG_TESTIMONIALS: ChatTestimonialFact[] = [];
 
 export const CATALOG_COMMUNITIES: ChatCommunityFact[] = [
   {
