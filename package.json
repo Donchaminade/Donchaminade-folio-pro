@@ -15,6 +15,7 @@
     "@ai-sdk/google": "^4.0.74",
     "@ai-sdk/groq": "^4.0.44",
     "@ai-sdk/react": "^4.0.108",
+    "@vercel/functions": "^3.9.11",
     "ai": "^7.0.105",
     "framer-motion": "^12.26.2",
     "lucide-react": "^0.562.0",

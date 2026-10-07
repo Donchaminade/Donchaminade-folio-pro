@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, type FC } from 'react';
 import { BlogPostDetail } from '../../lib/api';
+import { toPublishedIso, TWITTER_HANDLE } from '../../lib/blogOg';
+import { mediaUrl } from '../../lib/media';
 import { getCanonicalShareUrl, getSharePreviewImageUrl } from '../../lib/ogImage';
 
 interface Props {
@@ -8,12 +10,13 @@ interface Props {
 }
 
 /** Balises meta dynamiques (complète la page share.php pour les crawlers). */
-const BlogMeta: React.FC<Props> = ({ post, noIndex = false }) => {
+const BlogMeta: FC<Props> = ({ post, noIndex = false }) => {
   useEffect(() => {
     const title = `${post.title} — Donchaminade`;
     const description = post.excerpt || '';
-    const image = getSharePreviewImageUrl();
-    const url = getCanonicalShareUrl(post.share_url || window.location.href);
+    const cover = mediaUrl(post.cover_image);
+    const image = /^https?:\/\//i.test(cover) ? cover : getSharePreviewImageUrl();
+    const url = getCanonicalShareUrl(window.location.href);
 
     document.title = title;
 
@@ -35,10 +38,14 @@ const BlogMeta: React.FC<Props> = ({ post, noIndex = false }) => {
     setMeta('property', 'og:image', image);
     setMeta('property', 'og:url', url);
     setMeta('name', 'twitter:card', 'summary_large_image');
+    setMeta('name', 'twitter:site', TWITTER_HANDLE);
+    setMeta('name', 'twitter:creator', TWITTER_HANDLE);
     setMeta('name', 'twitter:title', post.title);
     setMeta('name', 'twitter:description', description);
     setMeta('name', 'twitter:image', image);
-  }, [post]);
+    const published = toPublishedIso(post.published_at);
+    if (published) setMeta('property', 'article:published_time', published);
+  }, [post, noIndex]);
 
   return null;
 };
