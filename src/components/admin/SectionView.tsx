@@ -2,11 +2,14 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
-  ArrowUpRight, Eye, EyeOff, FolderKanban, LayoutGrid, Mail, Newspaper, Pencil, Plus, Save, Search, Send, Trash2, TrendingUp, Upload, X,
+  ArrowUpRight, ExternalLink, Eye, EyeOff, FolderKanban, LayoutGrid, Mail, Newspaper, Pencil, Plus, Save, Search, Send, Trash2, TrendingUp, Upload, X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { fetchPortfolioProjects } from '@/lib/api';
+import { listPosts } from '@/lib/blog';
 import { adminCopy, type AdminSectionId } from '@/lib/admin-copy';
 import {
   AdminAuthError, adminGet, adminSubmit, collectForm, parseRows, parseStats, sectionCalls,
@@ -207,7 +210,9 @@ function Dialog({ open, onClose, title, children, label }: { open: boolean; onCl
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
   }, [open, onClose]);
-  return (
+  if (typeof document === 'undefined') return null;
+  return createPortal(
+    <div className="admin-root admin-portal">
     <AnimatePresence>
       {open ? (
         <motion.div className="admin-modal-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
@@ -222,7 +227,27 @@ function Dialog({ open, onClose, title, children, label }: { open: boolean; onCl
         </motion.div>
       ) : null}
     </AnimatePresence>
+    </div>,
+    document.body,
   );
+}
+
+const norm = (v: string) => v.trim().toLowerCase().replace(/\s+/g, ' ');
+
+/** Liens publics : /blog/article?slug=… pour les articles, lien du projet (sinon /projets). */
+function usePublicLinks(section: AdminSectionId) {
+  const [links, setLinks] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (section === 'blog') {
+      listPosts().then((posts) => setLinks(Object.fromEntries(posts.map((p) => [norm(p.title), `/blog/article?slug=${encodeURIComponent(p.slug)}`])))).catch(() => undefined);
+    } else if (section === 'projets') {
+      fetchPortfolioProjects().then((list) => setLinks(Object.fromEntries(list.map((p) => [norm(p.title), p.link || '/projets'])))).catch(() => undefined);
+    }
+  }, [section]);
+  return (row: AdminRow) => {
+    if (row.status !== 'live' || (section !== 'blog' && section !== 'projets')) return '';
+    return links[norm(row.title)] || (section === 'projets' ? '/projets' : '');
+  };
 }
 
 function Editor({ section, onAuth }: { section: AdminSectionId; onAuth: () => void }) {
@@ -245,6 +270,7 @@ function Editor({ section, onAuth }: { section: AdminSectionId; onAuth: () => vo
   const [viewing, setViewing] = useState<{ row: AdminRow; detail: string; extra: string } | null>(null);
   const [doomed, setDoomed] = useState<AdminRow | null>(null);
   const singleForm = !cfg.edit && !cfg.canDelete;
+  const publicUrl = usePublicLinks(section);
 
   const reload = () => adminGet(cfg.page).then(({ html }) => {
     setRows(parseRows(html));
@@ -456,6 +482,11 @@ function Editor({ section, onAuth }: { section: AdminSectionId; onAuth: () => vo
                     {row.status === 'live' ? t.live : t.draft}
                   </motion.span>
                   <div className="flex shrink-0 gap-1">
+                    {publicUrl(row) ? (
+                      <motion.a href={publicUrl(row)} target="_blank" rel="noopener noreferrer" className="admin-crud"
+                        aria-label={`${L(lang, 'Voir sur le site', 'View on site')} : ${row.title}`} title={L(lang, 'Voir sur le site', 'View on site')} data-tip={L(lang, 'Voir sur le site', 'View on site')}
+                        whileHover={{ y: -2, scale: 1.08 }} whileTap={{ scale: 0.92 }}><ExternalLink size={16} /></motion.a>
+                    ) : null}
                     <IconAction label={`${L(lang, 'Voir', 'View')} : ${row.title}`} onClick={() => view(row)}><Eye size={16} /></IconAction>
                     {cfg.edit || cfg.saveAction ? <IconAction label={`${L(lang, 'Modifier', 'Edit')} : ${row.title}`} onClick={() => choose(row)}><Pencil size={16} /></IconAction> : null}
                     {cfg.canDelete ? <IconAction tone="danger" label={`${t.remove} : ${row.title}`} onClick={() => setDoomed(row)}><Trash2 size={16} /></IconAction> : null}
