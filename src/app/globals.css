@@ -69,3 +69,14 @@ main { overflow-x: clip; }
   radial-gradient(40% 30% at 20% 30%, rgba(217,208,193,.55), transparent 70%),
   radial-gradient(35% 40% at 80% 60%, rgba(140,120,100,.2), transparent 70%),
   radial-gradient(30% 30% at 50% 90%, rgba(255,255,255,.65), transparent 70%); }
+.blog-content { line-height: 1.75; opacity: .92; }
+.blog-content h2 { font-size: 1.75rem; font-weight: 800; margin: 2.5rem 0 1rem; }
+.blog-content h3 { font-size: 1.3rem; font-weight: 700; margin: 2rem 0 .75rem; }
+.blog-content p, .blog-content ul, .blog-content ol { margin: 1rem 0; }
+.blog-content ul { list-style: disc; padding-left: 1.5rem; } .blog-content ol { list-style: decimal; padding-left: 1.5rem; }
+.blog-content a { text-decoration: underline; }
+.blog-content img { border-radius: 1rem; margin: 1.5rem 0; max-width: 100%; height: auto; }
+.blog-content pre { background: rgba(255,255,255,.06); padding: 1rem; border-radius: .75rem; overflow-x: auto; font-size: .875rem; }
+.blog-content code { font-size: .9em; }
+.blog-content table { width: 100%; border-collapse: collapse; display: block; overflow-x: auto; } .blog-content th, .blog-content td { border: 1px solid rgba(255,255,255,.15); padding: .5rem; }
+.blog-content blockquote { border-left: 3px solid #d9d0c1; padding-left: 1rem; opacity: .85; }
