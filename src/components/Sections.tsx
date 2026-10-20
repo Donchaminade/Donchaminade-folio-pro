@@ -72,7 +72,7 @@ export function Hero({ ready }: { ready: boolean }) {
   );
   return (
     <section id="accueil" className="spot relative overflow-hidden">
-      <div className="flex min-h-[100svh] flex-col px-6 pb-6 pt-[4.5rem] md:hidden">
+      <div className="flex min-h-[100svh] flex-col px-6 pb-6 pt-24 md:hidden">
         <motion.h1 initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.6, ease: 'easeOut' }}
           className="wordmark-m metal shrink-0 select-none text-center font-display font-black">
           DONCHAMINADE
