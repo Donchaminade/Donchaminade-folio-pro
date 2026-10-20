@@ -14,7 +14,18 @@ body { background: radial-gradient(ellipse at 50% 0%, #1a1d20 0%, #060708 60%) f
 @media (min-width: 768px) { .wrap { padding-inline: 3rem; } }
 @media (min-width: 1024px) { .wrap { padding-inline: 5rem; } }
 @media (min-width: 1280px) { .wrap { padding-inline: 7rem; } }
-.project-title { font-size: clamp(2.35rem, 7vw, 7rem); line-height: 0.9; overflow-wrap: anywhere; }
+.project-title-slot { container-type: inline-size; }
+.project-title {
+  font-size: clamp(2.15rem, 5.4vw, 5.75rem);
+  font-size: max(2.15rem, min(6.5rem, calc(100cqi / (var(--chars, 8) * 0.8))));
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.project-title .title-lead,
+.project-title .title-rest { display: block; max-width: 100%; }
+.project-title .title-lead { white-space: nowrap; }
 .spot { background: radial-gradient(ellipse 50% 40% at 50% 85%, rgba(255,255,255,.14), transparent 70%); }
 .fg { background: #fff; }
 section { scroll-margin-top: 5.25rem; }

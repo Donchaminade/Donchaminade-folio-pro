@@ -25,9 +25,18 @@ function MaskTitle({ children, className = '' }: { children: React.ReactNode; cl
 }
 
 function splitTitle(title: string) {
-  const i = title.indexOf(' ');
-  if (i < 0) return { accent: title, rest: '' };
-  return { accent: title.slice(0, i), rest: title.slice(i) };
+  const spaced = title.indexOf(' ');
+  const dotted = title.indexOf('.');
+  if (dotted > 0 && (spaced < 0 || dotted < spaced)) {
+    return { accent: title.slice(0, dotted), rest: title.slice(dotted) };
+  }
+  if (spaced < 0) return { accent: title, rest: '' };
+  return { accent: title.slice(0, spaced), rest: title.slice(spaced + 1) };
+}
+
+function longestToken(accent: string, rest: string) {
+  const parts = [accent, ...rest.split(/\s+/).filter(Boolean)];
+  return parts.reduce((max, part) => Math.max(max, part.length), 1);
 }
 
 function RoleLine({ r, size }: { r: number; size: 'm' | 'd' }) {
@@ -249,11 +258,11 @@ function Device({ type, images }: { type: 'Mobile' | 'Web'; images: string[] }) 
     return () => clearInterval(timer);
   }, [images.length, reduced]);
   const frame = type === 'Mobile'
-    ? 'aspect-[9/19] w-[46%] md:w-[38%] rounded-[2.2rem] border-[6px]'
-    : 'aspect-[16/10] w-[92%] rounded-xl border-[8px] border-b-[14px]';
+    ? 'aspect-[9/19] w-[58%] sm:w-[46%] lg:w-[44%] rounded-[2.4rem] border-[7px]'
+    : 'aspect-[16/10] w-full rounded-2xl border-[10px] border-b-[18px]';
   return (
-    <div className="spot relative flex h-full min-h-[340px] w-full max-w-full items-center justify-center md:min-h-[520px]">
-      <div className={`relative overflow-hidden border-neutral-800 bg-black shadow-[0_40px_80px_-20px_rgba(0,0,0,.9)] ${frame}`}>
+    <div className="spot relative flex w-full max-w-full items-center justify-center py-4 md:py-6">
+      <div className={`relative overflow-hidden border-neutral-800 bg-black shadow-[0_40px_90px_-18px_rgba(0,0,0,.9)] ${frame}`}>
         <AnimatePresence>
           <motion.img key={images[k]} src={images[k]} alt="" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }} className="absolute inset-0 h-full w-full object-cover object-top" />
@@ -296,6 +305,7 @@ export function Work() {
   const index = count ? ((i % count) + count) % count : 0;
   const p = featured[index];
   const { accent, rest } = splitTitle(p?.title ?? '');
+  const titleChars = longestToken(accent, rest);
   const filtered = list.filter((q) => filter === 'all' || q.type === filter);
   const shown = more ? filtered : filtered.slice(0, PAGE);
   const filters = [
@@ -321,12 +331,25 @@ export function Work() {
             className={`label inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 ${index === j ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{q.title}</button>
         ))}
       </div>
-      {p && <div className="mt-12 grid min-w-0 items-center gap-10 lg:grid-cols-2 lg:gap-24">
+      {p && <div className="mt-12 grid min-w-0 items-center gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.16fr)] lg:gap-12">
         <AnimatePresence mode="wait">
-          <motion.div key={p.title} initial="hidden" animate="show" exit={{ opacity: 0, y: -20 }} variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="order-2 lg:order-1">
+          <motion.div key={p.title} initial="hidden" animate="show" exit={{ opacity: 0, y: -20 }} variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="project-title-slot order-2 w-full min-w-0 lg:order-1">
             <motion.p variants={fadeUp} className="text-base font-medium uppercase tracking-[0.14em] text-white/60">{String(index + 1).padStart(2, '0')} — {p.type === 'Mobile' ? t.mobileApp : t.webApp}</motion.p>
-            <motion.h3 variants={fadeUp} className="project-title mt-4 font-display font-black uppercase">
-              {accent}{rest && <Italic><span className="text-cream">{rest}</span></Italic>}
+            <motion.h3 variants={fadeUp} className="project-title mt-4 w-full min-w-0 font-display font-black uppercase" style={{ ['--chars' as string]: titleChars }}>
+              <span className="title-lead">{accent}</span>
+              {rest && (
+                <span className="title-rest">
+                  <Italic>
+                    <span className="text-cream">
+                      {rest.split(/(\s+)/).map((part, n) => (
+                        part.trim()
+                          ? <span key={`${part}-${n}`} className="inline-block whitespace-nowrap">{part}</span>
+                          : ' '
+                      ))}
+                    </span>
+                  </Italic>
+                </span>
+              )}
             </motion.h3>
             <motion.p variants={fadeUp} className="mt-6 max-w-[34rem] text-[1.125rem] leading-[1.65] text-mist [overflow-wrap:anywhere]">{p.description[lang]}</motion.p>
             <motion.ul variants={fadeUp} className="mt-6 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="inline-flex items-center rounded-full border border-white/15 px-3 py-1 text-base text-white/75">{tagLabel(tag, lang)}</li>)}</motion.ul>
@@ -378,14 +401,14 @@ function ProjectCard({ p }: { p: Project }) {
   const shot = p.images[0];
   return (
     <motion.li variants={fadeUp} {...hoverLift} className="overflow-hidden rounded-3xl border border-white/10 bg-white/[.03]">
-      <div className="relative aspect-[16/10] overflow-hidden bg-black/40">
+      <div className="relative aspect-[3/2] overflow-hidden bg-black/40">
         {shot
           ? <img src={shot} alt="" className="h-full w-full object-cover object-top" />
           : <div className="grid h-full place-items-center"><span className="font-display text-4xl font-black text-white/30">{t.noImage}</span></div>}
       </div>
       <div className="p-5">
         <p className="label text-cream">{p.type === 'Mobile' ? t.mobileApp : t.webApp}</p>
-        <h4 className="mt-2 font-display text-2xl font-black uppercase leading-none">{p.title}</h4>
+        <h4 className="mt-2 font-display text-2xl font-black uppercase leading-tight [overflow-wrap:normal] [word-break:keep-all]">{p.title}</h4>
         <p className="mt-3 text-base leading-relaxed text-mist [overflow-wrap:anywhere]">{p.description[lang]}</p>
         <ul className="mt-3 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="label rounded-full border border-white/15 px-2 py-1 text-white/60">{tagLabel(tag, lang)}</li>)}</ul>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
