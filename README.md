@@ -11,7 +11,7 @@ npm run build   # export statique dans out/
 Ajouter `?sansintro` à l'URL pour passer l'intro.
 
 ## Sections
-Intro (lettres qui tombent : CHAMINADE puis DONCHAMINADE) · Accueil · À propos · Parcours · Services · Tarifs · Projets · Distinctions · Communauté · Galerie · Écrans · HELLO WORLD · Contact.
+Intro (lettres qui tombent : CHAMINADE puis DONCHAMINADE) · Accueil · À propos · Parcours · Services · Tarifs · Rendez-vous · Projets · Distinctions · Communauté · Galerie · Écrans · HELLO WORLD · Contact.
 
 Le thème sombre est le défaut. Le choix de thème et la langue (français par défaut) sont gardés dans le navigateur.
 

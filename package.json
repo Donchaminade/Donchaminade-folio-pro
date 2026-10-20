@@ -1,1 +1,30 @@
-{"name":"chaminade-portfolio","version":"2.0.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"npx serve out"},"dependencies":{"@fontsource/archivo":"5.1.0","@fontsource/instrument-serif":"5.1.0","@fontsource/inter":"5.1.0","framer-motion":"11.11.9","lucide-react":"0.452.0","next":"^14.2.35","react":"18.3.1","react-dom":"18.3.1"},"devDependencies":{"@types/node":"^20.16.11","@types/react":"^18.3.11","autoprefixer":"10.4.20","postcss":"8.4.47","tailwindcss":"3.4.14","typescript":"^5.6.3"}}
+{
+  "name": "chaminade-portfolio",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "npx serve out",
+    "test:dotboard": "node scripts/dotboard-playwright.mjs"
+  },
+  "dependencies": {
+    "@fontsource/archivo": "5.1.0",
+    "@fontsource/instrument-serif": "5.1.0",
+    "@fontsource/inter": "5.1.0",
+    "framer-motion": "11.11.9",
+    "lucide-react": "0.452.0",
+    "next": "^14.2.35",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.11",
+    "@types/react": "^18.3.11",
+    "autoprefixer": "10.4.20",
+    "playwright": "^1.64.1",
+    "postcss": "8.4.47",
+    "tailwindcss": "3.4.14",
+    "typescript": "^5.6.3"
+  }
+}

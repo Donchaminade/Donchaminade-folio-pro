@@ -86,6 +86,8 @@ export const communities: { name: string; role: Bi; description: Bi }[] = [
   { name: 'Women Techmakers', role: b('Mentor & logistique', 'Mentor & logistics'), description: b('Mentor chez WTM Lomé : initiatives pour réduire la fracture numérique de genre, logistique des meetups mensuels, initiation au code.', 'Mentor at WTM Lomé: work on the gender digital divide, logistics for monthly meetups, and introductions to code.') },
   { name: 'Google Developer Groups', role: b('Speaker & organisateur', 'Speaker & organiser'), description: b('Speaker au GDG Lomé sur Flutter et Firebase, et coordination d’événements comme le DevFest.', 'Speaker at GDG Lomé on Flutter and Firebase, and coordination of events such as DevFest.') },
   { name: 'Python Togo', role: b('Social media & logistique', 'Social media & logistics'), description: b('Stratégie de contenu pour vulgariser Python, et support logistique des ateliers pratiques.', 'Content strategy to make Python approachable, plus logistics for hands-on workshops.') },
+  { name: 'SpaceXAI Togo community', role: b('Ambassadeur', 'Ambassador'), description: b('Ambassadeur au Togo.', 'Ambassador in Togo.') },
+  { name: 'African GeoSpace', role: b('Développeur Web et Mobile', 'Web & mobile developer'), description: b('Construire l’avenir spatial de l’Afrique : innovation, défense et durabilité.', 'Building Africa’s space future: innovation, defence and sustainability.') },
 ];
 
 export const managedPages: { name: string; link: string; followers: string; category: Bi }[] = [
@@ -107,7 +109,15 @@ export type Project = {
 
 const img = (name: string) => `/img/${name}`;
 
+const media = (path: string) => `https://donchamfolio.grosbit.com${path}`;
+
 export const projects: Project[] = [
+  { title: 'SAKURA', type: 'Web', description: b('Landing page animée d’un restaurant japonais : plats populaires, menu, panier latéral, galerie « Glassy Carousel » et newsletter.', 'Animated landing page for a Japanese restaurant: popular dishes, menu, side cart, a Glassy Carousel gallery and a newsletter.'), tags: ['Next.js 14', 'Tailwind', 'Framer Motion'], images: [img('sakura.webp')], github: 'https://github.com/Donchaminade/resto-site' },
+  { title: 'Codelab MCP', type: 'Web', description: b('Site de 65 slides pour un atelier de 2 h à Lomé (21/10/2026), « Crée ton propre serveur MCP ». Un serveur MCP en TypeScript donne la météo et le risque de pluie à Lomé (Open-Meteo).', 'A 65-slide site for a 2-hour workshop in Lomé (21/10/2026), “Crée ton propre serveur MCP”. A TypeScript MCP server reports the weather and rain risk in Lomé (Open-Meteo).'), tags: ['TypeScript', 'Vite'], images: [img('codelab-mcp.webp')], link: 'https://codelabmcp.vercel.app', github: 'https://github.com/Donchaminade/codelabmcp' },
+  { title: 'LogiStock', type: 'Web', description: b('Application de gestion de stock, en bleu, noir et blanc, avec connexion par e-mail ou téléphone et des comptes de démo.', 'Stock app, in blue, black and white, with sign-in by email or phone and demo accounts.'), tags: [], images: [img('logistock.webp')], link: 'https://logistoc.netlify.app', github: 'https://github.com/Donchaminade/logistock' },
+  { title: 'Chaminade.dev', type: 'Web', description: b('Refonte cinématique du portfolio : accueil DONCHAMINADE et portrait cartoon, intro animée, timeline alternée, tarifs, réservation Doodle, assistant qui répond sur les projets et le parcours, casse-briques HELLO WORLD, galerie glassy, FR/EN, mode clair zinc et mode sombre.', 'Cinematic portfolio redesign: DONCHAMINADE home and cartoon portrait, animated intro, alternating timeline, pricing, Doodle booking, an assistant that answers about projects and career, a playable HELLO WORLD breakout, glassy gallery, FR/EN, zinc light mode and dark mode.'), tags: ['Next.js', 'TypeScript', 'Tailwind', 'Framer Motion'], images: [img('portfolio-refonte.webp')], link: 'https://donchaminade-alpha.vercel.app', github: 'https://github.com/Donchaminade/Donchaminade-folio-pro' },
+  { title: 'Edzii-Nku', type: 'Web', description: b('Alerte inondation à Lomé : web mobile-first, application Flutter, API (https://edzii-api.onrender.com) et bot WhatsApp.', 'Flood alert for Lomé: mobile-first web, Flutter app, API (https://edzii-api.onrender.com) and a WhatsApp bot.'), tags: ['React 19', 'Vite', 'Tailwind v4', 'Flutter', 'Spring Boot', 'PostgreSQL'], images: [img('edziinku.webp')], link: 'https://edziinku.vercel.app', github: 'https://github.com/Donchaminade/edziinku' },
+  { title: 'Grok Meetup Togo', type: 'Web', description: b('Meetup autour de Grok Bot, édition 1 au Togo.', 'Meetup around Grok Bot, first edition in Togo.'), tags: ['Meetup'], images: [media('/uploads/projects/eedcb1abce45a535_1790060134.gif'), media('/uploads/projects/6a7d4d65edf11494_1790060134.png'), media('/uploads/projects/ced01d1bd7bba3fd_1790060134.png'), media('/uploads/projects/cf6f8b0f15bc18fd_1790060134.jpg')] },
   { title: 'Picon', type: 'Mobile', description: b('App de tirage photo publiée sur Google Play (com.photopicon.app). 26 écrans Flutter, Firebase Auth, hors ligne, paiement mobile money.', 'Photo-print app on Google Play (com.photopicon.app). 26 Flutter screens, Firebase Auth, offline, mobile-money payments.'), tags: ['Flutter', 'Firebase', 'Spring Boot'], images: [img('picon-play-2.jpg'), img('picon-play-5.jpg'), img('picon.png')], link: 'https://play.google.com/store/apps/details?id=com.photopicon.app', github: 'https://github.com/Donchaminade/photopicon' },
   { title: 'Tayba Market ERP', type: 'Web', description: b('Système complet de gestion commerciale : ventes, stocks, clients, caissiers et clôtures de caisses.', 'Full retail system: sales, stock, customers, cashiers and till closing.'), tags: ['React', 'Node.js', 'ERP'], images: [] },
   { title: 'La 8e Tranche', type: 'Web', description: b('Site du restaurant La 8e Tranche à Lomé : menu, avis et réservation.', 'Website for La 8e Tranche in Lomé: menu, reviews and booking.'), tags: ['React', 'Tailwind'], images: [img('resto8tranch.png'), img('8tran.png'), img('8tranch.png')], link: 'https://8-me-tranche-delights.vercel.app' },
@@ -139,7 +149,61 @@ export const projects: Project[] = [
   { title: 'K7 Mémoire', type: 'Web', description: b('Récits audio de Lomé dans une interface cassette/radio, contenus dans Sanity.', 'Audio stories from Lomé in a cassette/radio interface, content in Sanity.'), tags: ['Next.js', 'Sanity', 'GROQ'], images: [], link: 'https://k7-memoire.vercel.app' },
 ];
 
-export const gallery = ['/gallerie/adc.png', '/gallerie/pypicture.jpg'];
+/** Projets absents de l’admin. Ils complètent la liste API, sans doublon de nom. */
+const EXTRA_TITLES = ['SAKURA', 'Codelab MCP', 'LogiStock', 'Chaminade.dev', 'Edzii-Nku'];
+export const extraProjects: Project[] = EXTRA_TITLES.map((title) => projects.find((item) => item.title === title)).filter((item): item is Project => !!item);
+
+export function projectKey(title: string): string {
+  return title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+export function mergeRemoteProjects(remote: Array<Project & { featured?: boolean }>, extras: Project[] = extraProjects): Project[] {
+  const seen = new Set<string>();
+  const unique = remote.filter((item) => {
+    const key = projectKey(item.title);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const extra = extras.filter((item) => !seen.has(projectKey(item.title)));
+  const plain = (item: Project): Project => ({
+    title: item.title,
+    type: item.type,
+    description: item.description,
+    tags: item.tags,
+    images: item.images,
+    link: item.link,
+    github: item.github,
+  });
+  const featured = unique.filter((item) => item.featured).map(plain);
+  const rest = unique.filter((item) => !item.featured).map(plain);
+  return [...featured, ...extra, ...rest];
+}
+
+/** Photos réelles de l’ancienne galerie (commit 4d6bc8f). Les URLs du serveur PHP répondent 404. */
+export const gallery = [
+  '/gallerie/1753259537664.jpg',
+  '/gallerie/1753259550152.jpg',
+  '/gallerie/1754081969406.jpg',
+  '/gallerie/1754081970965.jpg',
+  '/gallerie/WhatsApp Image 2025-09-12 at 20.49.29.jpeg',
+  '/gallerie/WhatsApp Image 2025-09-27 at 13.19.20 (2).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 (1).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 (2).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 copy.jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47.jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.48.jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.49 (1).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.49.jpeg',
+  '/gallerie/adc.png',
+  '/gallerie/pypicture.jpg',
+];
+
+/** Logos réels uniquement. Les visuels Unsplash du catalogue API sont exclus, comme sur l’ancienne version. */
+export const clients: { name: string; logo: string }[] = [
+  { name: 'GDG', logo: 'https://www.gstatic.com/devrel-devsite/prod/vc893708466e31e515d90616b3f7495b46e393b6e76d99723223087268d813470/developers/images/touchicon-180.png' },
+  { name: 'Python Togo', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg' },
+];
 
 const enTag: Record<string, string> = {
   CDD: 'Fixed-term',
@@ -198,4 +262,4 @@ export const phoneScreens: { src: string; label: Bi }[] = [
   { src: '/img/picon-play-7.jpg', label: b('Picon — Souvenirs', 'Picon — Memories') },
 ];
 
-export const navIds = ['accueil', 'apropos', 'parcours', 'services', 'tarifs', 'projets', 'distinctions', 'communaute', 'galerie', 'ecrans', 'contact'] as const;
+export const navIds = ['accueil', 'apropos', 'parcours', 'services', 'tarifs', 'rendez-vous', 'projets', 'distinctions', 'communaute', 'retours', 'confiance', 'galerie', 'ecrans', 'contact'] as const;

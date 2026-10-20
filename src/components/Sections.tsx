@@ -1,9 +1,11 @@
 'use client';
 import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, Github, Linkedin, Mail, Phone, Twitter, Plus, Minus, Download, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Github, Linkedin, Mail, Phone, Twitter, Plus, Minus, Download, MessageCircle, Send } from 'lucide-react';
+import { Heartbeat, MotionIcon } from './MotionIcon';
+import { fetchPortfolioProjects, submitContact } from '@/lib/api';
 import { fadeUp, hoverLift, inViewGroup, reveal, slideIn } from '@/lib/motion';
-import { phoneScreens, profile, projects, roles, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
+import { extraProjects, mergeRemoteProjects, phoneScreens, profile, projects, roles, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
 import { useI18n } from '@/lib/i18n';
 import type { Lang } from '@/lib/dictionary';
 
@@ -28,6 +30,23 @@ function splitTitle(title: string) {
   return { accent: title.slice(0, i), rest: title.slice(i) };
 }
 
+function RoleLine({ r, size }: { r: number; size: 'm' | 'd' }) {
+  const { t } = useI18n();
+  const big = size === 'd';
+  return (
+    <p className={`font-display font-extrabold ${big ? 'text-3xl' : 'text-2xl'}`}>
+      {t.developer}{' '}
+      <span className="relative inline-block min-w-[5ch] align-bottom">
+        <span className={`invisible font-serif italic ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>Next.js</span>
+        {roles.map((w, k) => (
+          <motion.span key={w} initial={false} animate={{ y: k === r ? 0 : 20, opacity: k === r ? 1 : 0 }} transition={{ duration: 0.4 }}
+            className={`absolute bottom-0 left-0 font-serif font-normal italic text-cream ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>{w}</motion.span>
+        ))}
+      </span>
+    </p>
+  );
+}
+
 /* ---------- 1. HERO ---------- */
 export function Hero({ ready }: { ready: boolean }) {
   const { t, lang } = useI18n();
@@ -42,50 +61,82 @@ export function Hero({ ready }: { ready: boolean }) {
   const px = useSpring(useTransform(mx, [-1, 1], [-14, 14]), { stiffness: 60, damping: 20 });
   const py = useSpring(useTransform(my, [-1, 1], [-8, 8]), { stiffness: 60, damping: 20 });
   const tx = useTransform(px, (v) => -v / 2);
+  const portrait = `${t.portraitOf} ${profile.fullName}`;
+  const portraitOf = (className: string) => (
+    <picture>
+      <source srcSet="/img/portrait-cartoon.webp" type="image/webp" />
+      <img src="/img/portrait-cartoon.png" alt={portrait} draggable={false} className={className} />
+    </picture>
+  );
   return (
-    <section id="accueil" onPointerMove={(e) => { mx.set((e.clientX / window.innerWidth) * 2 - 1); my.set((e.clientY / window.innerHeight) * 2 - 1); }}
-      className="spot relative flex min-h-[100svh] flex-col items-center justify-end overflow-hidden pt-24">
-      <motion.h1 style={{ x: tx }} initial={{ opacity: 0, scale: 1.15 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 1, ease: 'easeOut' }}
-        className="wordmark metal pointer-events-none absolute inset-x-0 top-[30%] w-full select-none text-center font-display font-black md:top-[16%]">
-        DONCHAMINADE
-      </motion.h1>
-      <motion.img src={profile.photo} alt={`${t.portraitOf} ${profile.fullName}`} style={{ x: px, y: py }}
-        initial={{ opacity: 0, y: 120 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1, delay: 0.25, ease: 'easeOut' }}
-        className="relative z-10 w-[118vw] max-w-none md:w-[52vw] md:max-w-[820px] [mask-image:linear-gradient(to_bottom,black_80%,transparent)]" />
-      <motion.div initial="hidden" animate={ready ? 'show' : 'hidden'} variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.6 } } }}
-        className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-4 bg-gradient-to-t from-ink via-ink/80 to-transparent px-5 pb-6 pt-16 md:bottom-10 md:bg-none md:pb-0 md:pt-0 md:flex-row md:items-end md:justify-between md:px-10">
-        <motion.div variants={fadeUp}>
-          <p className="label mb-2 text-white/50">{profile.fullName}</p>
-          <p className="font-display text-xl font-extrabold md:text-3xl">
-            {t.developer}{' '}
-            <span className="relative inline-block min-w-[5ch] align-bottom">
-              <span className="invisible font-serif text-2xl italic md:text-4xl">Next.js</span>
-              {roles.map((w, k) => (
-                <motion.span key={w} initial={false} animate={{ y: k === r ? 0 : 20, opacity: k === r ? 1 : 0 }} transition={{ duration: 0.4 }}
-                  className="absolute bottom-0 left-0 font-serif text-2xl font-normal italic text-cream md:text-4xl">{w}</motion.span>
-              ))}
-            </span>
-          </p>
-          <p className="mt-1 text-xs text-mist md:text-sm">{profile.heroSubtitle[lang]}</p>
+    <section id="accueil" className="spot relative overflow-hidden">
+      <div className="flex min-h-[100svh] flex-col px-6 pb-6 pt-[4.5rem] md:hidden">
+        <motion.h1 initial={{ opacity: 0 }} animate={ready ? { opacity: 1 } : {}} transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="wordmark-m metal shrink-0 select-none text-center font-display font-black">
+          DONCHAMINADE
+        </motion.h1>
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+          className="mx-auto mt-2 flex w-full max-h-[50svh] justify-center">
+          {portraitOf('max-h-[50svh] w-full object-contain object-bottom [mask-image:linear-gradient(to_bottom,#000_86%,transparent)]')}
         </motion.div>
-        <motion.div variants={fadeUp} className="flex items-center gap-4">
-          <a href="#contact" className="label rounded-full border border-white/30 bg-white/5 px-5 py-3 backdrop-blur hover:bg-cream hover:text-ink">{t.contact}</a>
-          <span className="hidden h-9 w-5 justify-center rounded-full border border-white/40 pt-1.5 md:flex" aria-hidden>
-            <motion.span className="fg h-1.5 w-1 rounded-full" animate={reduced ? undefined : { y: [0, 10, 0] }} transition={{ duration: 1.6, repeat: Infinity }} />
-          </span>
-          <span className="label hidden text-white/40 md:inline">@donchaminade</span>
+        <motion.div initial="hidden" animate={ready ? 'show' : 'hidden'} variants={{ show: { transition: { staggerChildren: 0.12, delayChildren: 0.25 } } }}
+          className="mt-3 shrink-0">
+          <motion.div variants={fadeUp}>
+            <p className="label mb-2 text-white/50">{profile.fullName}</p>
+            <RoleLine r={r} size="m" />
+            <p className="mt-2 text-base leading-relaxed text-mist">{profile.heroSubtitle[lang]}</p>
+          </motion.div>
+          <motion.div variants={fadeUp} className="mt-4 grid gap-3">
+            <a href="#contact" className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 text-base font-medium tracking-wide">{t.contact} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" /></a>
+            <Heartbeat className="w-full">
+              <a href="#rendez-vous" className="flex min-h-11 w-full items-center justify-center rounded-full bg-cream px-5 text-base font-medium tracking-wide text-ink">{t.bookCall}</a>
+            </Heartbeat>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
+
+      <div className="relative hidden min-h-[100svh] flex-col items-center justify-end overflow-hidden pt-24 md:flex"
+        onPointerMove={(e) => { if (e.pointerType !== 'mouse') return; mx.set((e.clientX / window.innerWidth) * 2 - 1); my.set((e.clientY / window.innerHeight) * 2 - 1); }}>
+        <motion.h1 style={{ x: tx }} initial={{ opacity: 0, scale: 1.15 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 1, ease: 'easeOut' }}
+          className="wordmark metal pointer-events-none absolute inset-x-0 top-[16%] w-full select-none text-center font-display font-black">
+          DONCHAMINADE
+        </motion.h1>
+        <motion.div style={{ x: px, y: py }}
+          initial={{ opacity: 0, y: 120 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1, delay: 0.25, ease: 'easeOut' }}
+          className="relative z-10 w-[52vw] max-w-[820px]">
+          {portraitOf('h-auto w-full [mask-image:linear-gradient(to_bottom,#000_86%,transparent)]')}
+        </motion.div>
+        <motion.div initial="hidden" animate={ready ? 'show' : 'hidden'} variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.6 } } }}
+          className="absolute inset-x-0 bottom-0 z-20">
+          <div className="wrap flex items-end justify-between gap-6 pb-10">
+            <motion.div variants={fadeUp}>
+              <p className="label mb-2 text-white/50">{profile.fullName}</p>
+              <RoleLine r={r} size="d" />
+              <p className="mt-1 text-base text-mist">{profile.heroSubtitle[lang]}</p>
+            </motion.div>
+            <motion.div variants={fadeUp} className="flex items-center gap-3">
+              <Heartbeat>
+                <a href="#rendez-vous" className="inline-flex min-h-11 items-center rounded-full bg-cream px-5 text-sm font-medium tracking-wide text-ink hover:bg-white">{t.bookCall}</a>
+              </Heartbeat>
+              <a href="#contact" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 text-sm font-medium tracking-wide backdrop-blur hover:bg-cream hover:text-ink">{t.contact} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>
+              <span className="flex h-11 w-5 justify-center rounded-full border border-white/40 pt-1.5" aria-hidden>
+                <motion.span className="fg h-1.5 w-1 rounded-full" animate={reduced ? undefined : { y: [0, 10, 0] }} transition={{ duration: 1.6, repeat: Infinity }} />
+              </span>
+              <span className="text-sm tracking-[0.18em] text-white/40">@donchaminade</span>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
     </section>
   );
 }
 
 /* ---------- 2. À PROPOS ---------- */
 export function About() {
-  const { t, lang } = useI18n();
+  const { t, lang, theme } = useI18n();
   const badge = lang === 'en' ? profile.experienceBadgeEn : profile.experienceBadge;
   return (
-    <section id="apropos" className="relative px-5 py-20 md:px-10 md:py-28">
+    <section id="apropos" className="wrap relative py-20 md:py-28">
       <div className="grid gap-10 md:grid-cols-2">
         <h2 className="font-display text-[22vw] font-black uppercase leading-[.85] tracking-tight md:text-[12vw]">
           <MaskTitle className="metal">{t.aboutTitleA}</MaskTitle>
@@ -94,7 +145,7 @@ export function About() {
         <motion.div {...reveal(0.2)} className="self-start rounded-2xl border border-white/10 bg-white/[.04] p-6 backdrop-blur md:p-8">
           <p className="label mb-4 text-cream">{profile.availability[lang]}</p>
           <p className="text-lg leading-relaxed text-white/90 md:text-xl">{profile.bio[lang]}</p>
-          <p className="mt-3 text-sm text-mist">{profile.heroTitle[lang]} {profile.heroSubtitle[lang]}</p>
+          <p className="mt-3 text-base leading-relaxed text-mist">{profile.heroTitle[lang]} {profile.heroSubtitle[lang]}</p>
           <div className="mt-6 border-t border-white/10 pt-3">
             <span className="font-display text-3xl font-black">{badge}</span>
             <p className="label mt-1 text-white/50">{t.experienceSolid}</p>
@@ -115,8 +166,8 @@ export function About() {
             {row.map((s) => {
               const label = textOf(s, lang);
               return (
-                <motion.span key={label} variants={fadeUp} whileHover={{ y: -3, backgroundColor: '#d9d0c1', color: '#060708' }}
-                  className="rounded-full border border-white/15 bg-white/[.03] px-4 py-2 text-xs text-white/85 md:text-sm">{label}</motion.span>
+                <motion.span key={label} variants={fadeUp} whileHover={{ y: -3, backgroundColor: theme === 'light' ? '#18181b' : '#d9d0c1', color: theme === 'light' ? '#fafafa' : '#060708' }}
+                  className="inline-flex items-center rounded-full border border-white/15 bg-white/[.03] px-4 py-2 text-base text-white/85">{label}</motion.span>
               );
             })}
           </motion.div>
@@ -128,7 +179,7 @@ export function About() {
           <motion.li key={s.title.fr} variants={fadeUp} {...hoverLift} className="rounded-3xl border border-white/10 p-5">
             <h3 className="font-display text-lg font-black uppercase leading-tight">{s.title[lang]}</h3>
             <p className="label mt-3 text-cream">{t.impact}</p>
-            <p className="mt-2 text-sm leading-relaxed text-mist">{s.impact[lang]}</p>
+            <p className="mt-2 text-base leading-relaxed text-mist">{s.impact[lang]}</p>
           </motion.li>
         ))}
       </motion.ul>
@@ -140,9 +191,11 @@ export function About() {
 export function Services() {
   const { t, lang, theme } = useI18n();
   const [open, setOpen] = useState<number>(2);
-  const fg = theme === 'light' ? '#1c1814' : '#ffffff';
+  const fg = theme === 'light' ? '#18181b' : '#ffffff';
+  const openBg = theme === 'light' ? '#f4f4f5' : '#d9d0c1';
+  const openFg = '#18181b';
   return (
-    <section id="services" className="relative px-5 py-20 md:px-10 md:py-28">
+    <section id="services" className="wrap relative py-20 md:py-28">
       <h2 className="ml-auto max-w-3xl text-right font-display text-[13vw] font-black uppercase leading-[.85] tracking-tight md:text-[7vw]">
         <MaskTitle className="metal">{t.servicesTitleA}</MaskTitle>
         <MaskTitle className="metal">{t.servicesTitleB} <Italic>{t.servicesDo}</Italic></MaskTitle>
@@ -152,12 +205,14 @@ export function Services() {
           const isOpen = open === i;
           return (
             <motion.li key={s.title.fr} variants={fadeUp} onMouseEnter={() => window.matchMedia('(hover: hover)').matches && setOpen(i)}
-              animate={{ backgroundColor: isOpen ? '#d9d0c1' : 'rgba(0,0,0,0)', color: isOpen ? '#1c1814' : fg }} transition={{ duration: 0.4 }}
+              animate={{ backgroundColor: isOpen ? openBg : 'rgba(0,0,0,0)', color: isOpen ? openFg : fg }} transition={{ duration: 0.4 }}
               className="border-b border-white/10">
               <button onClick={() => setOpen(isOpen ? -1 : i)} aria-expanded={isOpen} className="flex w-full items-center gap-4 px-3 py-5 text-left md:px-6">
                 <span className="font-display text-sm font-black opacity-60">{String(i + 1).padStart(2, '0')}</span>
                 <span className="flex-1 font-display text-base font-extrabold uppercase tracking-wide md:text-xl">{s.title[lang]}</span>
-                <motion.span animate={{ rotate: isOpen ? 45 : 0 }}>{isOpen ? <Minus size={18} /> : <Plus size={18} />}</motion.span>
+                <motion.span animate={{ rotate: isOpen ? 45 : 0 }} transition={{ type: 'spring', stiffness: 420, damping: 18 }}>
+                  {isOpen ? <MotionIcon icon={Minus} size={18} effect="spin" /> : <MotionIcon icon={Plus} size={18} effect="spin" />}
+                </motion.span>
               </button>
               <AnimatePresence initial={false}>
                 {isOpen && (
@@ -167,11 +222,11 @@ export function Services() {
                         <div key={cat.name.fr}>
                           <p className="label mb-2 opacity-70">{cat.name[lang]}</p>
                           <ul className="flex flex-wrap gap-2">
-                            {cat.items[lang].map((it) => <li key={it} className="rounded-full border border-ink/20 px-3 py-1 text-xs md:text-sm">{it}</li>)}
+                            {cat.items[lang].map((it) => <li key={it} className="inline-flex items-center rounded-full border border-ink/20 px-3 py-1.5 text-base">{it}</li>)}
                           </ul>
                         </div>
                       ))}
-                      <a href="#contact" className="label inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-cream">{t.discuss} <ArrowUpRight size={14} /></a>
+                      <a href="#contact" className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 py-3 text-cream">{t.discuss} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>
                     </div>
                   </motion.div>
                 )}
@@ -213,72 +268,94 @@ const PAGE = 6;
 
 export function Work() {
   const { t, lang } = useI18n();
-  const featured = projects.filter((p) => p.images.length > 0);
+  const [list, setList] = useState<Project[]>(projects);
+  const featured = list.filter((p) => p.images.length > 0);
   const [i, setI] = useState(0);
   const [filter, setFilter] = useState<'all' | 'Web' | 'Mobile'>('all');
   const [more, setMore] = useState(false);
-  const p = featured[i] ?? featured[0];
-  const { accent, rest } = splitTitle(p.title);
-  const list = projects.filter((q) => filter === 'all' || q.type === filter);
-  const shown = more ? list : list.slice(0, PAGE);
+  useEffect(() => {
+    let cancel = false;
+    const load = () => {
+      fetchPortfolioProjects()
+        .then((remote) => {
+          if (!cancel && remote.length) setList(mergeRemoteProjects(remote, extraProjects));
+        })
+        .catch(() => { /* le catalogue local reste affiché */ });
+    };
+    load();
+    const timer = window.setInterval(load, 60_000);
+    const onVisible = () => { if (document.visibilityState === 'visible') load(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      cancel = true;
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+  const count = featured.length;
+  const index = count ? ((i % count) + count) % count : 0;
+  const p = featured[index];
+  const { accent, rest } = splitTitle(p?.title ?? '');
+  const filtered = list.filter((q) => filter === 'all' || q.type === filter);
+  const shown = more ? filtered : filtered.slice(0, PAGE);
   const filters = [
     { id: 'all' as const, label: t.filterAll },
     { id: 'Web' as const, label: t.filterWeb },
     { id: 'Mobile' as const, label: t.filterMobile },
   ];
   return (
-    <section id="projets" className="relative px-5 py-20 md:px-10 md:py-28">
+    <section id="projets" className="wrap relative overflow-x-clip py-20 md:py-28">
       <h2 className="font-display text-[14vw] font-black uppercase leading-[.85] tracking-tight md:text-[6.5vw]">
         <MaskTitle className="metal">{t.projectsTitle} <Italic>{t.projectsChosen}</Italic></MaskTitle>
       </h2>
       <div className="mt-6 flex items-center justify-between gap-3">
-        <p className="label text-white/45">{String(i + 1).padStart(2, '0')} / {String(featured.length).padStart(2, '0')}</p>
+        <p className="label text-white/45">{String(count ? index + 1 : 0).padStart(2, '0')} / {String(count).padStart(2, '0')}</p>
         <div className="flex gap-2">
-          <button type="button" onClick={() => setI((i - 1 + featured.length) % featured.length)} className="label rounded-full border border-white/25 px-4 py-2 hover:bg-white hover:text-ink" aria-label={t.prevScreen}>←</button>
-          <button type="button" onClick={() => setI((i + 1) % featured.length)} className="label rounded-full bg-cream px-4 py-2 text-ink" aria-label={t.next}>{t.next} →</button>
+          <button type="button" onClick={() => count && setI((index - 1 + count) % count)} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 px-4 hover:bg-white hover:text-ink" aria-label={t.prevScreen}><MotionIcon icon={ChevronLeft} size={16} effect="slideBack" /></button>
+          <button type="button" onClick={() => count && setI((index + 1) % count)} className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-4 text-ink" aria-label={t.next}>{t.next} <MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
         </div>
       </div>
       <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
         {featured.map((q, j) => (
           <button key={q.title} type="button" onClick={() => setI(j)}
-            className={`label shrink-0 rounded-full border px-3 py-2 ${i === j ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{q.title}</button>
+            className={`label inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 ${index === j ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{q.title}</button>
         ))}
       </div>
-      <div className="mt-8 grid items-center gap-8 md:grid-cols-[1fr_1.3fr]">
+      {p && <div className="mt-12 grid min-w-0 items-center gap-10 lg:grid-cols-2 lg:gap-24">
         <AnimatePresence mode="wait">
-          <motion.div key={p.title} initial="hidden" animate="show" exit={{ opacity: 0, y: -20 }} variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="order-2 md:order-1">
-            <motion.p variants={fadeUp} className="font-display text-sm font-black text-white/50">{String(i + 1).padStart(2, '0')} — {p.type === 'Mobile' ? t.mobileApp : t.webApp}</motion.p>
-            <motion.h3 variants={fadeUp} className="mt-3 font-display text-4xl font-black uppercase leading-none md:text-6xl">
+          <motion.div key={p.title} initial="hidden" animate="show" exit={{ opacity: 0, y: -20 }} variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="order-2 lg:order-1">
+            <motion.p variants={fadeUp} className="text-base font-medium uppercase tracking-[0.14em] text-white/60">{String(index + 1).padStart(2, '0')} — {p.type === 'Mobile' ? t.mobileApp : t.webApp}</motion.p>
+            <motion.h3 variants={fadeUp} className="project-title mt-4 font-display font-black uppercase">
               {accent}{rest && <Italic><span className="text-cream">{rest}</span></Italic>}
             </motion.h3>
-            <motion.p variants={fadeUp} className="mt-5 max-w-md text-sm leading-relaxed text-mist md:text-base">{p.description[lang]}</motion.p>
-            <motion.ul variants={fadeUp} className="mt-4 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="label rounded-full border border-white/15 px-3 py-1 text-white/70">{tagLabel(tag, lang)}</li>)}</motion.ul>
+            <motion.p variants={fadeUp} className="mt-6 max-w-[34rem] text-[1.125rem] leading-[1.65] text-mist [overflow-wrap:anywhere]">{p.description[lang]}</motion.p>
+            <motion.ul variants={fadeUp} className="mt-6 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="inline-flex items-center rounded-full border border-white/15 px-3 py-1 text-base text-white/75">{tagLabel(tag, lang)}</li>)}</motion.ul>
             <ProjectLinks p={p} />
           </motion.div>
         </AnimatePresence>
-        <motion.div {...slideIn(80, 0.1)} className="order-1 md:order-2">
+        <motion.div {...slideIn(28, 0.1)} className="order-1 min-w-0 lg:order-2">
           <AnimatePresence mode="wait">
-            <motion.div key={p.title} initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -60 }} transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}>
+            <motion.div key={p.title} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}>
               <Device type={p.type} images={p.images} />
             </motion.div>
           </AnimatePresence>
         </motion.div>
-      </div>
+      </div>}
 
       <div className="mt-20 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <h3 className="font-display text-4xl font-black uppercase md:text-5xl">{t.catalogKicker}</h3>
         <div className="flex gap-2">
           {filters.map((f) => (
             <button key={f.id} type="button" onClick={() => { setFilter(f.id); setMore(false); }}
-              className={`label rounded-full border px-4 py-2 ${filter === f.id ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{f.label}</button>
+              className={`label inline-flex min-h-11 items-center rounded-full border px-4 ${filter === f.id ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{f.label}</button>
           ))}
         </div>
       </div>
       <motion.ul {...inViewGroup(0.05)} className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {shown.map((q) => <ProjectCard key={q.title} p={q} />)}
       </motion.ul>
-      {list.length > PAGE && (
-        <button type="button" onClick={() => setMore((v) => !v)} className="label mt-8 rounded-full border border-white/25 px-6 py-3 hover:bg-white hover:text-ink">
+      {filtered.length > PAGE && (
+        <button type="button" onClick={() => setMore((v) => !v)} className="label mt-8 inline-flex min-h-11 items-center rounded-full border border-white/25 px-6 hover:bg-white hover:text-ink">
           {more ? t.seeLess : t.seeAll}
         </button>
       )}
@@ -289,9 +366,9 @@ export function Work() {
 function ProjectLinks({ p }: { p: Project }) {
   const { t } = useI18n();
   return (
-    <motion.div variants={fadeUp} className="mt-7 flex flex-wrap gap-3">
-      {p.link && <a href={p.link} target="_blank" rel="noreferrer" className="label inline-flex items-center gap-2 rounded-full bg-cream px-5 py-3 text-ink hover:bg-white">{p.link.includes('play.google') ? t.googlePlay : t.seeSite} <ArrowUpRight size={14} /></a>}
-      {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="label inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 hover:bg-white hover:text-ink"><Github size={14} /> GitHub</a>}
+    <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-4">
+      {p.link && <a href={p.link} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-base font-medium tracking-wide text-ink hover:bg-white">{p.link.includes('play.google') ? t.googlePlay : t.seeSite} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" /></a>}
+      {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 px-6 text-base font-medium tracking-wide hover:bg-white hover:text-ink"><MotionIcon icon={Github} size={16} effect="bounce" /> GitHub</a>}
     </motion.div>
   );
 }
@@ -309,11 +386,11 @@ function ProjectCard({ p }: { p: Project }) {
       <div className="p-5">
         <p className="label text-cream">{p.type === 'Mobile' ? t.mobileApp : t.webApp}</p>
         <h4 className="mt-2 font-display text-2xl font-black uppercase leading-none">{p.title}</h4>
-        <p className="mt-3 text-sm leading-relaxed text-mist">{p.description[lang]}</p>
+        <p className="mt-3 text-base leading-relaxed text-mist [overflow-wrap:anywhere]">{p.description[lang]}</p>
         <ul className="mt-3 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="label rounded-full border border-white/15 px-2 py-1 text-white/60">{tagLabel(tag, lang)}</li>)}</ul>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
-          {p.link && <a href={p.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-cream">{p.link.includes('play.google') ? t.googlePlay : t.seeSite} <ArrowUpRight size={14} /></a>}
-          {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:text-cream"><Github size={14} /> GitHub</a>}
+          {p.link && <a href={p.link} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1 text-base hover:text-cream">{p.link.includes('play.google') ? t.googlePlay : t.seeSite} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>}
+          {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1 text-base hover:text-cream"><MotionIcon icon={Github} size={14} effect="bounce" /> GitHub</a>}
         </div>
       </div>
     </motion.li>
@@ -325,7 +402,7 @@ export function Components() {
   const { t, lang } = useI18n();
   const [c, setC] = useState(2);
   return (
-    <section id="ecrans" className="relative overflow-hidden px-5 py-20 md:px-10 md:py-28">
+    <section id="ecrans" className="wrap relative overflow-hidden py-20 md:py-28">
       <div className="grid items-center gap-10 md:grid-cols-[0.8fr_1.6fr]">
         <div>
           <h2 className="font-display text-5xl font-black uppercase leading-[.9] tracking-tight md:text-6xl">
@@ -333,10 +410,10 @@ export function Components() {
             <MaskTitle className="metal">{t.screensB}</MaskTitle>
             <MaskTitle><Italic><span className="text-cream">{t.screensC}</span></Italic></MaskTitle>
           </h2>
-          <motion.p {...reveal(0.2)} className="mt-5 max-w-sm text-sm text-mist">{t.screensNote}</motion.p>
+          <motion.p {...reveal(0.2)} className="mt-5 max-w-sm text-base leading-relaxed text-mist">{t.screensNote}</motion.p>
           <motion.div {...reveal(0.3)} className="mt-6 flex gap-3">
-            <button type="button" onClick={() => setC(Math.max(0, c - 1))} className="label rounded-full border border-white/25 px-4 py-2 hover:bg-white hover:text-ink" aria-label={t.prevScreen}>←</button>
-            <button type="button" onClick={() => setC(Math.min(phoneScreens.length - 1, c + 1))} className="label rounded-full bg-cream px-4 py-2 text-ink" aria-label={t.nextScreen}>→</button>
+            <button type="button" onClick={() => setC(Math.max(0, c - 1))} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 px-4 hover:bg-white hover:text-ink" aria-label={t.prevScreen}><MotionIcon icon={ChevronLeft} size={16} effect="slideBack" /></button>
+            <button type="button" onClick={() => setC(Math.min(phoneScreens.length - 1, c + 1))} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-cream px-4 text-ink" aria-label={t.nextScreen}><MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
             <span className="label self-center text-white/40">{String(c + 1).padStart(2, '0')} / {String(phoneScreens.length).padStart(2, '0')}</span>
           </motion.div>
         </div>
@@ -347,7 +424,7 @@ export function Components() {
               <motion.button key={s.src} variants={{ hidden: { opacity: 0, x: 200 }, show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } } }}
                 onClick={() => setC(j)} aria-label={s.label[lang]} type="button"
                 className="absolute left-1/2 top-1/2 w-[200px] md:w-[240px]" style={{ zIndex: 20 - Math.abs(d) }}>
-                <motion.div animate={{ x: `calc(-50% + ${d * 72}%)`, y: '-50%', scale: d === 0 ? 1 : 0.82, opacity: Math.abs(d) > 2 ? 0 : d === 0 ? 1 : 0.45, filter: d === 0 ? 'blur(0px)' : 'blur(2px)' }}
+                <motion.div animate={{ x: `calc(-50% + ${d * 48}%)`, y: '-50%', scale: d === 0 ? 1 : 0.82, opacity: Math.abs(d) > 2 ? 0 : d === 0 ? 1 : 0.45, filter: d === 0 ? 'blur(0px)' : 'blur(2px)' }}
                   transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
                   className="overflow-hidden rounded-[2rem] border-[5px] border-neutral-800 bg-black shadow-2xl">
                   <img src={s.src} alt={s.label[lang]} className="aspect-[9/19] w-full object-cover object-top" />
@@ -364,13 +441,40 @@ export function Components() {
 /* ---------- 6. CONTACT ---------- */
 export function Contact() {
   const { t, lang } = useI18n();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [website, setWebsite] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'fail'>('idle');
+  const [notice, setNotice] = useState('');
   const rows = [
     { icon: Mail, label: t.email, value: profile.email, href: `mailto:${profile.email}` },
     { icon: Phone, label: t.phone, value: profile.phoneDisplay, href: `tel:${profile.phone}` },
     { icon: MessageCircle, label: t.whatsapp, value: profile.phoneDisplay, href: profile.whatsapp },
   ];
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (website) return;
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    if (!name.trim() || !email.trim() || !message.trim()) { setNotice(t.contactRequired); setStatus('fail'); return; }
+    if (!emailOk) { setNotice(t.contactEmailInvalid); setStatus('fail'); return; }
+    if (message.trim().length < 10) { setNotice(t.contactShort); setStatus('fail'); return; }
+    setNotice('');
+    setStatus('sending');
+    try {
+      const msg = await submitContact(name.trim(), email.trim(), message.trim(), website);
+      setNotice(msg || t.contactSent);
+      setStatus('sent');
+      setName('');
+      setEmail('');
+      setMessage('');
+    } catch (err) {
+      setNotice(err instanceof Error && err.message ? err.message : t.sendError);
+      setStatus('fail');
+    }
+  };
   return (
-    <section id="contact" className="relative flex min-h-[100svh] flex-col overflow-hidden px-5 pt-24 md:px-10">
+    <section id="contact" className="wrap relative flex min-h-[100svh] flex-col overflow-hidden pt-24">
       <div className="marble" aria-hidden />
       <div className="relative grid flex-1 items-center gap-10 md:grid-cols-2">
         <div>
@@ -379,8 +483,10 @@ export function Contact() {
             <MaskTitle><Italic><span className="text-cream">{t.contactTitleB}</span></Italic></MaskTitle>
           </h2>
           <motion.div {...reveal(0.2)} className="mt-8 flex flex-wrap gap-3">
-            <a href={`mailto:${profile.email}`} className="label rounded-full bg-cream px-6 py-3 text-ink hover:bg-white">{t.writeEmail}</a>
-            <a href={profile.cv} target="_blank" rel="noreferrer" className="label inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 hover:bg-white hover:text-ink"><Download size={14} /> {t.myCv}</a>
+            <Heartbeat>
+              <a href={`mailto:${profile.email}`} className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-ink hover:bg-white"><MotionIcon icon={Mail} size={14} effect="draw" /> {t.writeEmail}</a>
+            </Heartbeat>
+            <a href={profile.cv} target="_blank" rel="noreferrer" className="label inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 px-6 hover:bg-white hover:text-ink"><MotionIcon icon={Download} size={14} effect="bounce" /> {t.myCv}</a>
           </motion.div>
         </div>
         <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -389,23 +495,42 @@ export function Contact() {
           <ul className="mt-6 divide-y divide-white/10">
             {rows.map(({ icon: I, label, value, href }) => (
               <li key={label} className="flex items-center gap-4 py-4">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-white/5"><I size={16} /></span>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-white/5"><MotionIcon icon={I} size={16} effect="draw" /></span>
                 <div className="min-w-0">
                   <p className="label text-white/40">{label}</p>
-                  <a href={href} className="block truncate text-sm hover:text-cream md:text-base">{value}</a>
+                  <a href={href} className="block truncate text-base hover:text-cream">{value}</a>
                 </div>
               </li>
             ))}
           </ul>
+          <form onSubmit={send} className="mt-6 grid gap-3">
+            <p className="text-base text-mist">{t.contactFormNote}</p>
+            <input name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder={t.bookName} aria-label={t.bookName} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder={t.email} aria-label={t.email} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
+            <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder={t.bookMessage} aria-label={t.bookMessage} className="resize-y rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base outline-none focus:border-cream" />
+            <AnimatePresence mode="wait">
+              {notice && (
+                <motion.p key={status + notice} role={status === 'fail' ? 'alert' : 'status'} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-base text-cream">{notice}</motion.p>
+              )}
+            </AnimatePresence>
+            <Heartbeat className="w-fit">
+              <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">
+                <MotionIcon icon={Send} size={16} effect="slide" />
+                {status === 'sending' ? t.sending : t.contactSend}
+              </motion.button>
+            </Heartbeat>
+          </form>
           <div className="mt-6 flex gap-3">
             {[{ I: Github, h: profile.github, l: 'GitHub' }, { I: Linkedin, h: profile.linkedin, l: 'LinkedIn' }, { I: Twitter, h: profile.twitter, l: 'X' }].map(({ I, h, l }) => (
-              <motion.a key={l} href={h} target="_blank" rel="noreferrer" aria-label={l} whileHover={{ y: -4 }} className="grid h-11 w-11 place-items-center rounded-full border border-white/20 hover:bg-cream hover:text-ink"><I size={16} /></motion.a>
+              <motion.a key={l} href={h} target="_blank" rel="noreferrer" aria-label={l} whileHover={{ y: -4 }} whileTap={{ scale: 0.94 }} className="grid h-11 w-11 place-items-center rounded-full border border-white/20 hover:bg-cream hover:text-ink"><MotionIcon icon={I} size={16} effect="bounce" /></motion.a>
             ))}
           </div>
         </motion.div>
       </div>
       <footer className="relative mt-16 flex flex-col gap-3 border-t border-white/10 py-6 md:flex-row md:justify-between">
         <span className="label text-white/40">© {profile.year} {profile.fullName}</span>
+        <a href="/blog" className="label text-white/40 hover:text-cream">{t.nav.blog}</a>
         <span className="label text-white/40">{profile.heroSubtitle[lang]}</span>
       </footer>
     </section>
