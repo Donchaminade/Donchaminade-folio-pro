@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useId, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MessageCircle, Send, Sparkles, X } from 'lucide-react';
 import { MotionIcon } from './MotionIcon';
@@ -17,6 +18,7 @@ function messageText(raw: string) {
 
 export default function PortfolioChat() {
   const { lang, t } = useI18n();
+  const path = usePathname() || '/';
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -152,6 +154,8 @@ export default function PortfolioChat() {
     event?.preventDefault();
     void ask(input);
   };
+
+  if (path.startsWith('/admin')) return null;
 
   return (
     <>
