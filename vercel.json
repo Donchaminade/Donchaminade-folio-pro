@@ -5,11 +5,11 @@
   "rewrites": [
     {
       "source": "/blog/preview/:token",
-      "destination": "/blog/preview.html"
+      "destination": "/blog/preview"
     },
     {
       "source": "/blog/:slug",
-      "destination": "/blog/article.html"
+      "destination": "/blog/article"
     }
   ],
   "cleanUrls": true
