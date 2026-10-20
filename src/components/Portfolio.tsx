@@ -6,9 +6,11 @@ import Nav from './Nav';
 import Pointeur from './Pointeur';
 import DotBoard from './DotBoard';
 import { Hero, About, Services, Work, Components, Contact } from './Sections';
-import { nav } from '@/lib/data';
+import { Awards, Community, Gallery, Path, Pricing } from './More';
+import { navIds } from '@/lib/catalog';
+import { Providers } from '@/lib/i18n';
 
-export default function Portfolio() {
+function Shell() {
   const reduced = !!useReducedMotion();
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState('accueil');
@@ -19,9 +21,9 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
-    const els = [...nav.map((n) => n.id), 'hello'].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const els = [...navIds, 'hello'].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-      if (e.isIntersecting) setActive(e.target.id === 'hello' ? 'composants' : e.target.id);
+      if (e.isIntersecting) setActive(e.target.id === 'hello' ? 'ecrans' : e.target.id);
     }), { rootMargin: '-45% 0px -50% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -35,12 +37,25 @@ export default function Portfolio() {
       <main>
         <Hero ready={!loading} />
         <About />
+        <Path />
         <Services />
+        <Pricing />
         <Work />
+        <Awards />
+        <Community />
+        <Gallery />
         <Components />
         <DotBoard reduced={reduced} />
         <Contact />
       </main>
     </MotionConfig>
+  );
+}
+
+export default function Portfolio() {
+  return (
+    <Providers>
+      <Shell />
+    </Providers>
   );
 }
