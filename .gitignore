@@ -1,39 +1,11 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
 node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-.vercel
-
-# PHP / Backend
-/vendor/
-.env
-public/uploads/**/*
-!public/uploads/.gitkeep
-!public/uploads/blog/.gitkeep
-!public/uploads/projects/.gitkeep
-!public/uploads/profile/.gitkeep
-!public/uploads/documents/.gitkeep
-install.php.lock
-hostinger-upload/
-hostinger-upload.zip
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+# Fichiers d'une ancienne refonte présents dans ce dossier (non liés à ce projet)
+REFONTE-AUDIT.md
+before/
+after/
+mockup/
+tools/

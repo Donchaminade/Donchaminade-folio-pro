@@ -1,43 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/CV_ADJOLOU_DONDAH_CHAMINADE.pdf",
-      "destination": "/cv/CV-Chaminade-Adjolou-FR-FullStack-Master.pdf",
-      "permanent": true
-    },
-    {
-      "source": "/admin",
-      "destination": "https://donchamfolio.grosbit.com/admin/login.php",
-      "permanent": false
-    },
-    {
-      "source": "/admin/",
-      "destination": "https://donchamfolio.grosbit.com/admin/login.php",
-      "permanent": false
-    },
-    {
-      "source": "/admin/:path*",
-      "destination": "https://donchamfolio.grosbit.com/admin/:path*",
-      "permanent": false
-    }
-  ],
-  "functions": {
-    "api/chat.js": {
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/chat",
-      "destination": "/api/chat"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "outputDirectory": "out",
+  "framework": null
 }

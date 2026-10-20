@@ -1,1 +1,0 @@
-export { mergeProjects } from './mergeCatalog';
