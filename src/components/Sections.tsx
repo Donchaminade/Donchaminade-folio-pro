@@ -1,7 +1,7 @@
 'use client';
 import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Github, Linkedin, Mail, Phone, Twitter, Plus, Minus, Download, MessageCircle, Send } from 'lucide-react';
 import { Heartbeat, MotionIcon } from './MotionIcon';
 import { fetchPortfolioProjects, submitContact } from '@/lib/api';
@@ -422,7 +422,10 @@ function ProjectCard({ p }: { p: Project }) {
 /* ---------- 5. ÉCRANS ---------- */
 export function Components() {
   const { t, lang } = useI18n();
+  const reduce = !!useReducedMotion();
   const [c, setC] = useState(2);
+  const dragged = useRef(false);
+  const last = phoneScreens.length - 1;
   return (
     <section id="ecrans" className="wrap relative overflow-hidden py-20 md:py-28">
       <div className="grid items-center gap-10 md:grid-cols-[0.8fr_1.6fr]">
@@ -435,21 +438,36 @@ export function Components() {
           <motion.p {...reveal(0.2)} className="mt-5 max-w-sm text-base leading-relaxed text-mist">{t.screensNote}</motion.p>
           <motion.div {...reveal(0.3)} className="mt-6 flex gap-3">
             <button type="button" onClick={() => setC(Math.max(0, c - 1))} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 px-4 hover:bg-white hover:text-ink" aria-label={t.prevScreen}><MotionIcon icon={ChevronLeft} size={16} effect="slideBack" /></button>
-            <button type="button" onClick={() => setC(Math.min(phoneScreens.length - 1, c + 1))} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-cream px-4 text-ink" aria-label={t.nextScreen}><MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
+            <button type="button" onClick={() => setC(Math.min(last, c + 1))} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-cream px-4 text-ink" aria-label={t.nextScreen}><MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
             <span className="label self-center text-white/40">{String(c + 1).padStart(2, '0')} / {String(phoneScreens.length).padStart(2, '0')}</span>
           </motion.div>
         </div>
-        <motion.div {...inViewGroup(0.08)} className="relative h-[460px] md:h-[560px]">
+        <motion.div
+          {...inViewGroup(0.08)}
+          className="relative h-[460px] cursor-grab touch-pan-y active:cursor-grabbing md:h-[560px]"
+          drag={reduce ? false : 'x'}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragStart={() => { dragged.current = false; }}
+          onDrag={(_, info) => { if (Math.abs(info.offset.x) > 8) dragged.current = true; }}
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -48) setC((v) => Math.min(last, v + 1));
+            else if (info.offset.x > 48) setC((v) => Math.max(0, v - 1));
+          }}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label={t.screensA}
+        >
           {phoneScreens.map((s, j) => {
             const d = j - c;
             return (
               <motion.button key={s.src} variants={{ hidden: { opacity: 0, x: 200 }, show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } } }}
-                onClick={() => setC(j)} aria-label={s.label[lang]} type="button"
+                onClick={() => { if (dragged.current) { dragged.current = false; return; } setC(j); }} aria-label={s.label[lang]} type="button"
                 className="absolute left-1/2 top-1/2 w-[200px] md:w-[240px]" style={{ zIndex: 20 - Math.abs(d) }}>
                 <motion.div animate={{ x: `calc(-50% + ${d * 48}%)`, y: '-50%', scale: d === 0 ? 1 : 0.82, opacity: Math.abs(d) > 2 ? 0 : d === 0 ? 1 : 0.45, filter: d === 0 ? 'blur(0px)' : 'blur(2px)' }}
                   transition={{ duration: 0.6, ease: [0.65, 0, 0.35, 1] }}
                   className="overflow-hidden rounded-[2rem] border-[5px] border-neutral-800 bg-black shadow-2xl">
-                  <img src={s.src} alt={s.label[lang]} className="aspect-[9/19] w-full object-cover object-top" />
+                  <img src={s.src} alt="" draggable={false} className="pointer-events-none aspect-[9/19] w-full object-cover object-top" />
                 </motion.div>
               </motion.button>
             );
