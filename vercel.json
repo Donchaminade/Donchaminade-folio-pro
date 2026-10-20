@@ -10,6 +10,10 @@
   "redirects": [],
   "rewrites": [
     {
+      "source": "/php/:path*",
+      "destination": "https://donchamfolio.grosbit.com/:path*"
+    },
+    {
       "source": "/blog/preview/:token",
       "destination": "/blog/preview"
     },
