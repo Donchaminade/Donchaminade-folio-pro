@@ -17,7 +17,7 @@ export default function Controls() {
               <motion.span layoutId="lang-pill" className="absolute inset-0 rounded-full bg-cream"
                 transition={{ type: 'spring', stiffness: 420, damping: 32 }} />
             )}
-            <span className="relative">{code}</span>
+            <span className="relative">{code === 'fr' ? 'FR' : 'ENG'}</span>
           </button>
         ))}
       </div>

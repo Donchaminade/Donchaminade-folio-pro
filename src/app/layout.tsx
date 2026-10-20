@@ -9,6 +9,7 @@ import '@fontsource/instrument-serif/400-italic.css';
 import './globals.css';
 import { Providers } from '@/lib/i18n';
 import PortfolioChat from '@/components/PortfolioChat';
+import SiteNav from '@/components/SiteNav';
 
 export const metadata: Metadata = {
   title: 'Chaminade ADJOLOU — Portfolio',
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans antialiased">
         <Script id="theme-boot" strategy="beforeInteractive">{boot}</Script>
         <Providers>
+          <SiteNav />
           {children}
           <PortfolioChat />
         </Providers>
