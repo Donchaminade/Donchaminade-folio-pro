@@ -3,7 +3,8 @@ import { AnimatePresence, MotionConfig, useReducedMotion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 import Loader from './Loader';
 import Pointeur from './Pointeur';
-import DotBoard from './DotBoard';
+// Jeu casse-briques conservé dans DotBoard. Décommenter pour le réafficher.
+// import DotBoard from './DotBoard';
 import { Hero, About, Services, Work, Components, Contact } from './Sections';
 import { Awards, Community, Gallery, Path, Pricing } from './More';
 import Booking from './Booking';
@@ -36,7 +37,7 @@ function Shell() {
         <Trust />
         <Gallery />
         <Components />
-        <DotBoard reduced={reduced} />
+        {/* <DotBoard reduced={reduced} /> */}
         <Contact />
       </main>
     </MotionConfig>
