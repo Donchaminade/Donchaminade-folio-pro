@@ -86,6 +86,8 @@ export const communities: { name: string; role: Bi; description: Bi }[] = [
   { name: 'Women Techmakers', role: b('Mentor & logistique', 'Mentor & logistics'), description: b('Mentor chez WTM Lomé : initiatives pour réduire la fracture numérique de genre, logistique des meetups mensuels, initiation au code.', 'Mentor at WTM Lomé: work on the gender digital divide, logistics for monthly meetups, and introductions to code.') },
   { name: 'Google Developer Groups', role: b('Speaker & organisateur', 'Speaker & organiser'), description: b('Speaker au GDG Lomé sur Flutter et Firebase, et coordination d’événements comme le DevFest.', 'Speaker at GDG Lomé on Flutter and Firebase, and coordination of events such as DevFest.') },
   { name: 'Python Togo', role: b('Social media & logistique', 'Social media & logistics'), description: b('Stratégie de contenu pour vulgariser Python, et support logistique des ateliers pratiques.', 'Content strategy to make Python approachable, plus logistics for hands-on workshops.') },
+  { name: 'SpaceXAI Togo community', role: b('Ambassadeur', 'Ambassador'), description: b('Ambassadeur au Togo.', 'Ambassador in Togo.') },
+  { name: 'African GeoSpace', role: b('Développeur Web et Mobile', 'Web & mobile developer'), description: b('Construire l’avenir spatial de l’Afrique : innovation, défense et durabilité.', 'Building Africa’s space future: innovation, defence and sustainability.') },
 ];
 
 export const managedPages: { name: string; link: string; followers: string; category: Bi }[] = [
@@ -107,7 +109,10 @@ export type Project = {
 
 const img = (name: string) => `/img/${name}`;
 
+const media = (path: string) => `https://donchamfolio.grosbit.com${path}`;
+
 export const projects: Project[] = [
+  { title: 'Grok Meetup Togo', type: 'Web', description: b('Meetup autour de Grok Bot, édition 1 au Togo.', 'Meetup around Grok Bot, first edition in Togo.'), tags: ['Meetup'], images: [media('/uploads/projects/eedcb1abce45a535_1790060134.gif'), media('/uploads/projects/6a7d4d65edf11494_1790060134.png'), media('/uploads/projects/ced01d1bd7bba3fd_1790060134.png'), media('/uploads/projects/cf6f8b0f15bc18fd_1790060134.jpg')] },
   { title: 'Picon', type: 'Mobile', description: b('App de tirage photo publiée sur Google Play (com.photopicon.app). 26 écrans Flutter, Firebase Auth, hors ligne, paiement mobile money.', 'Photo-print app on Google Play (com.photopicon.app). 26 Flutter screens, Firebase Auth, offline, mobile-money payments.'), tags: ['Flutter', 'Firebase', 'Spring Boot'], images: [img('picon-play-2.jpg'), img('picon-play-5.jpg'), img('picon.png')], link: 'https://play.google.com/store/apps/details?id=com.photopicon.app', github: 'https://github.com/Donchaminade/photopicon' },
   { title: 'Tayba Market ERP', type: 'Web', description: b('Système complet de gestion commerciale : ventes, stocks, clients, caissiers et clôtures de caisses.', 'Full retail system: sales, stock, customers, cashiers and till closing.'), tags: ['React', 'Node.js', 'ERP'], images: [] },
   { title: 'La 8e Tranche', type: 'Web', description: b('Site du restaurant La 8e Tranche à Lomé : menu, avis et réservation.', 'Website for La 8e Tranche in Lomé: menu, reviews and booking.'), tags: ['React', 'Tailwind'], images: [img('resto8tranch.png'), img('8tran.png'), img('8tranch.png')], link: 'https://8-me-tranche-delights.vercel.app' },
@@ -140,6 +145,12 @@ export const projects: Project[] = [
 ];
 
 export const gallery = ['/gallerie/adc.png', '/gallerie/pypicture.jpg'];
+
+/** Logos réels uniquement. Les visuels Unsplash du catalogue API sont exclus, comme sur l’ancienne version. */
+export const clients: { name: string; logo: string }[] = [
+  { name: 'GDG', logo: 'https://www.gstatic.com/devrel-devsite/prod/vc893708466e31e515d90616b3f7495b46e393b6e76d99723223087268d813470/developers/images/touchicon-180.png' },
+  { name: 'Python Togo', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg' },
+];
 
 const enTag: Record<string, string> = {
   CDD: 'Fixed-term',
@@ -198,4 +209,4 @@ export const phoneScreens: { src: string; label: Bi }[] = [
   { src: '/img/picon-play-7.jpg', label: b('Picon — Souvenirs', 'Picon — Memories') },
 ];
 
-export const navIds = ['accueil', 'apropos', 'parcours', 'services', 'tarifs', 'rendez-vous', 'projets', 'distinctions', 'communaute', 'galerie', 'ecrans', 'contact'] as const;
+export const navIds = ['accueil', 'apropos', 'parcours', 'services', 'tarifs', 'rendez-vous', 'projets', 'distinctions', 'communaute', 'retours', 'confiance', 'galerie', 'ecrans', 'contact'] as const;

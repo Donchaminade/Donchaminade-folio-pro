@@ -7,6 +7,23 @@
       "maxDuration": 30
     }
   },
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "https://donchamfolio.grosbit.com/admin/login.php",
+      "permanent": false
+    },
+    {
+      "source": "/admin/",
+      "destination": "https://donchamfolio.grosbit.com/admin/login.php",
+      "permanent": false
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://donchamfolio.grosbit.com/admin/:path*",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/blog/preview/:token",

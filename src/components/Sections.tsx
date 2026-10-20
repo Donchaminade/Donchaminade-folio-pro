@@ -2,6 +2,7 @@
 import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, Github, Linkedin, Mail, Phone, Twitter, Plus, Minus, Download, MessageCircle } from 'lucide-react';
+import { submitContact } from '@/lib/api';
 import { fadeUp, hoverLift, inViewGroup, reveal, slideIn } from '@/lib/motion';
 import { phoneScreens, profile, projects, roles, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
 import { useI18n } from '@/lib/i18n';
@@ -403,11 +404,31 @@ export function Components() {
 /* ---------- 6. CONTACT ---------- */
 export function Contact() {
   const { t, lang } = useI18n();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [website, setWebsite] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'fail'>('idle');
+  const [invalid, setInvalid] = useState(false);
   const rows = [
     { icon: Mail, label: t.email, value: profile.email, href: `mailto:${profile.email}` },
     { icon: Phone, label: t.phone, value: profile.phoneDisplay, href: `tel:${profile.phone}` },
     { icon: MessageCircle, label: t.whatsapp, value: profile.phoneDisplay, href: profile.whatsapp },
   ];
+  const send = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (website) return;
+    if (!name.trim() || !email.includes('@') || message.trim().length < 10) { setInvalid(true); setStatus('idle'); return; }
+    setInvalid(false);
+    setStatus('sending');
+    try {
+      await submitContact(name.trim(), email.trim(), message.trim(), website);
+      setStatus('sent');
+      setMessage('');
+    } catch {
+      setStatus('fail');
+    }
+  };
   return (
     <section id="contact" className="wrap relative flex min-h-[100svh] flex-col overflow-hidden pt-24">
       <div className="marble" aria-hidden />
@@ -436,6 +457,17 @@ export function Contact() {
               </li>
             ))}
           </ul>
+          <form onSubmit={send} className="mt-6 grid gap-3">
+            <p className="text-base text-mist">{t.contactFormNote}</p>
+            <input name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
+            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder={t.bookName} aria-label={t.bookName} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder={t.email} aria-label={t.email} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
+            <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder={t.bookMessage} aria-label={t.bookMessage} className="resize-y rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base outline-none focus:border-cream" />
+            {invalid && <p className="text-sm text-cream">{t.formInvalid}</p>}
+            {status === 'sent' && <p className="text-base text-cream" role="status">{t.contactSent}</p>}
+            {status === 'fail' && <p className="text-base text-cream" role="alert">{t.sendFail}</p>}
+            <button type="submit" disabled={status === 'sending'} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">{status === 'sending' ? t.sending : t.contactSend}</button>
+          </form>
           <div className="mt-6 flex gap-3">
             {[{ I: Github, h: profile.github, l: 'GitHub' }, { I: Linkedin, h: profile.linkedin, l: 'LinkedIn' }, { I: Twitter, h: profile.twitter, l: 'X' }].map(({ I, h, l }) => (
               <motion.a key={l} href={h} target="_blank" rel="noreferrer" aria-label={l} whileHover={{ y: -4 }} className="grid h-11 w-11 place-items-center rounded-full border border-white/20 hover:bg-cream hover:text-ink"><I size={16} /></motion.a>
@@ -445,6 +477,7 @@ export function Contact() {
       </div>
       <footer className="relative mt-16 flex flex-col gap-3 border-t border-white/10 py-6 md:flex-row md:justify-between">
         <span className="label text-white/40">© {profile.year} {profile.fullName}</span>
+        <a href="/blog" className="label text-white/40 hover:text-cream">{t.nav.blog}</a>
         <span className="label text-white/40">{profile.heroSubtitle[lang]}</span>
       </footer>
     </section>

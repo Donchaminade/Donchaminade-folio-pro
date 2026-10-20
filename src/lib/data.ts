@@ -1,4 +1,4 @@
 export { profile } from './catalog';
 
-/** TODO : coller l’URL Cal.com ou Calendly. Vide = calendrier du site. */
-export const bookingUrl = '';
+/** Lien Doodle public. L’iframe est refusée par la CSP de Doodle (frame-ancestors). */
+export const bookingUrl = 'https://doodle.com/bp/chaminadedondahadjolou/donchaminade';

@@ -22,6 +22,7 @@ export default function Nav({ active }: { active: string }) {
               {active === n.id && <motion.span layoutId="underline" className="fg absolute inset-x-0 -bottom-0.5 h-px" transition={{ type: 'spring', stiffness: 400, damping: 35 }} />}
             </a>
           ))}
+          <a href="/blog" className="label whitespace-nowrap pb-1 text-white/50 hover:text-white">{t.nav.blog}</a>
         </nav>
         <div className="flex items-center gap-1">
           <Controls />
@@ -34,6 +35,7 @@ export default function Nav({ active }: { active: string }) {
             {links.map((n) => (
               <a key={n.id} href={`#${n.id}`} onClick={() => setOpen(false)} className={`label flex min-h-11 items-center ${active === n.id ? 'text-white underline underline-offset-8' : 'text-white/60'}`}>{n.label}</a>
             ))}
+            <a href="/blog" onClick={() => setOpen(false)} className="label flex min-h-11 items-center text-white/60">{t.nav.blog}</a>
           </div>
         </motion.nav>
       )}

@@ -8,6 +8,7 @@ import DotBoard from './DotBoard';
 import { Hero, About, Services, Work, Components, Contact } from './Sections';
 import { Awards, Community, Gallery, Path, Pricing } from './More';
 import Booking from './Booking';
+import { Proof, Trust } from './Proof';
 import { navIds } from '@/lib/catalog';
 
 function Shell() {
@@ -44,6 +45,8 @@ function Shell() {
         <Work />
         <Awards />
         <Community />
+        <Proof />
+        <Trust />
         <Gallery />
         <Components />
         <DotBoard reduced={reduced} />

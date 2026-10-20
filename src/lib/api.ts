@@ -86,6 +86,35 @@ export async function submitRecommendation(data: {
   return json.message || '';
 }
 
+const FAKE_NAMES = new Set(['koffi mensah', 'abla doe', 'jean-pierre kouakou']);
+
+export type PublishedTestimonial = {
+  name: string;
+  quote: string;
+  role?: string;
+  company?: string;
+};
+
+function realName(name: string | undefined): boolean {
+  return !!name && !FAKE_NAMES.has(name.trim().toLowerCase());
+}
+
+/** Retours déjà publiés sur l’API. Listes vides = rien n’est en ligne. */
+export async function fetchProof(): Promise<{ testimonials: PublishedTestimonial[]; recommendations: Recommendation[] }> {
+  const res = await fetch(`${API_BASE}/api/index.php?resource=portfolio`);
+  const json = await readJson(res);
+  if (!res.ok || json.success === false) throw new Error(json.error || `Erreur API (${res.status})`);
+  const data = (json.data ?? {}) as {
+    testimonials?: Array<{ name?: string; quote?: string; role?: string; company?: string }>;
+    recommendations?: Recommendation[];
+  };
+  const testimonials = (data.testimonials ?? [])
+    .filter((item) => realName(item.name) && !!item.quote)
+    .map((item) => ({ name: item.name as string, quote: item.quote as string, role: item.role, company: item.company }));
+  const recommendations = (data.recommendations ?? []).filter((item) => realName(item.name) && !!item.body);
+  return { testimonials, recommendations };
+}
+
 export async function submitTestimonial(data: {
   quote: string;
   name: string;
