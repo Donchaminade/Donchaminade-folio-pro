@@ -144,7 +144,24 @@ export const projects: Project[] = [
   { title: 'K7 Mémoire', type: 'Web', description: b('Récits audio de Lomé dans une interface cassette/radio, contenus dans Sanity.', 'Audio stories from Lomé in a cassette/radio interface, content in Sanity.'), tags: ['Next.js', 'Sanity', 'GROQ'], images: [], link: 'https://k7-memoire.vercel.app' },
 ];
 
-export const gallery = ['/gallerie/adc.png', '/gallerie/pypicture.jpg'];
+/** Photos réelles de l’ancienne galerie (commit 4d6bc8f). Les URLs du serveur PHP répondent 404. */
+export const gallery = [
+  '/gallerie/1753259537664.jpg',
+  '/gallerie/1753259550152.jpg',
+  '/gallerie/1754081969406.jpg',
+  '/gallerie/1754081970965.jpg',
+  '/gallerie/WhatsApp Image 2025-09-12 at 20.49.29.jpeg',
+  '/gallerie/WhatsApp Image 2025-09-27 at 13.19.20 (2).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 (1).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 (2).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47 copy.jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.47.jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.48.jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.49 (1).jpeg',
+  '/gallerie/WhatsApp Image 2025-12-15 at 11.25.49.jpeg',
+  '/gallerie/adc.png',
+  '/gallerie/pypicture.jpg',
+];
 
 /** Logos réels uniquement. Les visuels Unsplash du catalogue API sont exclus, comme sur l’ancienne version. */
 export const clients: { name: string; logo: string }[] = [

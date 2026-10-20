@@ -1,10 +1,12 @@
 'use client';
 import { motion, useReducedMotion } from 'framer-motion';
+import { Calendar, Mail, MessageCircle, Send } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { bookingUrl, profile } from '@/lib/data';
 import { submitCollaboration } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { reveal } from '@/lib/motion';
+import { Heartbeat, MotionIcon } from './MotionIcon';
 
 const Italic = ({ children }: { children: React.ReactNode }) => <span className="font-serif font-normal italic normal-case tracking-normal">{children}</span>;
 
@@ -92,9 +94,10 @@ export default function Booking() {
         href={bookingUrl}
         target="_blank"
         rel="noopener noreferrer"
-        whileHover={reduced ? undefined : { scale: 1.02 }}
+        whileHover={reduced ? undefined : { scale: 1.03 }}
         whileTap={reduced ? undefined : { scale: 0.98 }}
-        transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+        animate={reduced ? undefined : { scale: [1, 1.018, 1] }}
+        transition={{ type: 'spring', stiffness: 420, damping: 22, scale: { duration: 1.3, repeat: Infinity, ease: 'easeInOut' } }}
         className="relative mt-10 flex min-h-16 w-full items-center justify-center overflow-hidden rounded-full bg-cream px-8 text-lg font-medium tracking-wide text-ink md:min-h-20 md:text-2xl"
       >
         {!reduced && (
@@ -106,7 +109,10 @@ export default function Booking() {
             transition={{ repeat: Infinity, duration: 2.6, ease: 'easeInOut', repeatDelay: 1.1 }}
           />
         )}
-        <span className="relative">{t.bookOpen}</span>
+        <span className="relative inline-flex items-center gap-3">
+          <MotionIcon icon={Calendar} size={22} effect="bounce" />
+          {t.bookOpen}
+        </span>
       </motion.a>
       <p className="mt-3 text-base text-mist">{t.bookNewTab}</p>
 
@@ -148,9 +154,14 @@ export default function Booking() {
           {status === 'sent' && <p className="text-base text-cream" role="status">{t.bookSent}</p>}
           {status === 'fail' && <p className="text-base text-cream" role="alert">{t.bookFail}</p>}
           <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-            <button type="submit" disabled={status === 'sending'} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium tracking-wide text-ink disabled:opacity-60">{status === 'sending' ? t.sending : t.bookSend}</button>
-            <a href={waHref} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 px-6 text-center text-base font-medium tracking-wide">{t.bookWhatsapp}</a>
-            <a href={mailHref} className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 px-6 text-center text-base font-medium tracking-wide">{t.bookMail}</a>
+            <Heartbeat>
+              <button type="submit" disabled={status === 'sending'} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-cream px-6 text-base font-medium tracking-wide text-ink disabled:opacity-60">
+                <MotionIcon icon={Send} size={16} effect="slide" />
+                {status === 'sending' ? t.sending : t.bookSend}
+              </button>
+            </Heartbeat>
+            <a href={waHref} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/25 px-6 text-center text-base font-medium tracking-wide"><MotionIcon icon={MessageCircle} size={16} effect="bounce" />{t.bookWhatsapp}</a>
+            <a href={mailHref} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/25 px-6 text-center text-base font-medium tracking-wide"><MotionIcon icon={Mail} size={16} effect="draw" />{t.bookMail}</a>
           </div>
         </div>
       </form>

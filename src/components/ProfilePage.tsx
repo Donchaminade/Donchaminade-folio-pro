@@ -1,9 +1,11 @@
 'use client';
 import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { profile, roles } from '@/lib/catalog';
 import { useI18n } from '@/lib/i18n';
 import { fadeUp, inViewGroup } from '@/lib/motion';
 import PageHero from './PageHero';
+import { Heartbeat, MotionIcon } from './MotionIcon';
 
 export default function ProfilePage() {
   const { t, lang } = useI18n();
@@ -21,8 +23,10 @@ export default function ProfilePage() {
             {roles.map((role) => <li key={role} className="rounded-full border border-white/15 px-4 py-2 text-base">{role}</li>)}
           </ul>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href="/#contact" className="inline-flex min-h-11 items-center justify-center rounded-full bg-cream px-6 text-base font-medium text-ink">{t.contactCta}</a>
-            <a href="/#rendez-vous" className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/25 px-6 text-base">{t.bookCall}</a>
+            <Heartbeat>
+              <a href="/#contact" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink">{t.contactCta} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" /></a>
+            </Heartbeat>
+            <a href="/#rendez-vous" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/25 px-6 text-base">{t.bookCall} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" /></a>
           </div>
         </div>
       </div>

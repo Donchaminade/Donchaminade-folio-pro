@@ -1,6 +1,8 @@
 'use client';
 import { FormEvent, useMemo, useState } from 'react';
+import { Heart, Send } from 'lucide-react';
 import Link from 'next/link';
+import { Heartbeat, MotionIcon } from '@/components/MotionIcon';
 import { BlogCategory, BlogComment, Post, fixHtml, headingIds, localized, media, postComment, toggleLike } from '@/lib/blog';
 import { useI18n } from '@/lib/i18n';
 
@@ -149,7 +151,9 @@ export function BlogArticle({ post, preview = false }: { post: Post; preview?: b
             {post.cover_image && <img src={media(post.cover_image)} alt="" className="mb-10 w-full rounded-3xl" />}
             <div className="blog-content text-base" dangerouslySetInnerHTML={{ __html: body.html }} />
             <div className="mt-12 border-t border-white/10 pt-8">
-              <button type="button" onClick={like} className="min-h-11 rounded-full border border-white/20 px-5 text-base">{liked ? '♥' : '♡'} {likes}</button>
+              <button type="button" onClick={like} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-5 text-base">
+                <MotionIcon icon={Heart} size={16} effect="heart" filled={liked} className={liked ? 'text-cream' : ''} /> {likes}
+              </button>
               {fail && <p className="mt-3 text-base text-cream" role="alert">{fail}</p>}
               <Thread items={comments} />
               <form onSubmit={send} className="mt-6 grid gap-3">
@@ -157,7 +161,11 @@ export function BlogArticle({ post, preview = false }: { post: Post; preview?: b
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.email} aria-label={t.email} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
                 <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={t.commentPlaceholder} aria-label={t.commentPlaceholder} rows={4} className="rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base outline-none focus:border-cream" />
                 {note && <p className="text-base text-cream" role="status">{note}</p>}
-                <button type="submit" className="min-h-11 w-fit rounded-full bg-cream px-6 text-base font-medium text-ink">{t.contactSend}</button>
+                <Heartbeat>
+                  <button type="submit" className="inline-flex min-h-11 w-fit items-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink">
+                    <MotionIcon icon={Send} size={16} effect="slide" />{t.contactSend}
+                  </button>
+                </Heartbeat>
               </form>
             </div>
           </div>

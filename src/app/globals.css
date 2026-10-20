@@ -24,6 +24,8 @@ main { overflow-x: clip; }
 .timeline-track { background: rgba(255,255,255,.18); }
 .timeline-fill { background: #d9d0c1; }
 .timeline-dot { background: #d9d0c1; box-shadow: 0 0 0 4px #060708; }
+.glass-card { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.45); box-shadow: 0 24px 70px -28px rgba(0,0,0,.65); }
+[data-theme="light"] .glass-card { background: rgba(255,255,255,.62); border-color: rgba(24,24,27,.14); box-shadow: 0 24px 50px -28px rgba(24,24,27,.28); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 .marble { position:absolute; inset:-20%; background:
   radial-gradient(40% 30% at 20% 30%, rgba(217,208,193,.18), transparent 70%),

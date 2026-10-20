@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useId, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MessageCircle, Send, Sparkles, X } from 'lucide-react';
+import { MotionIcon } from './MotionIcon';
 import { useI18n } from '@/lib/i18n';
 
 type Role = 'user' | 'assistant';
@@ -171,7 +172,7 @@ export default function PortfolioChat() {
             aria-label={t.chatOpen}
             className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[70] grid h-14 w-14 place-items-center rounded-full bg-cream text-ink shadow-[0_16px_40px_-12px_rgba(0,0,0,.55)]"
           >
-            <MessageCircle size={22} />
+            <MotionIcon icon={MessageCircle} size={22} effect="bounce" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -201,13 +202,13 @@ export default function PortfolioChat() {
               <header className="flex items-start justify-between gap-3 border-b border-white/10 px-5 pb-3 pt-[max(1rem,env(safe-area-inset-top))]">
                 <div className="min-w-0">
                   <p className="label inline-flex items-center gap-1.5 text-cream">
-                    <Sparkles size={12} /> Assistant
+                    <MotionIcon icon={Sparkles} size={12} effect="spin" /> Assistant
                   </p>
                   <h2 id={titleId} className="mt-1 font-display text-2xl font-black uppercase leading-none">{t.chatTitle}</h2>
                   <p id={descId} className="mt-2 text-base leading-relaxed text-mist">{t.chatLead}</p>
                 </div>
                 <button type="button" onClick={() => setOpen(false)} aria-label={t.chatClose} className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/20">
-                  <X size={18} />
+                  <MotionIcon icon={X} size={18} effect="spin" />
                 </button>
               </header>
 
@@ -288,7 +289,7 @@ export default function PortfolioChat() {
                     </button>
                   ) : (
                     <button type="submit" disabled={!input.trim()} aria-label={t.chatSend} className="grid h-11 w-11 place-items-center rounded-2xl bg-cream text-ink disabled:opacity-40">
-                      <Send size={16} />
+                      <MotionIcon icon={Send} size={16} effect="slide" />
                     </button>
                   )}
                 </div>

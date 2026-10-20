@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { MotionIcon } from './MotionIcon';
 import { navIds } from '@/lib/catalog';
 import { useI18n } from '@/lib/i18n';
 import Controls from './Controls';
@@ -26,7 +27,7 @@ export default function Nav({ active }: { active: string }) {
         </nav>
         <div className="flex items-center gap-1">
           <Controls />
-          <button className="grid h-11 w-11 shrink-0 place-items-center xl:hidden" aria-label={open ? t.menuClose : t.menuOpen} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
+          <button className="grid h-11 w-11 shrink-0 place-items-center xl:hidden" aria-label={open ? t.menuClose : t.menuOpen} onClick={() => setOpen(!open)}>{open ? <MotionIcon icon={X} size={20} effect="spin" /> : <MotionIcon icon={Menu} size={20} effect="bounce" />}</button>
         </div>
       </div>
       {open && (

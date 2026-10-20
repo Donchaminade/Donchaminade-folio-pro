@@ -3,7 +3,9 @@ import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { useRef } from 'react';
 import { useSyncExternalStore } from 'react';
-import { awards, communities, education, experiences, gallery, managedPages, tagLabel } from '@/lib/catalog';
+import { awards, communities, education, experiences, managedPages, tagLabel } from '@/lib/catalog';
+import GlassyGallery from './GlassyGallery';
+import { MotionIcon } from './MotionIcon';
 import { useI18n } from '@/lib/i18n';
 import { fadeUp, hoverLift, inViewGroup, reveal } from '@/lib/motion';
 
@@ -115,12 +117,12 @@ export function Pricing() {
               ? <p className="mt-8 font-serif text-3xl italic text-cream">{t.onQuote}</p>
               : <p className="mt-8 font-display text-5xl font-black tracking-tight">${p.amount}</p>}
               {p.quote && <p className="mt-3 text-base leading-relaxed text-mist">{t.onQuoteBody}</p>}
-            <a href="#rendez-vous" className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-current px-4 text-base font-medium tracking-wide md:w-fit">{t.bookCall}</a>
+            <a href="#rendez-vous" className="mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-current px-4 text-base font-medium tracking-wide md:w-fit">{t.bookCall} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>
           </motion.li>
         ))}
       </motion.ul>
       <motion.div {...reveal(0.2)} className="mt-8">
-        <a href="#contact" className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-ink hover:bg-white">{t.askQuote} <ArrowUpRight size={14} /></a>
+        <a href="#contact" className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-ink hover:bg-white">{t.askQuote} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>
       </motion.div>
     </section>
   );
@@ -193,7 +195,7 @@ export function Community() {
           return (
             <motion.li key={p.name} variants={fadeUp} {...hoverLift} className="rounded-3xl border border-white/10 bg-white/[.03]">
               {real
-                ? <a href={p.link} target="_blank" rel="noreferrer" className="block p-6">{inner} <ArrowUpRight size={16} className="mt-4" /></a>
+                ? <a href={p.link} target="_blank" rel="noreferrer" className="group block p-6">{inner} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" className="mt-4" /></a>
                 : <div className="p-6">{inner}</div>}
             </motion.li>
           );
@@ -211,13 +213,7 @@ export function Gallery() {
       <h2 className="mt-3 font-display text-5xl font-black uppercase leading-none md:text-7xl">
         <MaskTitle className="metal">{t.galleryKicker}</MaskTitle>
       </h2>
-      <motion.ul {...inViewGroup(0.12)} className="mt-10 grid gap-4 md:grid-cols-2">
-        {gallery.map((src) => (
-          <motion.li key={src} variants={fadeUp} className="overflow-hidden rounded-3xl border border-white/10">
-            <motion.img src={src} alt={t.photoAlt} className="aspect-[4/5] w-full object-cover" whileHover={{ scale: 1.04 }} transition={{ duration: 0.6 }} />
-          </motion.li>
-        ))}
-      </motion.ul>
+      <GlassyGallery />
     </section>
   );
 }

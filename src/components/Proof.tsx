@@ -1,5 +1,7 @@
 'use client';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Send, Star } from 'lucide-react';
+import { Heartbeat, MotionIcon } from './MotionIcon';
 import { useEffect, useState } from 'react';
 import { fetchProof, submitRecommendation, submitTestimonial, type PublishedTestimonial, type Recommendation } from '@/lib/api';
 import { clients } from '@/lib/catalog';
@@ -33,6 +35,7 @@ function Status({ status, notice }: { status: string; notice: string }) {
 }
 
 function Reel({ items }: { items: { key: string; text: string; meta: string; stars?: number }[] }) {
+  const { t } = useI18n();
   const [index, setIndex] = useState(0);
   useEffect(() => { setIndex(0); }, [items.length]);
   useEffect(() => {
@@ -47,7 +50,7 @@ function Reel({ items }: { items: { key: string; text: string; meta: string; sta
       <div className="overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.blockquote key={item.key} initial={{ opacity: 0, x: 36 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -36 }} transition={{ duration: 0.45 }} className="rounded-3xl border border-white/10 p-6 md:p-10">
-            {item.stars ? <p className="font-serif text-xl text-cream">{'★★★★★'.slice(0, item.stars)}</p> : null}
+            {item.stars ? <p className="inline-flex gap-0.5 text-cream" aria-label={`${item.stars}`}>{Array.from({ length: item.stars }, (_, i) => <MotionIcon key={i} icon={Star} size={14} effect="heart" filled />)}</p> : null}
             <p className="mt-3 font-serif text-2xl italic leading-snug md:text-3xl">{item.text}</p>
             <p className="mt-6 text-base text-mist">{item.meta}</p>
           </motion.blockquote>
@@ -55,8 +58,8 @@ function Reel({ items }: { items: { key: string; text: string; meta: string; sta
       </div>
       {items.length > 1 && (
         <div className="mt-4 flex items-center gap-2">
-          <button type="button" onClick={() => setIndex((v) => (v - 1 + items.length) % items.length)} className="grid h-11 w-11 place-items-center rounded-full border border-white/20" aria-label="‹">‹</button>
-          <button type="button" onClick={() => setIndex((v) => (v + 1) % items.length)} className="grid h-11 w-11 place-items-center rounded-full border border-white/20" aria-label="›">›</button>
+          <button type="button" onClick={() => setIndex((v) => (v - 1 + items.length) % items.length)} className="grid h-11 w-11 place-items-center rounded-full border border-white/20" aria-label={t.galleryPrev}><MotionIcon icon={ChevronLeft} size={16} effect="slideBack" /></button>
+          <button type="button" onClick={() => setIndex((v) => (v + 1) % items.length)} className="grid h-11 w-11 place-items-center rounded-full border border-white/20" aria-label={t.galleryNext}><MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
           <span className="text-sm text-mist">{index + 1} / {items.length}</span>
         </div>
       )}
@@ -176,7 +179,12 @@ function TestimonialForm({ onDone }: { onDone: () => void }) {
         <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => setPhoto(e.target.files?.[0] || null)} className="mt-2 block min-h-11 w-full text-base" />
       </label>
       <Status status={status} notice={notice} />
-      <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink md:col-span-2 md:w-fit disabled:opacity-60">{status === 'sending' ? t.sending : t.testiSend}</motion.button>
+      <Heartbeat className="md:col-span-2 md:w-fit">
+        <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">
+          <MotionIcon icon={Send} size={16} effect="slide" />
+          {status === 'sending' ? t.sending : t.testiSend}
+        </motion.button>
+      </Heartbeat>
     </form>
   );
 }
@@ -223,7 +231,9 @@ function RecommendationForm({ onDone }: { onDone: () => void }) {
         <span className="mt-2 flex gap-2">
           {[1, 2, 3, 4, 5].map((n) => (
             <button key={n} type="button" onClick={() => setRating(n)} aria-label={`${n}`}
-              className={`grid h-11 w-11 place-items-center rounded-full border text-base ${rating >= n ? 'border-cream bg-cream text-ink' : 'border-white/20'}`}>{n}</button>
+              className={`grid h-11 w-11 place-items-center rounded-full border text-base ${rating >= n ? 'border-cream bg-cream text-ink' : 'border-white/20'}`}>
+              <MotionIcon icon={Star} size={16} effect="heart" filled={rating >= n} />
+            </button>
           ))}
         </span>
       </div>
@@ -236,7 +246,12 @@ function RecommendationForm({ onDone }: { onDone: () => void }) {
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recRole}</span><input value={role} onChange={(e) => setRole(e.target.value)} className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recCompany}</span><input value={company} onChange={(e) => setCompany(e.target.value)} className={field} /></label>
       <Status status={status} notice={notice} />
-      <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink md:col-span-2 md:w-fit disabled:opacity-60">{status === 'sending' ? t.sending : t.recSend}</motion.button>
+      <Heartbeat className="md:col-span-2 md:w-fit">
+        <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">
+          <MotionIcon icon={Send} size={16} effect="slide" />
+          {status === 'sending' ? t.sending : t.recSend}
+        </motion.button>
+      </Heartbeat>
     </form>
   );
 }

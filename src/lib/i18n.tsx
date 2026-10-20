@@ -1,5 +1,6 @@
 'use client';
 
+import { MotionConfig } from 'framer-motion';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { dictionary, type Lang, type Copy } from './dictionary';
 
@@ -58,7 +59,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(() => ({ lang, setLang, theme, setTheme, t: dictionary[lang] }), [lang, theme]);
 
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+  return (
+    <MotionConfig reducedMotion="user">
+      <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+    </MotionConfig>
+  );
 }
 
 export function useI18n() {

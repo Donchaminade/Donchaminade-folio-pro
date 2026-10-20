@@ -1,11 +1,12 @@
 'use client';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 import Controls from './Controls';
+import { Heartbeat, MotionIcon } from './MotionIcon';
 
 const LINKS = [
   { href: '/profil', key: 'profile' },
@@ -21,6 +22,7 @@ export default function SiteNav() {
   const { t } = useI18n();
   const path = usePathname() || '/';
   const [open, setOpen] = useState(false);
+  const reduce = !!useReducedMotion();
   const links = LINKS.map((link) => ({
     ...link,
     label: t.links[link.key],
@@ -46,9 +48,21 @@ export default function SiteNav() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Controls />
-          <a href="/#contact" className="hidden min-h-11 items-center rounded-full bg-cream px-4 text-sm font-medium text-ink lg:inline-flex">{t.contactCta}</a>
+          <span className="hidden lg:inline-flex">
+            <Heartbeat>
+              <a href="/#contact" className="inline-flex min-h-11 items-center rounded-full bg-cream px-4 text-sm font-medium text-ink">{t.contactCta}</a>
+            </Heartbeat>
+          </span>
           <button type="button" className="grid h-11 w-11 place-items-center lg:hidden" aria-label={open ? t.menuClose : t.menuOpen} onClick={() => setOpen(!open)}>
-            {open ? <X size={20} /> : <Menu size={20} />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span key={open ? 'close' : 'open'} className="grid place-items-center"
+                initial={reduce ? false : { rotate: -80, opacity: 0, scale: 0.6 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                exit={reduce ? undefined : { rotate: 80, opacity: 0, scale: 0.6 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 22 }}>
+                {open ? <MotionIcon icon={X} size={20} effect="spin" /> : <MotionIcon icon={Menu} size={20} effect="bounce" />}
+              </motion.span>
+            </AnimatePresence>
           </button>
         </div>
       </div>
