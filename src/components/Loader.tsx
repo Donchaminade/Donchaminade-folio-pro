@@ -1,6 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 const words = ['CHAMINADE', 'DONCHAMINADE'];
 
@@ -22,6 +23,7 @@ function Word({ text }: { text: string }) {
 }
 
 export default function Loader({ onDone, reduced }: { onDone: () => void; reduced: boolean }) {
+  const { t } = useI18n();
   const [step, setStep] = useState(0); // 0 point, 1 CHAMINADE, 2 DONCHAMINADE, 3 fin
   useEffect(() => {
     if (reduced) { onDone(); return; }
@@ -30,7 +32,7 @@ export default function Loader({ onDone, reduced }: { onDone: () => void; reduce
   }, [reduced, onDone]);
 
   return (
-    <motion.div className="fixed inset-0 z-[100] grid place-items-center bg-ink" exit={{ opacity: 0 }} transition={{ duration: 0.5 }} aria-label="Chargement">
+    <motion.div className="fixed inset-0 z-[100] grid place-items-center bg-ink" exit={{ opacity: 0 }} transition={{ duration: 0.5 }} aria-label={t.loading}>
       {step === 0 && (
         <motion.span className="h-4 w-4 rounded-full bg-white"
           initial={{ y: -300 }} animate={{ y: [-300, 0, -80, 0, -20, 0] }} transition={{ duration: 0.6, ease: 'easeOut' }} />
