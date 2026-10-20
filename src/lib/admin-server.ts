@@ -119,7 +119,8 @@ export function parseRows(html: string): AdminRow[] {
     const id = href.match(/(?:\bid|edit)=(\d+)/)?.[1] || hidden;
     if (!id) return [];
     const cells = [...tr.querySelectorAll('td')].map((td) => (td.textContent || '').replace(/\s+/g, ' ').trim());
-    const live = /publi|actif|oui|visible/i.test(cells.join(' '));
+    const text = cells.join(' ');
+    const live = !/brouillon|draft|masqu|inactif|cach|hidden|non publi/i.test(text) && /publi|actif|\boui\b|visible|approuv/i.test(text);
     return [{ id, title: cells[0] || `#${id}`, meta: cells.slice(1, 4).join(' · '), status: live ? 'live' as const : 'draft' as const }];
   });
 }

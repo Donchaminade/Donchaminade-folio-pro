@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { MotionConfig, motion, useReducedMotion } from 'framer-motion';
 import {
   Award, BarChart3, Briefcase, Cpu, FolderKanban, LayoutDashboard, Mail, Menu, MessageSquare,
   Newspaper, ScrollText, Sparkles, Star, UserRound, Users, X,
@@ -63,6 +63,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="admin-root relative min-h-[100dvh] overflow-x-clip">
       <Orbs />
       {open ? <motion.button type="button" className="admin-overlay lg:hidden" aria-label={t.close} onClick={() => setOpen(false)} whileTap={reduce ? undefined : { opacity: .85 }} /> : null}
@@ -107,5 +108,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="relative z-[1] mx-auto w-full max-w-6xl px-1 py-6 sm:px-2">{children}</div>
       </div>
     </div>
+    </MotionConfig>
   );
 }
