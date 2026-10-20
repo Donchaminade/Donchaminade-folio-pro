@@ -11,8 +11,8 @@ export function AboutPage() {
   const { t } = useI18n();
   return (
     <article>
-      <PageHero kicker="Chaminade.dev" title={t.links.about} italic={t.awardsTitleB} />
-      <About />
+      <PageHero kicker="Chaminade.dev" title={t.links.about} />
+      <About showHeading={false} />
       <Awards />
     </article>
   );
@@ -22,8 +22,8 @@ export function StackPage() {
   const { t } = useI18n();
   return (
     <article>
-      <PageHero kicker="Chaminade.dev" title={t.links.stack} italic={t.servicesDo} />
-      <Services />
+      <PageHero kicker="Chaminade.dev" title={t.links.stack} />
+      <Services showHeading={false} />
     </article>
   );
 }
@@ -33,7 +33,7 @@ export function ProjectsPage() {
   return (
     <article>
       <PageHero kicker="Chaminade.dev" title={t.links.projects} italic={t.projectsChosen} />
-      <Work />
+      <Work showHeading={false} />
     </article>
   );
 }
@@ -43,7 +43,7 @@ export function CareerPage() {
   return (
     <article>
       <PageHero kicker="Chaminade.dev" title={t.links.career} italic={t.pathTitleB} />
-      <Path />
+      <Path showHeading={false} />
       <p className="wrap pb-20">
         <a href={profile.cv} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/25 px-6 text-base"><MotionIcon icon={Download} size={16} effect="bounce" />{t.myCv}</a>
       </p>
@@ -56,7 +56,7 @@ export function CommunityPage() {
   return (
     <article>
       <PageHero kicker="Chaminade.dev" title={t.links.community} italic={t.communityTitleB} />
-      <Community />
+      <Community showHeading={false} />
     </article>
   );
 }

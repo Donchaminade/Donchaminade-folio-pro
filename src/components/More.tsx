@@ -67,14 +67,16 @@ function MaskTitle({ children, className = '' }: { children: React.ReactNode; cl
   );
 }
 
-export function Path() {
+export function Path({ showHeading = true }: { showHeading?: boolean }) {
   const { t, lang } = useI18n();
   return (
-    <section id="parcours" className="wrap py-20 md:py-28">
-      <h2 className="font-display text-[16vw] font-black uppercase leading-[.85] tracking-tight md:text-[7vw]">
-        <MaskTitle className="metal">{t.pathTitleA}</MaskTitle>
-        <MaskTitle><Italic><span className="text-cream">{t.pathTitleB}</span></Italic></MaskTitle>
-      </h2>
+    <section id="parcours" className={`wrap ${showHeading ? 'py-20 md:py-28' : 'pb-16 pt-2 md:pb-24'}`}>
+      {showHeading && (
+        <h2 className="font-display text-[16vw] font-black uppercase leading-[.85] tracking-tight md:text-[7vw]">
+          <MaskTitle className="metal">{t.pathTitleA}</MaskTitle>
+          <MaskTitle><Italic><span className="text-cream">{t.pathTitleB}</span></Italic></MaskTitle>
+        </h2>
+      )}
       <Timeline>
         {experiences.map((e, i) => (
           <TimelineItem key={e.company} index={i}>
@@ -164,14 +166,16 @@ export function Awards() {
   );
 }
 
-export function Community() {
+export function Community({ showHeading = true }: { showHeading?: boolean }) {
   const { t, lang } = useI18n();
   return (
-    <section id="communaute" className="wrap py-20 md:py-28">
-      <h2 className="font-display text-[12vw] font-black uppercase leading-[.85] tracking-tight md:text-[6vw]">
-        <MaskTitle className="metal">{t.communityTitleA}</MaskTitle>
-        <MaskTitle><Italic><span className="text-cream">{t.communityTitleB}</span></Italic></MaskTitle>
-      </h2>
+    <section id="communaute" className={`wrap ${showHeading ? 'py-20 md:py-28' : 'pb-16 pt-2 md:pb-24'}`}>
+      {showHeading && (
+        <h2 className="font-display text-[12vw] font-black uppercase leading-[.85] tracking-tight md:text-[6vw]">
+          <MaskTitle className="metal">{t.communityTitleA}</MaskTitle>
+          <MaskTitle><Italic><span className="text-cream">{t.communityTitleB}</span></Italic></MaskTitle>
+        </h2>
+      )}
       <Timeline>
         {communities.map((c, i) => (
           <TimelineItem key={c.name} index={i}>
