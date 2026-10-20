@@ -28,7 +28,38 @@ body { background: radial-gradient(ellipse at 50% 0%, #1a1d20 0%, #060708 60%) f
 .project-title .title-lead { white-space: nowrap; }
 .spot { background: radial-gradient(ellipse 50% 40% at 50% 85%, rgba(255,255,255,.14), transparent 70%); }
 .fg { background: #fff; }
-section { scroll-margin-top: 5.25rem; }
+section { scroll-margin-top: 6.5rem; }
+.nav-float {
+  background: rgba(6, 7, 8, .72);
+  border: 1px solid rgba(255, 255, 255, .16);
+  box-shadow: 0 18px 50px -24px rgba(0, 0, 0, .75);
+}
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  border-radius: 999px;
+  padding: .35rem .95rem;
+  color: rgba(255, 255, 255, .62);
+  transition: background-color .2s ease, color .2s ease;
+}
+.nav-link:hover,
+.nav-link[aria-current="page"] {
+  background: #fff;
+  color: #18181b;
+}
+[data-theme="light"] .nav-float {
+  background: rgba(255, 255, 255, .86);
+  border-color: rgba(24, 24, 27, .12);
+  box-shadow: 0 18px 44px -24px rgba(24, 24, 27, .4);
+}
+[data-theme="light"] .nav-link { color: #3f3f46; }
+[data-theme="light"] .nav-link:hover,
+[data-theme="light"] .nav-link[aria-current="page"] {
+  background: #18181b;
+  color: #fafafa;
+}
 main { overflow-x: clip; }
 @media (hover: hover) and (pointer: fine) { body.has-pointeur, body.has-pointeur a, body.has-pointeur button { cursor: none; } }
 @media (pointer: coarse), (hover: none) { .pointeur-dot { display: none !important; } body.has-pointeur, body.has-pointeur a, body.has-pointeur button { cursor: auto; } }
