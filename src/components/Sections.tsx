@@ -141,16 +141,18 @@ export function Hero({ ready }: { ready: boolean }) {
 }
 
 /* ---------- 2. À PROPOS ---------- */
-export function About() {
+export function About({ showHeading = true }: { showHeading?: boolean }) {
   const { t, lang, theme } = useI18n();
   const badge = lang === 'en' ? profile.experienceBadgeEn : profile.experienceBadge;
   return (
-    <section id="apropos" className="wrap relative py-20 md:py-28">
-      <div className="grid gap-10 md:grid-cols-2">
-        <h2 className="font-display text-[22vw] font-black uppercase leading-[.85] tracking-tight md:text-[12vw]">
-          <MaskTitle className="metal">{t.aboutTitleA}</MaskTitle>
-          <MaskTitle><Italic><span className="text-cream">{t.aboutTitleB}</span></Italic></MaskTitle>
-        </h2>
+    <section id="apropos" className={`wrap relative ${showHeading ? 'py-20 md:py-28' : 'pb-16 pt-2 md:pb-24'}`}>
+      <div className={showHeading ? 'grid gap-10 md:grid-cols-2' : 'max-w-3xl'}>
+        {showHeading && (
+          <h2 className="font-display text-[22vw] font-black uppercase leading-[.85] tracking-tight md:text-[12vw]">
+            <MaskTitle className="metal">{t.aboutTitleA}</MaskTitle>
+            <MaskTitle><Italic><span className="text-cream">{t.aboutTitleB}</span></Italic></MaskTitle>
+          </h2>
+        )}
         <motion.div {...reveal(0.2)} className="self-start rounded-2xl border border-white/10 bg-white/[.04] p-6 backdrop-blur md:p-8">
           <p className="label mb-4 text-cream">{profile.availability[lang]}</p>
           <p className="text-lg leading-relaxed text-white/90 md:text-xl">{profile.bio[lang]}</p>
@@ -197,19 +199,21 @@ export function About() {
 }
 
 /* ---------- 3. SERVICES ---------- */
-export function Services() {
+export function Services({ showHeading = true }: { showHeading?: boolean }) {
   const { t, lang, theme } = useI18n();
   const [open, setOpen] = useState<number>(2);
   const fg = theme === 'light' ? '#18181b' : '#ffffff';
   const openBg = theme === 'light' ? '#f4f4f5' : '#d9d0c1';
   const openFg = '#18181b';
   return (
-    <section id="services" className="wrap relative py-20 md:py-28">
-      <h2 className="ml-auto max-w-3xl text-right font-display text-[13vw] font-black uppercase leading-[.85] tracking-tight md:text-[7vw]">
-        <MaskTitle className="metal">{t.servicesTitleA}</MaskTitle>
-        <MaskTitle className="metal">{t.servicesTitleB} <Italic>{t.servicesDo}</Italic></MaskTitle>
-      </h2>
-      <motion.ul {...inViewGroup(0.08)} className="mt-14 border-t border-white/10">
+    <section id="services" className={`wrap relative ${showHeading ? 'py-20 md:py-28' : 'pb-16 pt-2 md:pb-24'}`}>
+      {showHeading && (
+        <h2 className="ml-auto max-w-3xl text-right font-display text-[13vw] font-black uppercase leading-[.85] tracking-tight md:text-[7vw]">
+          <MaskTitle className="metal">{t.servicesTitleA}</MaskTitle>
+          <MaskTitle className="metal">{t.servicesTitleB} <Italic>{t.servicesDo}</Italic></MaskTitle>
+        </h2>
+      )}
+      <motion.ul {...inViewGroup(0.08)} className={`${showHeading ? 'mt-14' : 'mt-8'} border-t border-white/10`}>
         {skillBlocks.map((s, i) => {
           const isOpen = open === i;
           return (
@@ -275,7 +279,7 @@ function Device({ type, images }: { type: 'Mobile' | 'Web'; images: string[] }) 
 
 const PAGE = 6;
 
-export function Work() {
+export function Work({ showHeading = true }: { showHeading?: boolean }) {
   const { t, lang } = useI18n();
   const [list, setList] = useState<Project[]>(projects);
   const featured = list.filter((p) => p.images.length > 0);
@@ -314,10 +318,12 @@ export function Work() {
     { id: 'Mobile' as const, label: t.filterMobile },
   ];
   return (
-    <section id="projets" className="wrap relative overflow-x-clip py-20 md:py-28">
-      <h2 className="font-display text-[14vw] font-black uppercase leading-[.85] tracking-tight md:text-[6.5vw]">
-        <MaskTitle className="metal">{t.projectsTitle} <Italic>{t.projectsChosen}</Italic></MaskTitle>
-      </h2>
+    <section id="projets" className={`wrap relative overflow-x-clip ${showHeading ? 'py-20 md:py-28' : 'pb-16 pt-2 md:pb-24'}`}>
+      {showHeading && (
+        <h2 className="font-display text-[14vw] font-black uppercase leading-[.85] tracking-tight md:text-[6.5vw]">
+          <MaskTitle className="metal">{t.projectsTitle} <Italic>{t.projectsChosen}</Italic></MaskTitle>
+        </h2>
+      )}
       <div className="mt-6 flex items-center justify-between gap-3">
         <p className="label text-white/45">{String(count ? index + 1 : 0).padStart(2, '0')} / {String(count).padStart(2, '0')}</p>
         <div className="flex gap-2">
