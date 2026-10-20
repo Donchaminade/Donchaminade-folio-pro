@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+html { scroll-behavior: smooth; background: #060708; }
+body { background: radial-gradient(ellipse at 50% 0%, #1a1d20 0%, #060708 60%) fixed; color: #fff; }
+::selection { background: #d9d0c1; color: #060708; }
+.metal { background: linear-gradient(180deg, #ffffff 0%, #d6d8da 45%, #6b7075 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 30px rgba(255,255,255,.12)); }
+/* 12 lettres Archivo Black ≈ 8,7 em. 9,4vw laisse une marge même pendant le zoom d'entrée. */
+.wordmark { font-size: clamp(1.15rem, 9.4vw, 12.5rem); letter-spacing: -0.05em; line-height: 0.9; white-space: nowrap; }
+.label { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; }
+.spot { background: radial-gradient(ellipse 50% 40% at 50% 85%, rgba(255,255,255,.14), transparent 70%); }
+@media (pointer: fine) { body.has-pointeur, body.has-pointeur a, body.has-pointeur button { cursor: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+.marble { position:absolute; inset:-20%; background:
+  radial-gradient(40% 30% at 20% 30%, rgba(217,208,193,.18), transparent 70%),
+  radial-gradient(35% 40% at 80% 60%, rgba(120,130,140,.22), transparent 70%),
+  radial-gradient(30% 30% at 50% 90%, rgba(255,255,255,.08), transparent 70%);
+  filter: blur(40px); animation: swirl 18s ease-in-out infinite alternate; }
+@keyframes swirl { 0% { transform: rotate(0deg) scale(1); } 100% { transform: rotate(25deg) scale(1.15) translate(4%, -3%); } }
