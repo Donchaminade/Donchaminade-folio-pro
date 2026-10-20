@@ -62,6 +62,12 @@ export function Hero({ ready }: { ready: boolean }) {
   const py = useSpring(useTransform(my, [-1, 1], [-8, 8]), { stiffness: 60, damping: 20 });
   const tx = useTransform(px, (v) => -v / 2);
   const portrait = `${t.portraitOf} ${profile.fullName}`;
+  const portraitOf = (className: string) => (
+    <picture>
+      <source srcSet="/img/portrait-cartoon.webp" type="image/webp" />
+      <img src="/img/portrait-cartoon.png" alt={portrait} draggable={false} className={className} />
+    </picture>
+  );
   return (
     <section id="accueil" className="spot relative overflow-hidden">
       <div className="flex min-h-[100svh] flex-col px-6 pb-6 pt-[4.5rem] md:hidden">
@@ -70,8 +76,8 @@ export function Hero({ ready }: { ready: boolean }) {
           DONCHAMINADE
         </motion.h1>
         <motion.div initial={{ opacity: 0, y: 24 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
-          className="mx-auto mt-2 flex w-full justify-center">
-          <img src={profile.photo} alt={portrait} className="max-h-[50svh] w-full object-contain object-bottom [mask-image:linear-gradient(to_bottom,#000_72%,transparent)]" />
+          className="mx-auto mt-2 flex w-full max-h-[50svh] justify-center">
+          {portraitOf('max-h-[50svh] w-full object-contain object-bottom [mask-image:linear-gradient(to_bottom,#000_86%,transparent)]')}
         </motion.div>
         <motion.div initial="hidden" animate={ready ? 'show' : 'hidden'} variants={{ show: { transition: { staggerChildren: 0.12, delayChildren: 0.25 } } }}
           className="mt-3 shrink-0">
@@ -95,9 +101,11 @@ export function Hero({ ready }: { ready: boolean }) {
           className="wordmark metal pointer-events-none absolute inset-x-0 top-[16%] w-full select-none text-center font-display font-black">
           DONCHAMINADE
         </motion.h1>
-        <motion.img src={profile.photo} alt={portrait} style={{ x: px, y: py }}
+        <motion.div style={{ x: px, y: py }}
           initial={{ opacity: 0, y: 120 }} animate={ready ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1, delay: 0.25, ease: 'easeOut' }}
-          className="relative z-10 w-[52vw] max-w-[820px] [mask-image:linear-gradient(to_bottom,black_80%,transparent)]" />
+          className="relative z-10 w-[52vw] max-w-[820px]">
+          {portraitOf('h-auto w-full [mask-image:linear-gradient(to_bottom,#000_86%,transparent)]')}
+        </motion.div>
         <motion.div initial="hidden" animate={ready ? 'show' : 'hidden'} variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.6 } } }}
           className="absolute inset-x-0 bottom-0 z-20">
           <div className="wrap flex items-end justify-between gap-6 pb-10">
