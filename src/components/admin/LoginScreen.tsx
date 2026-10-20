@@ -3,8 +3,9 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { adminCopy } from '@/lib/admin-copy';
+import { adminHasSession, adminLogin } from '@/lib/admin-server';
 import { useI18n } from '@/lib/i18n';
 import Controls from '../Controls';
 import { badgePop, cardPop, LiquidButton, Orbs, Pressable, reveal, stagger } from './ui';
@@ -23,15 +24,25 @@ export default function LoginScreen() {
   const [step, setStep] = useState(0);
   const valid = emailOk(email);
 
+  useEffect(() => {
+    adminHasSession().then((ok) => { if (ok) router.replace('/admin/tableau'); }).catch(() => {});
+  }, [router]);
+
   const enter = async () => {
     if (!valid) { setNote(t.emailInvalid); throw new Error(t.emailInvalid); }
     if (!password) { setNote(t.passwordRequired); throw new Error(t.passwordRequired); }
     setNote('');
     setStep(1);
-    await new Promise((resolve) => window.setTimeout(resolve, reduce ? 0 : 420));
+    try {
+      await adminLogin(email, password);
+    } catch (error) {
+      setStep(0);
+      const message = error instanceof Error ? error.message : t.passwordRequired;
+      setNote(message);
+      throw error;
+    }
     setStep(2);
-    try { sessionStorage.setItem('admin-ui', '1'); } catch { /* visite seulement */ }
-    window.setTimeout(() => router.push('/admin/tableau'), reduce ? 0 : 380);
+    router.push('/admin/tableau');
   };
 
   return (

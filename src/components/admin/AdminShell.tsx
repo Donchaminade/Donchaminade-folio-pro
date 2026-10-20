@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { adminCopy, adminSectionIds, type AdminSectionId } from '@/lib/admin-copy';
+import { adminHasSession, adminLogout } from '@/lib/admin-server';
 import { useI18n } from '@/lib/i18n';
 import Controls from '../Controls';
 import { Orbs, Pressable } from './ui';
@@ -42,17 +43,19 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const current = adminSectionIds.find((id) => path.endsWith(`/${id}`)) || 'tableau';
 
   useEffect(() => {
-    let allowed = false;
-    try { allowed = sessionStorage.getItem('admin-ui') === '1'; } catch { allowed = false; }
-    if (!allowed) router.replace('/admin');
-    else setReady(true);
+    let cancel = false;
+    adminHasSession().then((ok) => {
+      if (cancel) return;
+      if (!ok) router.replace('/admin');
+      else setReady(true);
+    }).catch(() => { if (!cancel) router.replace('/admin'); });
+    return () => { cancel = true; };
   }, [router]);
 
   useEffect(() => { setOpen(false); }, [path]);
 
   const leave = () => {
-    try { sessionStorage.removeItem('admin-ui'); } catch { /* déjà fermé */ }
-    router.push('/admin');
+    adminLogout().finally(() => router.push('/admin'));
   };
 
   if (!ready) {
