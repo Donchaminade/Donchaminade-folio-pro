@@ -1,3 +1,5 @@
+import type { Project } from './catalog';
+
 /** API PHP déjà en ligne. Ne pas la déplacer ni la redéployer. */
 export const API_BASE = 'https://donchamfolio.grosbit.com';
 
@@ -140,4 +142,63 @@ export async function submitTestimonial(data: {
   const json = await readJson(res);
   if (!res.ok || json.success === false) throw new Error(json.error || `Erreur API (${res.status})`);
   return json.message || '';
+}
+
+export type ListedProject = Project & { featured?: boolean; order?: number };
+
+const PRIVATE_REPO = /github\.com\/[^/]+\/(academiablanc|k7-memoire|devfest)(?:\.git)?\/?$/i;
+
+function absMedia(src: string): string {
+  if (!src || src === '#') return '';
+  if (/^https?:\/\//i.test(src)) return src;
+  return `${API_BASE}${src.startsWith('/') ? src : `/${src}`}`;
+}
+
+function cleanLink(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const link = value.trim();
+  if (!link || link === '#' || link.toLowerCase() === 'null') return undefined;
+  return link;
+}
+
+function mapProject(raw: Record<string, unknown>): ListedProject | null {
+  const title = typeof raw.title === 'string' ? raw.title.trim() : '';
+  if (!title) return null;
+  if (raw.is_active === 0 || raw.is_active === false) return null;
+  const status = typeof raw.status === 'string' ? raw.status.toLowerCase() : '';
+  if (status === 'inactive' || status === 'draft' || status === 'hidden') return null;
+  const fr = typeof raw.description === 'string' ? raw.description.trim() : '';
+  const enRaw = raw.description_en ?? raw.descriptionEn;
+  const en = typeof enRaw === 'string' && enRaw.trim() ? enRaw.trim() : fr;
+  const tags = Array.isArray(raw.tags) ? raw.tags.filter((tag): tag is string => typeof tag === 'string' && tag.trim() !== '') : [];
+  const extra = Array.isArray(raw.additionalImages) ? raw.additionalImages : [];
+  const images = [raw.image, ...extra]
+    .filter((src): src is string => typeof src === 'string')
+    .map((src) => absMedia(src.trim()))
+    .filter(Boolean);
+  const github = cleanLink(raw.github);
+  return {
+    title,
+    type: raw.type === 'Mobile' ? 'Mobile' : 'Web',
+    description: { fr: fr || title, en: en || fr || title },
+    tags,
+    images,
+    link: cleanLink(raw.link),
+    github: github && PRIVATE_REPO.test(github) ? undefined : github,
+    featured: Number(raw.is_featured) === 1,
+    order: Number(raw.sort_order ?? 0) || 0,
+  };
+}
+
+/** Projets publiés par l’admin. Le site est exporté en statique : le rafraîchissement se fait dans le navigateur. */
+export async function fetchPortfolioProjects(): Promise<ListedProject[]> {
+  const res = await fetch(`${API_BASE}/api/index.php?resource=portfolio`, { cache: 'no-store' });
+  const json = await readJson(res);
+  if (!res.ok || json.success === false) throw new Error(json.error || `Erreur API (${res.status})`);
+  const data = (json.data ?? {}) as { projects?: Record<string, unknown>[] };
+  const projects = (data.projects ?? [])
+    .map((item) => mapProject(item))
+    .filter((item): item is ListedProject & { order: number } => item !== null);
+  projects.sort((a, b) => Number(b.featured) - Number(a.featured) || a.order - b.order);
+  return projects;
 }

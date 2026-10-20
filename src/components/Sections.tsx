@@ -3,9 +3,9 @@ import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring, u
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Github, Linkedin, Mail, Phone, Twitter, Plus, Minus, Download, MessageCircle, Send } from 'lucide-react';
 import { Heartbeat, MotionIcon } from './MotionIcon';
-import { submitContact } from '@/lib/api';
+import { fetchPortfolioProjects, submitContact } from '@/lib/api';
 import { fadeUp, hoverLift, inViewGroup, reveal, slideIn } from '@/lib/motion';
-import { phoneScreens, profile, projects, roles, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
+import { extraProjects, mergeRemoteProjects, phoneScreens, profile, projects, roles, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
 import { useI18n } from '@/lib/i18n';
 import type { Lang } from '@/lib/dictionary';
 
@@ -268,14 +268,36 @@ const PAGE = 6;
 
 export function Work() {
   const { t, lang } = useI18n();
-  const featured = projects.filter((p) => p.images.length > 0);
+  const [list, setList] = useState<Project[]>(projects);
+  const featured = list.filter((p) => p.images.length > 0);
   const [i, setI] = useState(0);
   const [filter, setFilter] = useState<'all' | 'Web' | 'Mobile'>('all');
   const [more, setMore] = useState(false);
-  const p = featured[i] ?? featured[0];
-  const { accent, rest } = splitTitle(p.title);
-  const list = projects.filter((q) => filter === 'all' || q.type === filter);
-  const shown = more ? list : list.slice(0, PAGE);
+  useEffect(() => {
+    let cancel = false;
+    const load = () => {
+      fetchPortfolioProjects()
+        .then((remote) => {
+          if (!cancel && remote.length) setList(mergeRemoteProjects(remote, extraProjects));
+        })
+        .catch(() => { /* le catalogue local reste affiché */ });
+    };
+    load();
+    const timer = window.setInterval(load, 60_000);
+    const onVisible = () => { if (document.visibilityState === 'visible') load(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      cancel = true;
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+  const count = featured.length;
+  const index = count ? ((i % count) + count) % count : 0;
+  const p = featured[index];
+  const { accent, rest } = splitTitle(p?.title ?? '');
+  const filtered = list.filter((q) => filter === 'all' || q.type === filter);
+  const shown = more ? filtered : filtered.slice(0, PAGE);
   const filters = [
     { id: 'all' as const, label: t.filterAll },
     { id: 'Web' as const, label: t.filterWeb },
@@ -287,22 +309,22 @@ export function Work() {
         <MaskTitle className="metal">{t.projectsTitle} <Italic>{t.projectsChosen}</Italic></MaskTitle>
       </h2>
       <div className="mt-6 flex items-center justify-between gap-3">
-        <p className="label text-white/45">{String(i + 1).padStart(2, '0')} / {String(featured.length).padStart(2, '0')}</p>
+        <p className="label text-white/45">{String(count ? index + 1 : 0).padStart(2, '0')} / {String(count).padStart(2, '0')}</p>
         <div className="flex gap-2">
-          <button type="button" onClick={() => setI((i - 1 + featured.length) % featured.length)} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 px-4 hover:bg-white hover:text-ink" aria-label={t.prevScreen}><MotionIcon icon={ChevronLeft} size={16} effect="slideBack" /></button>
-          <button type="button" onClick={() => setI((i + 1) % featured.length)} className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-4 text-ink" aria-label={t.next}>{t.next} <MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
+          <button type="button" onClick={() => count && setI((index - 1 + count) % count)} className="label inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/25 px-4 hover:bg-white hover:text-ink" aria-label={t.prevScreen}><MotionIcon icon={ChevronLeft} size={16} effect="slideBack" /></button>
+          <button type="button" onClick={() => count && setI((index + 1) % count)} className="label inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-4 text-ink" aria-label={t.next}>{t.next} <MotionIcon icon={ChevronRight} size={16} effect="slide" /></button>
         </div>
       </div>
       <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
         {featured.map((q, j) => (
           <button key={q.title} type="button" onClick={() => setI(j)}
-            className={`label inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 ${i === j ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{q.title}</button>
+            className={`label inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 ${index === j ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{q.title}</button>
         ))}
       </div>
-      <div className="mt-12 grid min-w-0 items-center gap-10 lg:grid-cols-2 lg:gap-24">
+      {p && <div className="mt-12 grid min-w-0 items-center gap-10 lg:grid-cols-2 lg:gap-24">
         <AnimatePresence mode="wait">
           <motion.div key={p.title} initial="hidden" animate="show" exit={{ opacity: 0, y: -20 }} variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="order-2 lg:order-1">
-            <motion.p variants={fadeUp} className="text-base font-medium uppercase tracking-[0.14em] text-white/60">{String(i + 1).padStart(2, '0')} — {p.type === 'Mobile' ? t.mobileApp : t.webApp}</motion.p>
+            <motion.p variants={fadeUp} className="text-base font-medium uppercase tracking-[0.14em] text-white/60">{String(index + 1).padStart(2, '0')} — {p.type === 'Mobile' ? t.mobileApp : t.webApp}</motion.p>
             <motion.h3 variants={fadeUp} className="project-title mt-4 font-display font-black uppercase">
               {accent}{rest && <Italic><span className="text-cream">{rest}</span></Italic>}
             </motion.h3>
@@ -318,7 +340,7 @@ export function Work() {
             </motion.div>
           </AnimatePresence>
         </motion.div>
-      </div>
+      </div>}
 
       <div className="mt-20 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <h3 className="font-display text-4xl font-black uppercase md:text-5xl">{t.catalogKicker}</h3>
@@ -332,7 +354,7 @@ export function Work() {
       <motion.ul {...inViewGroup(0.05)} className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {shown.map((q) => <ProjectCard key={q.title} p={q} />)}
       </motion.ul>
-      {list.length > PAGE && (
+      {filtered.length > PAGE && (
         <button type="button" onClick={() => setMore((v) => !v)} className="label mt-8 inline-flex min-h-11 items-center rounded-full border border-white/25 px-6 hover:bg-white hover:text-ink">
           {more ? t.seeLess : t.seeAll}
         </button>
