@@ -405,3 +405,6 @@ main { overflow-x: clip; }
   .admin-row .admin-badge { display: none; }
   .admin-row { padding: .7rem .75rem; gap: .5rem; }
 }
+
+.admin-portal { background: transparent; min-height: 0; }
+.admin-modal-wrap { z-index: 100; }
