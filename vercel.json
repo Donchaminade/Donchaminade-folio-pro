@@ -1,5 +1,15 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "out",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/blog/preview/:token",
+      "destination": "/blog/preview.html"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/blog/article.html"
+    }
+  ]
 }
