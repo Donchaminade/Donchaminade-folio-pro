@@ -409,7 +409,7 @@ export function Contact() {
   const [message, setMessage] = useState('');
   const [website, setWebsite] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'fail'>('idle');
-  const [invalid, setInvalid] = useState(false);
+  const [notice, setNotice] = useState('');
   const rows = [
     { icon: Mail, label: t.email, value: profile.email, href: `mailto:${profile.email}` },
     { icon: Phone, label: t.phone, value: profile.phoneDisplay, href: `tel:${profile.phone}` },
@@ -418,14 +418,21 @@ export function Contact() {
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     if (website) return;
-    if (!name.trim() || !email.includes('@') || message.trim().length < 10) { setInvalid(true); setStatus('idle'); return; }
-    setInvalid(false);
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    if (!name.trim() || !email.trim() || !message.trim()) { setNotice(t.contactRequired); setStatus('fail'); return; }
+    if (!emailOk) { setNotice(t.contactEmailInvalid); setStatus('fail'); return; }
+    if (message.trim().length < 10) { setNotice(t.contactShort); setStatus('fail'); return; }
+    setNotice('');
     setStatus('sending');
     try {
-      await submitContact(name.trim(), email.trim(), message.trim(), website);
+      const msg = await submitContact(name.trim(), email.trim(), message.trim(), website);
+      setNotice(msg || t.contactSent);
       setStatus('sent');
+      setName('');
+      setEmail('');
       setMessage('');
-    } catch {
+    } catch (err) {
+      setNotice(err instanceof Error && err.message ? err.message : t.sendError);
       setStatus('fail');
     }
   };
@@ -463,10 +470,12 @@ export function Contact() {
             <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder={t.bookName} aria-label={t.bookName} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder={t.email} aria-label={t.email} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
             <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder={t.bookMessage} aria-label={t.bookMessage} className="resize-y rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base outline-none focus:border-cream" />
-            {invalid && <p className="text-sm text-cream">{t.formInvalid}</p>}
-            {status === 'sent' && <p className="text-base text-cream" role="status">{t.contactSent}</p>}
-            {status === 'fail' && <p className="text-base text-cream" role="alert">{t.sendFail}</p>}
-            <button type="submit" disabled={status === 'sending'} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">{status === 'sending' ? t.sending : t.contactSend}</button>
+            <AnimatePresence mode="wait">
+              {notice && (
+                <motion.p key={status + notice} role={status === 'fail' ? 'alert' : 'status'} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-base text-cream">{notice}</motion.p>
+              )}
+            </AnimatePresence>
+            <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">{status === 'sending' ? t.sending : t.contactSend}</motion.button>
           </form>
           <div className="mt-6 flex gap-3">
             {[{ I: Github, h: profile.github, l: 'GitHub' }, { I: Linkedin, h: profile.linkedin, l: 'LinkedIn' }, { I: Twitter, h: profile.twitter, l: 'X' }].map(({ I, h, l }) => (

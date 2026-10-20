@@ -111,7 +111,11 @@ export async function fetchProof(): Promise<{ testimonials: PublishedTestimonial
   const testimonials = (data.testimonials ?? [])
     .filter((item) => realName(item.name) && !!item.quote)
     .map((item) => ({ name: item.name as string, quote: item.quote as string, role: item.role, company: item.company }));
-  const recommendations = (data.recommendations ?? []).filter((item) => realName(item.name) && !!item.body);
+  let recommendations = (data.recommendations ?? []).filter((item) => realName(item.name) && !!item.body);
+  try {
+    const published = await fetchRecommendations();
+    if (published.length) recommendations = published.filter((item) => realName(item.name) && !!item.body);
+  } catch { /* la liste du portfolio reste le repli */ }
   return { testimonials, recommendations };
 }
 
@@ -122,6 +126,7 @@ export async function submitTestimonial(data: {
   role?: string;
   company?: string;
   website?: string;
+  image?: File | null;
 }): Promise<string> {
   const fd = new FormData();
   fd.append('quote', data.quote);
@@ -130,6 +135,7 @@ export async function submitTestimonial(data: {
   if (data.role) fd.append('role', data.role);
   if (data.company) fd.append('company', data.company);
   if (data.website) fd.append('website', data.website);
+  if (data.image) fd.append('image_file', data.image);
   const res = await fetch(`${API_BASE}/api/testimonials.php`, { method: 'POST', body: fd });
   const json = await readJson(res);
   if (!res.ok || json.success === false) throw new Error(json.error || `Erreur API (${res.status})`);

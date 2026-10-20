@@ -208,6 +208,16 @@ const fr = {
   commentSent: 'Commentaire publié.',
   likeFail: 'Impossible d’enregistrer le like pour le moment.',
   previewBanner: 'Aperçu brouillon — non publié. Relisez, puis validez dans l’admin.',
+  contactRequired: 'Tous les champs sont obligatoires.',
+  contactEmailInvalid: 'Adresse email invalide.',
+  contactShort: 'Message un peu trop court.',
+  chooseRating: 'Choisissez une note entre 1 et 5.',
+  minChars: '30 caractères minimum…',
+  sentRecommendation: 'Merci. La recommandation a été envoyée.',
+  sendError: 'Envoi impossible.',
+  photoOptional: 'Photo (optionnel)',
+  fileTooBig: 'Fichier trop volumineux (max 5 Mo).',
+  fileType: 'Type de fichier non autorisé.',
 };
 
 const en: typeof fr = {
@@ -418,6 +428,16 @@ const en: typeof fr = {
   commentSent: 'Comment published.',
   likeFail: 'The like could not be saved right now.',
   previewBanner: 'Draft preview — not published. Review it, then approve it in the admin.',
+  contactRequired: 'All fields are required.',
+  contactEmailInvalid: 'Invalid email address.',
+  contactShort: 'The message is a little short.',
+  chooseRating: 'Choose a rating from 1 to 5.',
+  minChars: '30 characters minimum…',
+  sentRecommendation: 'Thank you. The recommendation was sent.',
+  sendError: 'Could not send.',
+  photoOptional: 'Photo (optional)',
+  fileTooBig: 'File is too large (max 5 MB).',
+  fileType: 'File type is not allowed.',
 };
 
 export const dictionary = { fr, en };

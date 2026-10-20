@@ -1,5 +1,5 @@
 'use client';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { fetchProof, submitRecommendation, submitTestimonial, type PublishedTestimonial, type Recommendation } from '@/lib/api';
 import { clients } from '@/lib/catalog';
@@ -19,7 +19,52 @@ function MaskTitle({ children, className = '' }: { children: React.ReactNode; cl
 
 const field = 'mt-2 min-h-11 w-full rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream';
 
-export function Proof() {
+const emailOk = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const IMAGE_OK = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+function Status({ status, notice }: { status: string; notice: string }) {
+  return (
+    <AnimatePresence mode="wait">
+      {notice && (
+        <motion.p key={status + notice} role={status === 'fail' ? 'alert' : 'status'} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="text-base text-cream md:col-span-2">{notice}</motion.p>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function Reel({ items }: { items: { key: string; text: string; meta: string; stars?: number }[] }) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => { setIndex(0); }, [items.length]);
+  useEffect(() => {
+    if (items.length < 2) return;
+    const timer = setInterval(() => setIndex((v) => (v + 1) % items.length), 5200);
+    return () => clearInterval(timer);
+  }, [items.length]);
+  if (!items.length) return null;
+  const item = items[index];
+  return (
+    <div className="mt-8">
+      <div className="overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.blockquote key={item.key} initial={{ opacity: 0, x: 36 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -36 }} transition={{ duration: 0.45 }} className="rounded-3xl border border-white/10 p-6 md:p-10">
+            {item.stars ? <p className="font-serif text-xl text-cream">{'★★★★★'.slice(0, item.stars)}</p> : null}
+            <p className="mt-3 font-serif text-2xl italic leading-snug md:text-3xl">{item.text}</p>
+            <p className="mt-6 text-base text-mist">{item.meta}</p>
+          </motion.blockquote>
+        </AnimatePresence>
+      </div>
+      {items.length > 1 && (
+        <div className="mt-4 flex items-center gap-2">
+          <button type="button" onClick={() => setIndex((v) => (v - 1 + items.length) % items.length)} className="grid h-11 w-11 place-items-center rounded-full border border-white/20" aria-label="‹">‹</button>
+          <button type="button" onClick={() => setIndex((v) => (v + 1) % items.length)} className="grid h-11 w-11 place-items-center rounded-full border border-white/20" aria-label="›">›</button>
+          <span className="text-sm text-mist">{index + 1} / {items.length}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function Proof({ page = false }: { page?: boolean }) {
   const { t } = useI18n();
   const [filter, setFilter] = useState<'all' | 't' | 'r'>('all');
   const [testimonials, setTestimonials] = useState<PublishedTestimonial[]>([]);
@@ -48,7 +93,7 @@ export function Proof() {
   ];
 
   return (
-    <section id="retours" className="wrap py-20 md:py-28">
+    <section id="retours" className={`wrap py-20 md:py-28 ${page ? 'pt-28 md:pt-36' : ''}`}>
       <div className="grid items-end gap-6 md:grid-cols-[1.1fr_.9fr]">
         <h2 className="font-display text-[11vw] font-black uppercase leading-[.85] tracking-tight md:text-[5.5vw]">
           <MaskTitle className="metal">{t.proofTitleA}</MaskTitle>
@@ -70,20 +115,10 @@ export function Proof() {
         ))}
       </div>
       {loadFail && <p className="mt-6 text-base text-cream" role="alert">{t.proofLoadFail}</p>}
-      <ul className="mt-8 grid gap-4">
-        {shownT.map((item) => (
-          <li key={`${item.name}-${item.quote.slice(0, 24)}`} className="rounded-3xl border border-white/10 p-6">
-            <p className="text-base leading-relaxed">{item.quote}</p>
-            <p className="mt-3 text-base text-mist">{item.name}{item.role ? ` · ${item.role}` : ''}{item.company ? ` · ${item.company}` : ''}</p>
-          </li>
-        ))}
-        {shownR.map((item) => (
-          <li key={`${item.name}-${item.body.slice(0, 24)}`} className="rounded-3xl border border-white/10 p-6">
-            <p className="text-base leading-relaxed">{item.body}</p>
-            <p className="mt-3 text-base text-mist">{item.name}{item.role ? ` · ${item.role}` : ''}{item.company ? ` · ${item.company}` : ''}</p>
-          </li>
-        ))}
-      </ul>
+      <Reel items={[
+        ...shownT.map((item) => ({ key: `t-${item.name}-${item.quote.slice(0, 16)}`, text: item.quote, meta: [item.name, item.role, item.company].filter(Boolean).join(' · ') })),
+        ...shownR.map((item) => ({ key: `r-${item.name}-${item.body.slice(0, 16)}`, text: item.body, meta: [item.name, item.role, item.company].filter(Boolean).join(' · '), stars: item.rating })),
+      ]} />
       {shownT.length === 0 && filter !== 'r' && <p className="mt-6 text-base text-mist">{t.emptyTestimonials}</p>}
       {shownR.length === 0 && filter !== 't' && <p className="mt-3 text-base text-mist">{t.emptyRecommendations}</p>}
     </section>
@@ -97,40 +132,51 @@ function TestimonialForm({ onDone }: { onDone: () => void }) {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
   const [company, setCompany] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
   const [website, setWebsite] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'fail'>('idle');
-  const [invalid, setInvalid] = useState(false);
+  const [notice, setNotice] = useState('');
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (website) return;
-    if (!name.trim() || quote.trim().length < 20) { setInvalid(true); return; }
-    setInvalid(false);
+    if (!name.trim() || !quote.trim()) { setNotice(t.contactRequired); setStatus('fail'); return; }
+    if (quote.trim().length < 30) { setNotice(t.minChars); setStatus('fail'); return; }
+    if (email.trim() && !emailOk(email.trim())) { setNotice(t.contactEmailInvalid); setStatus('fail'); return; }
+    if (photo && !IMAGE_OK.includes(photo.type)) { setNotice(t.fileType); setStatus('fail'); return; }
+    if (photo && photo.size > 5_242_880) { setNotice(t.fileTooBig); setStatus('fail'); return; }
+    setNotice('');
     setStatus('sending');
     try {
-      await submitTestimonial({ quote: quote.trim(), name: name.trim(), email: email.trim() || undefined, role: role.trim() || undefined, company: company.trim() || undefined, website });
+      const msg = await submitTestimonial({ quote: quote.trim(), name: name.trim(), email: email.trim() || undefined, role: role.trim() || undefined, company: company.trim() || undefined, website, image: photo });
+      setNotice(msg || t.contactSent);
       setStatus('sent');
-      onDone();
-    } catch {
+      setQuote('');
+      setPhoto(null);
+    } catch (err) {
+      setNotice(err instanceof Error && err.message ? err.message : t.sendError);
       setStatus('fail');
     }
   };
+  void onDone;
 
   return (
     <form onSubmit={submit} className="mt-6 grid gap-4 rounded-3xl border border-white/10 p-5 md:grid-cols-2">
       <input name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
       <label className="md:col-span-2">
         <span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.quoteLabel}</span>
-        <textarea value={quote} onChange={(e) => setQuote(e.target.value)} rows={4} className={`${field} resize-y`} />
+        <textarea value={quote} onChange={(e) => setQuote(e.target.value)} rows={4} placeholder={t.minChars} className={`${field} resize-y`} />
       </label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.bookName}</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.email}</span><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recRole}</span><input value={role} onChange={(e) => setRole(e.target.value)} className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recCompany}</span><input value={company} onChange={(e) => setCompany(e.target.value)} className={field} /></label>
-      {invalid && <p className="text-sm text-cream md:col-span-2">{t.minQuote}</p>}
-      {status === 'fail' && <p className="text-base text-cream md:col-span-2" role="alert">{t.sendFail}</p>}
-      {status === 'sent' && <p className="text-base text-cream md:col-span-2" role="status">{t.contactSent}</p>}
-      <button type="submit" disabled={status === 'sending'} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink md:col-span-2 md:w-fit disabled:opacity-60">{status === 'sending' ? t.sending : t.testiSend}</button>
+      <label className="md:col-span-2">
+        <span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.photoOptional}</span>
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(e) => setPhoto(e.target.files?.[0] || null)} className="mt-2 block min-h-11 w-full text-base" />
+      </label>
+      <Status status={status} notice={notice} />
+      <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink md:col-span-2 md:w-fit disabled:opacity-60">{status === 'sending' ? t.sending : t.testiSend}</motion.button>
     </form>
   );
 }
@@ -145,22 +191,29 @@ function RecommendationForm({ onDone }: { onDone: () => void }) {
   const [rating, setRating] = useState(0);
   const [website, setWebsite] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'fail'>('idle');
-  const [invalid, setInvalid] = useState(false);
+  const [notice, setNotice] = useState('');
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (website) return;
-    if (!name.trim() || body.trim().length < 20 || rating < 1) { setInvalid(true); return; }
-    setInvalid(false);
+    if (!name.trim() || !body.trim()) { setNotice(t.contactRequired); setStatus('fail'); return; }
+    if (rating < 1 || rating > 5) { setNotice(t.chooseRating); setStatus('fail'); return; }
+    if (body.trim().length < 30) { setNotice(t.minChars); setStatus('fail'); return; }
+    if (email.trim() && !emailOk(email.trim())) { setNotice(t.contactEmailInvalid); setStatus('fail'); return; }
+    setNotice('');
     setStatus('sending');
     try {
-      await submitRecommendation({ name: name.trim(), email: email.trim() || undefined, role: role.trim() || undefined, company: company.trim() || undefined, body: body.trim(), rating, website });
+      const msg = await submitRecommendation({ name: name.trim(), email: email.trim() || undefined, role: role.trim() || undefined, company: company.trim() || undefined, body: body.trim(), rating, website });
+      setNotice(msg || t.sentRecommendation);
       setStatus('sent');
-      onDone();
-    } catch {
+      setBody('');
+      setRating(0);
+    } catch (err) {
+      setNotice(err instanceof Error && err.message ? err.message : t.sendError);
       setStatus('fail');
     }
   };
+  void onDone;
 
   return (
     <form onSubmit={submit} className="mt-6 grid gap-4 rounded-3xl border border-white/10 p-5 md:grid-cols-2">
@@ -176,16 +229,14 @@ function RecommendationForm({ onDone }: { onDone: () => void }) {
       </div>
       <label className="md:col-span-2">
         <span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recommendations}</span>
-        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={4} className={`${field} resize-y`} />
+        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={4} placeholder={t.minChars} className={`${field} resize-y`} />
       </label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.bookName}</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.email}</span><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recRole}</span><input value={role} onChange={(e) => setRole(e.target.value)} className={field} /></label>
       <label><span className="text-sm uppercase tracking-[0.16em] text-white/50">{t.recCompany}</span><input value={company} onChange={(e) => setCompany(e.target.value)} className={field} /></label>
-      {invalid && <p className="text-sm text-cream md:col-span-2">{t.bookNeed}</p>}
-      {status === 'fail' && <p className="text-base text-cream md:col-span-2" role="alert">{t.sendFail}</p>}
-      {status === 'sent' && <p className="text-base text-cream md:col-span-2" role="status">{t.contactSent}</p>}
-      <button type="submit" disabled={status === 'sending'} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink md:col-span-2 md:w-fit disabled:opacity-60">{status === 'sending' ? t.sending : t.recSend}</button>
+      <Status status={status} notice={notice} />
+      <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="min-h-11 rounded-full bg-cream px-6 text-base font-medium text-ink md:col-span-2 md:w-fit disabled:opacity-60">{status === 'sending' ? t.sending : t.recSend}</motion.button>
     </form>
   );
 }
