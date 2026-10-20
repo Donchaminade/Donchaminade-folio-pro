@@ -252,7 +252,7 @@ function Device({ type, images }: { type: 'Mobile' | 'Web'; images: string[] }) 
     ? 'aspect-[9/19] w-[46%] md:w-[38%] rounded-[2.2rem] border-[6px]'
     : 'aspect-[16/10] w-[92%] rounded-xl border-[8px] border-b-[14px]';
   return (
-    <div className="spot relative flex h-full min-h-[340px] items-center justify-center md:min-h-[520px]">
+    <div className="spot relative flex h-full min-h-[340px] w-full max-w-full items-center justify-center md:min-h-[520px]">
       <div className={`relative overflow-hidden border-neutral-800 bg-black shadow-[0_40px_80px_-20px_rgba(0,0,0,.9)] ${frame}`}>
         <AnimatePresence>
           <motion.img key={images[k]} src={images[k]} alt="" initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
@@ -333,7 +333,7 @@ export function Work() {
             <ProjectLinks p={p} />
           </motion.div>
         </AnimatePresence>
-        <motion.div {...slideIn(28, 0.1)} className="order-1 min-w-0 lg:order-2">
+        <motion.div {...slideIn(28, 0.1)} className="order-1 min-w-0 max-w-full overflow-hidden lg:order-2">
           <AnimatePresence mode="wait">
             <motion.div key={p.title} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.7, ease: [0.65, 0, 0.35, 1] }}>
               <Device type={p.type} images={p.images} />
@@ -474,10 +474,10 @@ export function Contact() {
     }
   };
   return (
-    <section id="contact" className="wrap relative flex min-h-[100svh] flex-col overflow-hidden pt-24">
+    <section id="contact" className="wrap relative box-border flex min-h-[100svh] w-full max-w-full flex-col overflow-x-clip pt-24">
       <div className="marble" aria-hidden />
-      <div className="relative grid flex-1 items-center gap-10 md:grid-cols-2">
-        <div>
+      <div className="relative grid min-w-0 flex-1 items-center gap-10 md:grid-cols-2">
+        <div className="min-w-0">
           <h2 className="font-display text-[15vw] font-black uppercase leading-[.85] tracking-tight md:text-[7vw]">
             <MaskTitle className="metal">{t.contactTitleA}</MaskTitle>
             <MaskTitle><Italic><span className="text-cream">{t.contactTitleB}</span></Italic></MaskTitle>
@@ -490,32 +490,31 @@ export function Contact() {
           </motion.div>
         </div>
         <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="rounded-3xl border border-white/15 bg-white/[.06] p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)] backdrop-blur-2xl md:p-10">
+          className="box-border mx-auto w-full min-w-0 max-w-full rounded-3xl border border-white/15 bg-white/[.06] p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)] backdrop-blur-2xl md:p-10">
           <p className="label text-white/50">{profile.fullName}</p>
           <ul className="mt-6 divide-y divide-white/10">
             {rows.map(({ icon: I, label, value, href }) => (
-              <li key={label} className="flex items-center gap-4 py-4">
+              <li key={label} className="flex min-w-0 items-center gap-4 py-4">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 bg-white/5"><MotionIcon icon={I} size={16} effect="draw" /></span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="label text-white/40">{label}</p>
-                  <a href={href} className="block truncate text-base hover:text-cream">{value}</a>
+                  <a href={href} className="block break-all text-base hover:text-cream">{value}</a>
                 </div>
               </li>
             ))}
           </ul>
-          <form onSubmit={send} className="mt-6 grid gap-3">
-            <p className="text-base text-mist">{t.contactFormNote}</p>
+          <form onSubmit={send} className="mt-6 grid min-w-0 gap-3">
             <input name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
-            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder={t.bookName} aria-label={t.bookName} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder={t.email} aria-label={t.email} className="min-h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
-            <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder={t.bookMessage} aria-label={t.bookMessage} className="resize-y rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base outline-none focus:border-cream" />
+            <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder={t.bookName} aria-label={t.bookName} className="box-border min-h-11 w-full min-w-0 max-w-full rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder={t.email} aria-label={t.email} className="box-border min-h-11 w-full min-w-0 max-w-full rounded-2xl border border-white/15 bg-white/5 px-4 text-base outline-none focus:border-cream" />
+            <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder={t.bookMessage} aria-label={t.bookMessage} className="box-border w-full min-w-0 max-w-full resize-y rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base outline-none focus:border-cream" />
             <AnimatePresence mode="wait">
               {notice && (
                 <motion.p key={status + notice} role={status === 'fail' ? 'alert' : 'status'} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="text-base text-cream">{notice}</motion.p>
               )}
             </AnimatePresence>
-            <Heartbeat className="w-fit">
-              <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">
+            <Heartbeat className="max-w-full">
+              <motion.button type="submit" disabled={status === 'sending'} whileTap={{ scale: 0.98 }} className="box-border inline-flex max-w-full min-h-11 items-center gap-2 rounded-full bg-cream px-6 text-base font-medium text-ink disabled:opacity-60">
                 <MotionIcon icon={Send} size={16} effect="slide" />
                 {status === 'sending' ? t.sending : t.contactSend}
               </motion.button>
@@ -528,10 +527,10 @@ export function Contact() {
           </div>
         </motion.div>
       </div>
-      <footer className="relative mt-16 flex flex-col gap-3 border-t border-white/10 py-6 md:flex-row md:justify-between">
+      <footer className="relative mt-16 flex min-w-0 flex-col gap-3 border-t border-white/10 py-6 md:flex-row md:justify-between">
         <span className="label text-white/40">© {profile.year} {profile.fullName}</span>
         <a href="/blog" className="label text-white/40 hover:text-cream">{t.nav.blog}</a>
-        <span className="label text-white/40">{profile.heroSubtitle[lang]}</span>
+        <span className="label max-w-full break-words text-white/40">{profile.heroSubtitle[lang]}</span>
       </footer>
     </section>
   );
