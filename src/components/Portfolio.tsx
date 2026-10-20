@@ -9,7 +9,6 @@ import { Hero, About, Services, Work, Components, Contact } from './Sections';
 import { Awards, Community, Gallery, Path, Pricing } from './More';
 import Booking from './Booking';
 import { navIds } from '@/lib/catalog';
-import { Providers } from '@/lib/i18n';
 
 function Shell() {
   const reduced = !!useReducedMotion();
@@ -55,9 +54,5 @@ function Shell() {
 }
 
 export default function Portfolio() {
-  return (
-    <Providers>
-      <Shell />
-    </Providers>
-  );
+  return <Shell />;
 }

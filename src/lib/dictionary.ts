@@ -134,6 +134,23 @@ const fr = {
     { name: 'Application mobile', amount: 1000, quote: false },
     { name: 'Autres projets', amount: 0, quote: true },
   ],
+  chatOpen: 'Ouvrir l’assistant portfolio',
+  chatClose: 'Fermer l’assistant',
+  chatTitle: 'Assistant Donchaminade',
+  chatLead: 'Questions sur le profil, les projets, le parcours et les articles publics.',
+  chatHello: 'Bonjour — je peux parler du parcours, de PyCon Togo, du coaching YAS / Next Gen, des projets et des derniers articles. Hors sujet, je passerai mon tour.',
+  chatWriting: 'Rédaction en cours…',
+  chatError: 'Impossible de répondre pour le moment. Réessayez.',
+  chatNote: 'Réponses à partir du contenu public du portfolio. Les échanges ne sont pas conservés.',
+  chatAsk: 'Votre question',
+  chatPlaceholder: 'Ex. Quels sont tes projets ?',
+  chatSend: 'Envoyer le message',
+  chatStop: 'Stop',
+  chatSuggestions: [
+    { label: 'Tarifs', text: 'Quels sont tes tarifs ?' },
+    { label: 'Prendre rendez-vous', text: 'Comment prendre rendez-vous ?' },
+    { label: 'Projets', text: 'Quels sont tes projets ?' },
+  ],
 };
 
 const en: typeof fr = {
@@ -269,6 +286,23 @@ const en: typeof fr = {
     { name: 'PWA', amount: 500, quote: false },
     { name: 'Mobile application', amount: 1000, quote: false },
     { name: 'Other projects', amount: 0, quote: true },
+  ],
+  chatOpen: 'Open the portfolio assistant',
+  chatClose: 'Close the assistant',
+  chatTitle: 'Donchaminade assistant',
+  chatLead: 'Questions about the profile, projects, career and public articles.',
+  chatHello: 'Hello — I can talk about the career path, PyCon Togo, YAS / Next Gen coaching, projects and the latest articles. Off-topic questions, I will pass.',
+  chatWriting: 'Writing…',
+  chatError: 'I cannot answer right now. Please try again.',
+  chatNote: 'Answers come from the public portfolio. Conversations are not stored.',
+  chatAsk: 'Your question',
+  chatPlaceholder: 'e.g. What are your projects?',
+  chatSend: 'Send message',
+  chatStop: 'Stop',
+  chatSuggestions: [
+    { label: 'Pricing', text: 'What are your rates?' },
+    { label: 'Book a call', text: 'How do I book a call?' },
+    { label: 'Projects', text: 'What are your projects?' },
   ],
 };
 

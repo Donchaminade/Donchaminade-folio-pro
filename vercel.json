@@ -2,6 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "out",
   "framework": null,
+  "functions": {
+    "api/chat.mjs": {
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/blog/preview/:token",
