@@ -198,4 +198,4 @@ export const phoneScreens: { src: string; label: Bi }[] = [
   { src: '/img/picon-play-7.jpg', label: b('Picon — Souvenirs', 'Picon — Memories') },
 ];
 
-export const navIds = ['accueil', 'apropos', 'parcours', 'services', 'tarifs', 'projets', 'distinctions', 'communaute', 'galerie', 'ecrans', 'contact'] as const;
+export const navIds = ['accueil', 'apropos', 'parcours', 'services', 'tarifs', 'rendez-vous', 'projets', 'distinctions', 'communaute', 'galerie', 'ecrans', 'contact'] as const;

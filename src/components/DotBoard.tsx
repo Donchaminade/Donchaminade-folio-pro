@@ -41,7 +41,7 @@ export default function DotBoard({ reduced }: { reduced: boolean }) {
       for (const d of dots) {
         const a = reduced ? 1 : Math.min(1, Math.max(0, (t - d.born) / 300));
         if (d.on < 1) d.on = Math.min(1, d.on + 0.004);
-        const ink = theme === 'light' ? '28,24,20' : '255,255,255';
+        const ink = theme === 'light' ? '24,24,27' : '255,255,255';
         ctx.fillStyle = `rgba(${ink},${(0.15 + 0.85 * d.on) * a})`;
         ctx.beginPath(); ctx.arc(d.x, d.y, cell * 0.36, 0, Math.PI * 2); ctx.fill();
       }
@@ -54,8 +54,8 @@ export default function DotBoard({ reduced }: { reduced: boolean }) {
         if (ball.y > H + 20) { ball.x = W / 2; ball.y = H * 0.6; ball.vy = -3.6; }
         for (const d of dots) if (d.on > 0.8 && Math.hypot(d.x - ball.x, d.y - ball.y) < cell * 0.7) { d.on = 0.05; ball.vy *= -1; break; }
       }
-      ctx.fillStyle = theme === 'light' ? '#1c1814' : '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = theme === 'light' ? '#6d5c49' : '#d9d0c1'; ctx.beginPath(); ctx.roundRect(paddle - pw / 2, py, pw, 6, 3); ctx.fill();
+      ctx.fillStyle = theme === 'light' ? '#18181b' : '#fff'; ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = theme === 'light' ? '#18181b' : '#d9d0c1'; ctx.beginPath(); ctx.roundRect(paddle - pw / 2, py, pw, 6, 3); ctx.fill();
       raf = requestAnimationFrame(draw);
     };
     const move = (e: PointerEvent) => { const r = cv.getBoundingClientRect(); paddle = e.clientX - r.left; };
@@ -66,7 +66,7 @@ export default function DotBoard({ reduced }: { reduced: boolean }) {
     return () => { cancelAnimationFrame(raf); clearInterval(autoT); cv.removeEventListener('pointermove', mv); window.removeEventListener('resize', build); };
   }, [reduced, theme]);
   return (
-    <section id="hello" className="relative px-5 py-20 md:px-10 md:py-24">
+    <section id="hello" className="wrap relative py-20 md:py-24">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="label w-fit rounded-full border border-white/20 px-3 py-1.5 text-white/60">{t.dotKicker}</span>
         <span className="label text-white/40">{t.dotHint}</span>

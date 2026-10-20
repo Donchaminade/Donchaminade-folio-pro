@@ -7,6 +7,7 @@ import Pointeur from './Pointeur';
 import DotBoard from './DotBoard';
 import { Hero, About, Services, Work, Components, Contact } from './Sections';
 import { Awards, Community, Gallery, Path, Pricing } from './More';
+import Booking from './Booking';
 import { navIds } from '@/lib/catalog';
 import { Providers } from '@/lib/i18n';
 
@@ -40,6 +41,7 @@ function Shell() {
         <Path />
         <Services />
         <Pricing />
+        <Booking />
         <Work />
         <Awards />
         <Community />

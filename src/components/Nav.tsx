@@ -13,9 +13,9 @@ export default function Nav({ active }: { active: string }) {
   return (
     <motion.header initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, ease: 'easeOut' }}
       className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/60 backdrop-blur-md">
-      <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-8">
-        <a href="#accueil" className="shrink-0 font-display text-[11px] font-black tracking-[.16em] sm:text-[12px] sm:tracking-[.2em]">CHAMINADE</a>
-        <nav className="hidden min-w-0 items-center gap-4 xl:flex">
+      <div className="wrap flex items-center justify-between gap-2 py-2 md:py-3">
+        <a href="#accueil" className="shrink-0 font-display text-[10px] font-black tracking-[.14em] sm:text-[12px] sm:tracking-[.2em]">CHAMINADE</a>
+        <nav className="hidden min-w-0 flex-1 items-center justify-end gap-3 overflow-x-auto xl:flex">
           {links.map((n) => (
             <a key={n.id} href={`#${n.id}`} className={`label relative whitespace-nowrap pb-1 transition-colors ${active === n.id ? 'text-white' : 'text-white/50 hover:text-white'}`}>
               {n.label}
@@ -23,16 +23,18 @@ export default function Nav({ active }: { active: string }) {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Controls />
-          <button className="xl:hidden" aria-label={open ? t.menuClose : t.menuOpen} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
+          <button className="grid h-11 w-11 shrink-0 place-items-center xl:hidden" aria-label={open ? t.menuClose : t.menuOpen} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
       </div>
       {open && (
-        <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 gap-x-4 gap-y-4 border-t border-white/10 bg-ink/95 px-5 py-5 xl:hidden">
-          {links.map((n) => (
-            <a key={n.id} href={`#${n.id}`} onClick={() => setOpen(false)} className={`label ${active === n.id ? 'text-white underline underline-offset-8' : 'text-white/60'}`}>{n.label}</a>
-          ))}
+        <motion.nav initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="border-t border-white/10 bg-ink/95 xl:hidden">
+          <div className="wrap grid grid-cols-2 gap-x-4 gap-y-1 py-3">
+            {links.map((n) => (
+              <a key={n.id} href={`#${n.id}`} onClick={() => setOpen(false)} className={`label flex min-h-11 items-center ${active === n.id ? 'text-white underline underline-offset-8' : 'text-white/60'}`}>{n.label}</a>
+            ))}
+          </div>
         </motion.nav>
       )}
     </motion.header>
