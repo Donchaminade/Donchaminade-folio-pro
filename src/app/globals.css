@@ -27,6 +27,15 @@ body { background: radial-gradient(ellipse at 50% 0%, #1a1d20 0%, #060708 60%) f
 .project-title .title-rest { display: block; max-width: 100%; }
 .project-title .title-lead { white-space: nowrap; }
 .spot { background: radial-gradient(ellipse 50% 40% at 50% 85%, rgba(255,255,255,.14), transparent 70%); }
+/* L'italique du rôle passe sur le portrait clair : fond sombre pour qu'il reste lisible. */
+.role-focus {
+  color: #f6efe3;
+  background-color: rgba(6, 7, 8, .78);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 .14em .02em;
+  border-radius: .28em;
+}
 .fg { background: #fff; }
 section { scroll-margin-top: 6.5rem; }
 .nav-float {
@@ -83,6 +92,10 @@ main { overflow-x: clip; }
 [data-theme="light"] .metal { background: linear-gradient(180deg, #18181b 0%, #3f3f46 58%, #71717a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: none; }
 [data-theme="light"] .fg { background: #18181b; }
 [data-theme="light"] .text-cream { color: #18181b; }
+[data-theme="light"] .role-focus {
+  color: #18181b;
+  background-color: transparent;
+}
 [data-theme="light"] .bg-cream { background-color: #18181b; color: #fafafa; }
 [data-theme="light"] .border-cream,
 [data-theme="light"] .border-cream\/70,

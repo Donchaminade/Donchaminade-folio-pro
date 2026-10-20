@@ -46,7 +46,7 @@ function RoleLine({ size }: { size: 'm' | 'd' }) {
   return (
     <p className={`max-w-[18rem] font-display font-extrabold leading-tight sm:max-w-none ${big ? 'text-3xl' : 'text-2xl'}`}>
       {t.developer}{' '}
-      <span className={`font-serif font-normal italic text-cream ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>{t.roleFocus}</span>
+      <span className={`role-focus font-serif font-normal italic ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>{t.roleFocus}</span>
     </p>
   );
 }
