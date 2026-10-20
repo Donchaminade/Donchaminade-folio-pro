@@ -1,11 +1,12 @@
 'use client';
 import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Github, Linkedin, Mail, Phone, Twitter, Plus, Minus, Download, MessageCircle, Send } from 'lucide-react';
 import { Heartbeat, MotionIcon } from './MotionIcon';
 import { fetchPortfolioProjects, submitContact } from '@/lib/api';
 import { fadeUp, hoverLift, inViewGroup, reveal, slideIn } from '@/lib/motion';
-import { extraProjects, mergeRemoteProjects, phoneScreens, profile, projects, roles, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
+import { extraProjects, mergeRemoteProjects, phoneScreens, profile, projects, skillBlocks, skillRows, softSkills, tagLabel, type Bi, type Project } from '@/lib/catalog';
 import { useI18n } from '@/lib/i18n';
 import type { Lang } from '@/lib/dictionary';
 
@@ -39,19 +40,13 @@ function longestToken(accent: string, rest: string) {
   return parts.reduce((max, part) => Math.max(max, part.length), 1);
 }
 
-function RoleLine({ r, size }: { r: number; size: 'm' | 'd' }) {
+function RoleLine({ size }: { size: 'm' | 'd' }) {
   const { t } = useI18n();
   const big = size === 'd';
   return (
-    <p className={`font-display font-extrabold ${big ? 'text-3xl' : 'text-2xl'}`}>
+    <p className={`max-w-[18rem] font-display font-extrabold leading-tight sm:max-w-none ${big ? 'text-3xl' : 'text-2xl'}`}>
       {t.developer}{' '}
-      <span className="relative inline-block min-w-[5ch] align-bottom">
-        <span className={`invisible font-serif italic ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>Next.js</span>
-        {roles.map((w, k) => (
-          <motion.span key={w} initial={false} animate={{ y: k === r ? 0 : 20, opacity: k === r ? 1 : 0 }} transition={{ duration: 0.4 }}
-            className={`absolute bottom-0 left-0 font-serif font-normal italic text-cream ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>{w}</motion.span>
-        ))}
-      </span>
+      <span className={`font-serif font-normal italic text-cream ${big ? 'text-4xl' : 'text-[1.7rem]'}`}>{t.roleFocus}</span>
     </p>
   );
 }
@@ -60,12 +55,10 @@ function RoleLine({ r, size }: { r: number; size: 'm' | 'd' }) {
 export function Hero({ ready }: { ready: boolean }) {
   const { t, lang } = useI18n();
   const reduced = !!useReducedMotion();
-  const [r, setR] = useState(0);
-  useEffect(() => {
-    if (reduced) return;
-    const timer = setInterval(() => setR((v) => (v + 1) % roles.length), 2200);
-    return () => clearInterval(timer);
-  }, [reduced]);
+  const path = usePathname() || '/';
+  const home = path === '/';
+  const book = home ? '#rendez-vous' : '/#rendez-vous';
+  const contact = home ? '#contact' : '/#contact';
   const mx = useMotionValue(0), my = useMotionValue(0);
   const px = useSpring(useTransform(mx, [-1, 1], [-14, 14]), { stiffness: 60, damping: 20 });
   const py = useSpring(useTransform(my, [-1, 1], [-8, 8]), { stiffness: 60, damping: 20 });
@@ -92,13 +85,13 @@ export function Hero({ ready }: { ready: boolean }) {
           className="mt-3 shrink-0">
           <motion.div variants={fadeUp}>
             <p className="label mb-2 text-white/50">{profile.fullName}</p>
-            <RoleLine r={r} size="m" />
+            <RoleLine size="m" />
             <p className="mt-2 text-base leading-relaxed text-mist">{profile.heroSubtitle[lang]}</p>
           </motion.div>
           <motion.div variants={fadeUp} className="mt-4 grid gap-3">
-            <a href="#contact" className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 text-base font-medium tracking-wide">{t.contact} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" /></a>
+            <a href={contact} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 text-base font-medium tracking-wide">{t.contact} <MotionIcon icon={ArrowUpRight} size={16} effect="slide" /></a>
             <Heartbeat className="w-full">
-              <a href="#rendez-vous" className="flex min-h-11 w-full items-center justify-center rounded-full bg-cream px-5 text-base font-medium tracking-wide text-ink">{t.bookCall}</a>
+              <a href={book} className="flex min-h-11 w-full items-center justify-center rounded-full bg-cream px-5 text-base font-medium tracking-wide text-ink">{t.bookCall}</a>
             </Heartbeat>
           </motion.div>
         </motion.div>
@@ -120,14 +113,14 @@ export function Hero({ ready }: { ready: boolean }) {
           <div className="wrap flex items-end justify-between gap-6 pb-10">
             <motion.div variants={fadeUp}>
               <p className="label mb-2 text-white/50">{profile.fullName}</p>
-              <RoleLine r={r} size="d" />
+              <RoleLine size="d" />
               <p className="mt-1 text-base text-mist">{profile.heroSubtitle[lang]}</p>
             </motion.div>
             <motion.div variants={fadeUp} className="flex items-center gap-3">
               <Heartbeat>
-                <a href="#rendez-vous" className="inline-flex min-h-11 items-center rounded-full bg-cream px-5 text-sm font-medium tracking-wide text-ink hover:bg-white">{t.bookCall}</a>
+                <a href={book} className="inline-flex min-h-11 items-center rounded-full bg-cream px-5 text-sm font-medium tracking-wide text-ink hover:bg-white">{t.bookCall}</a>
               </Heartbeat>
-              <a href="#contact" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 text-sm font-medium tracking-wide backdrop-blur hover:bg-cream hover:text-ink">{t.contact} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>
+              <a href={contact} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-white/5 px-5 text-sm font-medium tracking-wide backdrop-blur hover:bg-cream hover:text-ink">{t.contact} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>
               <span className="flex h-11 w-5 justify-center rounded-full border border-white/40 pt-1.5" aria-hidden>
                 <motion.span className="fg h-1.5 w-1 rounded-full" animate={reduced ? undefined : { y: [0, 10, 0] }} transition={{ duration: 1.6, repeat: Infinity }} />
               </span>
