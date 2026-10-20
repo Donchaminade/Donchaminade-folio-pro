@@ -282,7 +282,7 @@ export function Work() {
     { id: 'Mobile' as const, label: t.filterMobile },
   ];
   return (
-    <section id="projets" className="wrap relative py-20 md:py-28">
+    <section id="projets" className="wrap relative overflow-x-clip py-20 md:py-28">
       <h2 className="font-display text-[14vw] font-black uppercase leading-[.85] tracking-tight md:text-[6.5vw]">
         <MaskTitle className="metal">{t.projectsTitle} <Italic>{t.projectsChosen}</Italic></MaskTitle>
       </h2>
@@ -299,14 +299,14 @@ export function Work() {
             className={`label inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 ${i === j ? 'border-cream bg-cream text-ink' : 'border-white/20 text-white/60'}`}>{q.title}</button>
         ))}
       </div>
-      <div className="mt-12 grid items-center gap-10 lg:grid-cols-2 lg:gap-24">
+      <div className="mt-12 grid min-w-0 items-center gap-10 lg:grid-cols-2 lg:gap-24">
         <AnimatePresence mode="wait">
           <motion.div key={p.title} initial="hidden" animate="show" exit={{ opacity: 0, y: -20 }} variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="order-2 lg:order-1">
             <motion.p variants={fadeUp} className="text-base font-medium uppercase tracking-[0.14em] text-white/60">{String(i + 1).padStart(2, '0')} — {p.type === 'Mobile' ? t.mobileApp : t.webApp}</motion.p>
             <motion.h3 variants={fadeUp} className="project-title mt-4 font-display font-black uppercase">
               {accent}{rest && <Italic><span className="text-cream">{rest}</span></Italic>}
             </motion.h3>
-            <motion.p variants={fadeUp} className="mt-6 max-w-[34rem] text-[1.125rem] leading-[1.65] text-mist">{p.description[lang]}</motion.p>
+            <motion.p variants={fadeUp} className="mt-6 max-w-[34rem] text-[1.125rem] leading-[1.65] text-mist [overflow-wrap:anywhere]">{p.description[lang]}</motion.p>
             <motion.ul variants={fadeUp} className="mt-6 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="inline-flex items-center rounded-full border border-white/15 px-3 py-1 text-base text-white/75">{tagLabel(tag, lang)}</li>)}</motion.ul>
             <ProjectLinks p={p} />
           </motion.div>
@@ -364,7 +364,7 @@ function ProjectCard({ p }: { p: Project }) {
       <div className="p-5">
         <p className="label text-cream">{p.type === 'Mobile' ? t.mobileApp : t.webApp}</p>
         <h4 className="mt-2 font-display text-2xl font-black uppercase leading-none">{p.title}</h4>
-        <p className="mt-3 text-base leading-relaxed text-mist">{p.description[lang]}</p>
+        <p className="mt-3 text-base leading-relaxed text-mist [overflow-wrap:anywhere]">{p.description[lang]}</p>
         <ul className="mt-3 flex flex-wrap gap-2">{p.tags.map((tag) => <li key={tag} className="label rounded-full border border-white/15 px-2 py-1 text-white/60">{tagLabel(tag, lang)}</li>)}</ul>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
           {p.link && <a href={p.link} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-1 text-base hover:text-cream">{p.link.includes('play.google') ? t.googlePlay : t.seeSite} <MotionIcon icon={ArrowUpRight} size={14} effect="slide" /></a>}
