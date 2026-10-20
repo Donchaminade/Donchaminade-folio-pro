@@ -6,7 +6,7 @@ const lines = (fr: string[], en: string[]): Record<Lang, string[]> => ({ fr, en 
 
 export const profile = {
   fullName: 'ADJOLOU Dondah Chaminade',
-  heroTitle: b('Développeur Web & Mobile.', 'Web & Mobile Developer.'),
+  heroTitle: b('Développeur fullstack web et mobile.', 'Fullstack web and mobile developer.'),
   heroSubtitle: b('Ambassadeur SpaceXAI | Co-organisateur GDG Lomé', 'SpaceXAI ambassador | GDG Lomé co-organiser'),
   bio: b(
     'Ingénieur IT passionné, je conçois et déploie des solutions numériques sur mesure.',
