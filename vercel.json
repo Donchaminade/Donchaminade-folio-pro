@@ -11,5 +11,6 @@
       "source": "/blog/:slug",
       "destination": "/blog/article.html"
     }
-  ]
+  ],
+  "cleanUrls": true
 }
