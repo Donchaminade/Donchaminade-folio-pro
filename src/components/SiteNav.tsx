@@ -23,6 +23,7 @@ export default function SiteNav() {
   const path = usePathname() || '/';
   const [open, setOpen] = useState(false);
   const reduce = !!useReducedMotion();
+  if (path.startsWith('/admin')) return null;
   const links = LINKS.map((link) => ({
     ...link,
     label: t.links[link.key],
